@@ -162,7 +162,7 @@ let rec execute (p: list<int>) (i: int) : list<int> =
             let pModified = replaceAt position (operand1 * operand2) p
             execute pModified (nextPosition)
 
-// let x = execute program 0
+let x = execute program 0
 
 //Module 2
 //This function from https://stackoverflow.com/questions/49190739/a-more-functional-way-to-create-tuples-from-two-arrays
