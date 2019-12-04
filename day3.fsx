@@ -108,4 +108,38 @@ let y =
         { XPos = 0.0
           YPos = 0.0 } (List.concat x)
 
+printfn("Minimum distance is %A") y
 //Module2
+
+let distance a b = 
+    if a.XPos = b.XPos then
+        abs (a.YPos - b.YPos)
+     else
+        abs (a.XPos - b.XPos)
+    // sqrt((a.XPos - b.XPos)**2.0 + (a.YPos - b.YPos)**2.0)
+
+let between a c b =
+    if a.XPos = c.XPos && c.XPos = b.XPos then
+        (distance a c + distance c b) = distance a b
+    else if a.YPos = c.YPos && c.YPos = b.YPos then    
+        (distance a c + distance c b) = distance a b
+    else false    
+
+let rec distanceToIntersection inter current (lines:list<(Location*Location)>) =
+    let currentLine = List.head lines
+    let isBetween = between (fst currentLine) inter (snd currentLine)
+    if isBetween then current + (distance (fst currentLine) inter)
+    else
+        if List.length lines = 1 then
+            current
+        else
+            let newDistance = current + (distance (fst currentLine) (snd currentLine))
+            distanceToIntersection inter newDistance (List.tail lines)
+
+let calculateSteps intersections lines1 lines2 =
+    let result = intersections |> List.map(fun i -> (distanceToIntersection i 0.0 lines1) + (distanceToIntersection i 0.0 lines2))
+    List.min result
+
+
+let result = calculateSteps (List.concat x) lines1 lines2
+printfn("Mindistance lines %A") result
