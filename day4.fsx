@@ -9,15 +9,22 @@ let rec increasing result prev (input: string) =
     else if prev > number then false
     else increasing (prev <= number) number input.[1..]
 
-let ispassword input =
+let ispassword input fn =
     let inputString = string input
-    (hasDuplicatesPart2 inputString) && (increasing true 0 inputString)
+    (fn inputString) && (increasing true 0 inputString)
 
 let validPasswords = 
     Seq.choose(fun x ->
         match x with
-        | x when (ispassword x) -> Some(x)
+        | x when (ispassword x hasDuplicates) -> Some(x)
         | _ -> None) values
 printfn("Number of valid %A") (Seq.length validPasswords)
-printfn("%A") validPasswords
+
+
+let validPasswordsPart2 = 
+    Seq.choose(fun x ->
+        match x with
+        | x when (ispassword x hasDuplicatesPart2) -> Some(x)
+        | _ -> None) values
+printfn("Number of valid %A") (Seq.length validPasswordsPart2)
             
