@@ -1,3 +1,5 @@
 .config/
 .ionide/
 .vscode/
+.paket/
+paket.lock
