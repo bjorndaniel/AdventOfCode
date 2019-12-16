@@ -3,7 +3,7 @@ open System
 open FSharp.Data
 type InputData = JsonProvider<""" {"program": [1,3,123] } """>
 
-let replaceAt (i: int) (v: int) (l: list<int>): list<int> =
+let replaceAt i v l =
     if i = 0 then
         v :: List.tail l
     else
@@ -26,7 +26,7 @@ let getOpCode input =
     let secondMode = inputString.[1] |> charToInt
     [thirdMode;secondMode;firstMode;opCode]
 
-let rec execute programstate inputs inputcount output autorun (p: list<int>) (i: int) : list<int> =
+let rec execute (programstate:list<int>) inputs inputcount output autorun (p: list<int>) (i: int) : list<int> =
     let instruction = List.item i p
     let opCodeList = if instruction > 10 && instruction <> 99 then getOpCode instruction else [0;0;0;instruction]
     let opCode = List.item 3 opCodeList
@@ -53,8 +53,8 @@ let rec execute programstate inputs inputcount output autorun (p: list<int>) (i:
     | 4 -> 
         if autorun then
             let output = List.item (List.item (i+1) p) p 
-            printfn("Received output code %A") [output]
-            [output]
+            // printfn("Received output code %A") output
+            List.append [output;0] programstate
         else
             let output =  List.item (List.item (i+1) p) p 
             Console.WriteLine(sprintf "Output value %A" output)
@@ -91,11 +91,12 @@ let rec execute programstate inputs inputcount output autorun (p: list<int>) (i:
         execute pModified inputs inputcount 0 autorun pModified (i + 4)
     | 99 -> 
         if autorun then 
-            [output]
+            let opcode = [output;99]
+            List.append opcode programstate
         else
             Console.WriteLine("Received end opcode")
-            p
-    | _ when count < 4 -> p
+            List.append [0;99] programstate
+    | _ when count < 4 -> List.append [0;0] programstate
     | _ ->
         let f = List.skip i p |> List.truncate 4
         let operand1 = if (List.item 2 opCodeList) = 0 then List.item (List.item 1 f) p else List.item 1 f
@@ -109,26 +110,28 @@ let rec execute programstate inputs inputcount output autorun (p: list<int>) (i:
             let pModified = replaceAt position (operand1 * operand2) p
             execute pModified inputs inputcount 0 autorun pModified (nextPosition)
 
-
-
 let rec phaser inputs output program =
     match inputs with 
     | [] -> output
     | _ -> 
         let newInputs = List.tail inputs
         let inputValue = List.head inputs
-        let newOutput = execute program [inputValue;(List.head output)] 0 0 true program 0
+        let newOutput = execute program [inputValue;List.head output] 0 0 true program 0
         phaser newInputs newOutput program
 
 let rec maximize maxValue combinations program =
+    printfn("inputmaximize %A") maxValue
     match combinations with
     | [] -> maxValue
     | _ -> 
         let remainingCombinations = List.tail combinations
-        let value = List.head (phaser (List.head combinations)  [0] program)
-        if value > maxValue then maximize value remainingCombinations program
-        else maximize maxValue remainingCombinations program
-
+        let phaserOutput = phaser (List.head combinations) [0] program
+        if (List.head phaserOutput) > (fst maxValue) then
+            let newMax = (List.head phaserOutput, List.item 1 phaserOutput)
+            maximize newMax remainingCombinations  program
+        else
+            let newMax = (fst maxValue, List.item 1 phaserOutput) 
+            maximize newMax remainingCombinations program
 
 //from https://stackoverflow.com/questions/286427/calculating-permutations-in-f    
 let rec permutations list taken = 
@@ -142,10 +145,25 @@ let combinations = permutations [0;1;2;3;4] Set.empty
 
 let testprogram1 = InputData.Load("day7.json")
 
-let x = maximize 0 (Seq.toList combinations) (Array.toList testprogram1.Program)
-printfn("%A") x
+// let x = maximize (0,0) (Seq.toList combinations) (Array.toList testprogram1.Program)
+// printfn("%A") x
 
 //Part 2
-let combinations2 = permutations [5;6;7;8;9]
-let testprogram2 = InputData.Load("day7part2test1.json")
+ 
+let feedbackLoop output combinations program  = 
+    let mutable continueLoop = true
+    let mutable value = 0
+    let mutable opcode = 0
+    while continueLoop do
+        let round = maximize (value, opcode) combinations program
+        printfn("%A") round
+        value <- fst round
+        opcode <- snd round
+        continueLoop <- opcode <> 99
+    value
 
+let combinations2 = permutations [5;6;7;8;9] Set.empty
+let testprogram2 = InputData.Load("day7part2test1.json")
+let output = feedbackLoop 0 (Seq.toList combinations2) (Array.toList testprogram2.Program)
+// let output = maximize (0,0) [[9;8;7;6;5]] (Array.toList testprogram2.Program)
+printfn("%A") output
