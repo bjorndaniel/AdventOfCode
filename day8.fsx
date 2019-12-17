@@ -5,8 +5,8 @@ type InputData = JsonProvider<""" {"data": "123wer" } """>
 
 let rec splitBy result length input =
     match input with 
-    | _ when (String.length input) <= 25 -> List.append [input] result
-    | _ -> splitBy (List.append [input.[..(length-1)]] result) length input.[25..]
+    | _ when (String.length input) <= length -> List.append [input] result
+    | _ -> splitBy (List.append [input.[..(length-1)]] result) length input.[length..]
 
 let rec countChar current character (input:String) = 
     match input with
@@ -26,13 +26,14 @@ let rec minZeros currentMin input =
             minZeros newMin (List.tail input)
         else minZeros currentMin (List.tail input)        
 
-let rec layers output input = 
+let rec layers output (height:int) input = 
     match input with
     | [] -> output
     | _ ->
-        let layer = input.[..5]
+        let arrLength = height - 1
+        let layer = List.rev input.[..arrLength]
         let newOutput = List.append [layer] output
-        layers newOutput input.[6..]
+        layers newOutput height input.[height..]
 
 let rec concatLayers output (input:list<list<string>>) =
    match input with 
@@ -50,8 +51,37 @@ let checksum input =
 
 let input =  InputData.Load("day8.json").Data
 let strings =  (splitBy [] 25 input)
-let lrs = layers [] strings
+let lrs = layers [] 6 strings
 let cncLayers = concatLayers [] lrs
 printfn("%A") (checksum cncLayers)
 
 //Part two
+let rec processPixel output index (layers:list<string>) = 
+    match layers with
+    | [] -> 
+        output
+    | _ -> 
+        let layer = List.head layers
+        let next = int (layer.[index..index])
+        if next <> 2 then processPixel next index (List.tail layers)
+        else processPixel output index (List.tail layers)
+
+let processImage (layers:list<string>) =
+    let layerLength = (String.length (List.head layers)) - 1
+    let mutable output = ""
+    for i = 0 to layerLength do
+        let number = processPixel 6 i layers
+        let str = if number = 1 then "X" else " "
+        output <- output + str
+    output     
+
+let printImage rowLength input =
+    let rows = List.rev (splitBy [] rowLength input)
+    for i = 0 to (List.length rows) - 1 do
+        printfn("%A") rows.[i..i]
+
+let testImage = "0222112222120000"
+let rows = (splitBy [] 25 input)
+let pixelLayers = concatLayers [] (layers [] 6 rows)
+let image = (processImage pixelLayers)
+printImage 25 image
