@@ -1,6 +1,6 @@
 .config/
 .ionide/
 .vscode/
-.paket/
+.paket/paket.exe
 paket.lock
 .fake
