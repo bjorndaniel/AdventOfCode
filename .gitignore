@@ -4,3 +4,4 @@
 .paket/paket.exe
 paket.lock
 .fake
+.vs/
