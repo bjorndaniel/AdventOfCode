@@ -53,7 +53,7 @@ let forest = (List.tail (Seq.toList lines))
 
 let testForest = (List.tail (Seq.toList testLines))
 
-let result = travel forest 3 false 0
+let result = travel forest 3 3 false 0
 printfn "Result part 1: %A" result
 
 let testResult = travel forest 1 1 true 0
