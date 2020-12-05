@@ -5,13 +5,13 @@ open System.Text.RegularExpressions
 let readLines filePath = System.IO.File.ReadAllText(filePath)
 
 let testLines =
-    readLines @"C:\\Projects\\bjorndaniel\\AdventOfCode\\2020\\day4-test.txt"
+    readLines @"D:\Code\bjorndaniel\adventofcode\2020\day4-test.txt"
 
 let lines =
-    readLines @"C:\\Projects\\bjorndaniel\\AdventOfCode\\2020\\day4.txt"
+    readLines @"D:\Code\bjorndaniel\adventofcode\2020\day4.txt"
 
 let testLinesP2 =
-    readLines @"C:\\Projects\\bjorndaniel\\AdventOfCode\\2020\\day4-part2-test.txt"
+    readLines @"D:\Code\bjorndaniel\adventofcode\2020\day4-part2-test.txt"
 
 let requiredFields =
     [ "byr"
@@ -71,14 +71,9 @@ let isFieldValid (f: string) (v: string) =
         let regex = "^(202[0-9])|2030$"
         result <- Regex.IsMatch(v, regex)
     | "hgt" ->
-        if v.IndexOf("cm") > -1 then
-            let length = v.Substring(0, v.IndexOf("cm")) |> int
-            result <- length > 149 && length < 194
-        else if v.IndexOf("in") > -1 then
-            let length = v.Substring(0, v.IndexOf("in")) |> int
-            result <- length > 58 && length < 77
-        else
-            result <- false
+        let regexCm = "^(1[5-8][0-9]|19[0-3])cm$"
+        let regexIn = "(59|6[0-9]|7[0-6])in"
+        result <- (Regex.IsMatch(v, regexCm) || Regex.IsMatch(v, regexIn))
     | "hcl" ->
         let regex = "^#(?:[0-9a-fA-F]{6}){1}$"
         result <- Regex.IsMatch(v, regex)
