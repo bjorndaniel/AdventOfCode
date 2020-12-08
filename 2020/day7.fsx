@@ -1,4 +1,3 @@
-#r "nuget:FsCheck"
 open System
 open System.Linq
 open System.Text.RegularExpressions
