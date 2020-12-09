@@ -26,5 +26,6 @@ let rec sum3 l =
     | [ a; b; c ] :: _ when a + b + c = 2020 -> a * b * c
     | _ -> sum3 (List.tail l)
 
+
 //printfn "%A" (comb 3 (Array.toList day1TestInput.Numbers))
 printfn "%A" (sum3 (comb 3 (Array.toList day1TestInput.Numbers)))
