@@ -5,9 +5,9 @@ open System.Text.RegularExpressions
 let readLines filePath = System.IO.File.ReadAllText(filePath)
 
 let testLines =
-    readLines @"D:\Code\bjorndaniel\adventofcode\2020\day10-test.txt"
+    readLines @"c:\Projects\bjorndaniel\adventofcode\2020\day10-test.txt"
 
-let testAdapters =
+let ta =
     testLines.Split([| "\r\n" |], StringSplitOptions.RemoveEmptyEntries)
     |> Seq.toList
     |> Seq.map (fun x -> x |> int)
@@ -15,14 +15,17 @@ let testAdapters =
     |> Seq.toList
 
 let lines =
-    readLines @"D:\Code\bjorndaniel\adventofcode\2020\day10.txt"
+    readLines @"c:\Projects\bjorndaniel\adventofcode\2020\day10.txt"
 
-let adapters =
+let a =
     lines.Split([| "\r\n" |], StringSplitOptions.RemoveEmptyEntries)
     |> Seq.toList
     |> Seq.map (fun x -> x |> int)
     |> Seq.sort
     |> Seq.toList
+
+let testAdapters = 0 :: ta
+let adapters = 0 :: a
 
 let rec chainAdapters l p v =
     match l with
@@ -37,14 +40,14 @@ let rec chainAdapters l p v =
             let newV = (fst (v), snd (v) + 1)
             chainAdapters t h newV
 
-let testDifferences = (chainAdapters testAdapters 0 (0, 0))
+let testDifferences = (chainAdapters ta 0 (0, 0))
 
 let testResult =
     fst (testDifferences) * snd (testDifferences)
 
 printfn "Testresult part 1: %A" testResult
 
-let differences = (chainAdapters adapters 0 (0, 0))
+let differences = (chainAdapters a 0 (0, 0))
 
 let result = fst (differences) * snd (differences)
 
@@ -58,59 +61,114 @@ let rec comb n l =
     | k, (x :: xs) -> List.map ((@) [ x ]) (comb (k - 1) xs) @ comb k xs
 
 let isValid (c: List<int>) =
-    let valid =
-        abs (c.[0] - c.[1]) = 1
-        || abs ((c.[0] - c.[1])) = 3
-
+    let valid = abs (c.[0] - c.[1]) < 4
     valid
 
-let combos =
+let testCombos =
     (comb 2 testAdapters)
     |> List.filter (fun x -> (isValid x))
     |> List.map (fun x -> (x.[0], x.[1]))
 
-printfn "%A" combos
-type Edge = { Node : int option; Children : int list }
+let combos =
+    (comb 2 adapters)
+    |> List.filter (fun x -> (isValid x))
+    |> List.map (fun x -> (x.[0], x.[1]))
+// printfn "%A" testCombos
 
-// let addToGraph (v:(int*int)) (g:List<Graph>) =
-//     match g with
-//     | Some x -> 
-//         let edge = fst v
-//         let newNode = {Node = Some edge ; Children = (snd v::g.Children)} 
-//         let newG = g |> Seq.map (fun x -> if x.Node = fst(v) then newNode else x) 
-//         newG
-//     | None -> 
-//         let newG = {Node = fst(v), Children= snd(v)::[]}
-//         newG
-        
-let rec createGraph l g = 
+type Edge =
+    { Node: int option
+      Children: int list }
+
+let rec createGraph (l: List<(int * int)>) (g: List<Edge>) =
     match l with
     | [] -> g
-    | h::t -> 
-       let edge = g |> List.choose (fun e -> if e.Node = fst h then Some e else None)
-       printfn "%A" edge
-       match edge with
-       | x ->
-            let newEdge = {Node = x.Node ; Children = snd v :: x.Children}
-            let newG = g |> Seq.map (fun a -> if a.Node = fst h then newEdge else h ) |> Seq.toList
+    | h :: t ->
+        let edge =
+            g
+            |> List.choose (fun e -> if e.Node = Some(fst h) then (Some e) else None)
+
+        match edge with
+        | [] ->
+            let newEdge =
+                { Node = Some(fst h)
+                  Children = (snd h :: []) }
+
+            createGraph t (newEdge :: g)
+        | e ->
+            let x = List.head e
+
+            let newEdge =
+                { Node = x.Node
+                  Children = (snd h :: x.Children) }
+
+            let newG =
+                g
+                |> Seq.map (fun a -> if a.Node = newEdge.Node then newEdge else a)
+                |> Seq.toList
+
             createGraph t newG
-       | None -> 
-            let newG = {Node = fst v; Children = snd v :: []}
-            createGraph t newG
+
+let tg = createGraph testCombos []
 let g = createGraph combos []
-printfn "Graph %A" g
+// printfn "%A" g
 
+let rec countPaths s d g (c: int64) =
+    if c > ("10000000000" |> int64) then printfn "%A %A %A" s c d
+    let mutable newCount = c
+    if s.Node = d.Node then
+        newCount <- newCount + (1 |> int64)
+    else
+        for n in s.Children do
+            let edge =
+                g
+                |> List.choose (fun e -> if e.Node = Some n then (Some e) else None)
 
-// type 'a AdjacencyGraph = 'a Node list
+            match edge with
+            | [] -> newCount <- countPaths d d g newCount
+            | e -> newCount <- countPaths (List.head e) d g newCount
+    newCount
 
-// let paths start finish (g : 'a AdjacencyGraph) =
-//         let map = g |> Map.ofList
-//       let rec loop route visited =
-//          [        let current = List.head route
-//              if current = finish then
-//               yield List.rev route
-//          else
-//             for next in map.[current] do
-//                          if visited |> Set.contains next |> not then
-//                                   yield! loop (next::route) (Set.add next visited)     ]
-//                   loop [start] <| Set.singleton start
+let rec findStart g (s: Edge) =
+    match g with
+    | [] -> s
+    | h :: t -> if h.Node < s.Node then (findStart t h) else (findStart t s)
+
+let rec findEnd g (s: Edge) =
+    match g with
+    | [] -> s
+    | h :: t -> if h.Node > s.Node then (findEnd t h) else (findEnd t s)
+
+let testStart =
+    (findStart
+        tg
+         ({ Node = Some Int32.MaxValue
+            Children = [] }))
+
+let testDest =
+    (findEnd
+        tg
+         ({ Node = (Some Int32.MinValue)
+            Children = [] }))
+
+printfn "%A" testDest
+
+let testResultP2 =
+    (countPaths testStart testDest tg (0 |> int64))
+
+printfn "Testresult P2 %A" testResultP2
+
+let start =
+    (findStart
+        g
+         ({ Node = Some Int32.MaxValue
+            Children = [] }))
+
+let dest =
+    (findEnd
+        g
+         ({ Node = (Some Int32.MinValue)
+            Children = [] }))
+
+// printfn "%A" dest
+let resultP2 = (countPaths start dest g (0 |> int64))
+printfn "Result P2 %A" result
