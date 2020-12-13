@@ -3,10 +3,10 @@ open System
 let readLines filePath = System.IO.File.ReadAllText(filePath)
 
 let testLines =
-    readLines @"c:\Projects\bjorndaniel\adventofcode\2020\day11-test.txt"
+    readLines @"D:\Code\bjorndaniel\adventofcode\2020\day11-test.txt"
 
 let lines =
-    readLines @"c:\Projects\bjorndaniel\adventofcode\2020\day11.txt"
+    readLines @"D:\Code\bjorndaniel\adventofcode\2020\day11.txt"
 
 let testSeats =
     testLines.Split([| "\r\n" |], StringSplitOptions.RemoveEmptyEntries)
@@ -88,13 +88,41 @@ let findAdjacent (grid: char [,]) row col =
               grid.[row + 1, col + 1]
               grid.[row + 1, col] ]
 
+let rec matchSeat l =
+    match l with
+    | [] -> '.'
+    | h :: t -> if h = 'L' || h = '#' then h else matchSeat t
+
+let siteRow (grid: char [,]) row col =
+    match col with
+    | 0 ->
+        matchSeat (grid.[row, col + 1..] |> Seq.toList)
+        :: []
+    | x when (x + 1) = Array2D.length2 grid ->
+        matchSeat (grid.[row, ..col - 1] |> Seq.toList)
+        :: []
+    | _ ->
+        [ (matchSeat (grid.[row, ..col - 1] |> Seq.toList))
+          (matchSeat (grid.[row, col + 1..] |> Seq.toList)) ]
+
+let siteCol (grid: char [,]) row col =
+    match row with
+    | 0 ->
+        matchSeat (grid.[row + 1.., col] |> Seq.toList)
+        :: []
+    | x when (x + 1) = Array2D.length1 grid ->
+        matchSeat (grid.[..row - 1, col] |> Seq.toList)
+        :: []
+    | _ ->
+        [ (matchSeat (grid.[..row - 1, col] |> Seq.toList))
+          (matchSeat (grid.[row + 1.., col] |> Seq.toList)) ]
+
 let findAdjacentP2 (grid: char [,]) row col =
     let mutable adjacent = []
-    //check left
-    //check right
-    //check up
-    //check down
-    //
+    adjacent <- (siteRow grid row col) @ adjacent //row
+    adjacent <- (siteCol grid row col) @ adjacent //col
+    //diagonally
+
     adjacent
 //From: https://gist.github.com/kristopherjohnson/0d8f9d29f0894bbb51af
 /// Count number of elements in array that satisfy filter
@@ -140,6 +168,7 @@ let checkSeatP2 row col (grid: char [,]) =
     | _ -> (false, seat)
 
 let rec seating (grid: char [,]) (c: bool) (p2: bool): char [,] =
+    printfn "%A" grid
     if not c then
         grid
     else
@@ -157,23 +186,24 @@ let rec seating (grid: char [,]) (c: bool) (p2: bool): char [,] =
                     let colChange = checkSeat i j grid
                     if fst (colChange) then changed <- true
                     newGrid.[i, j] <- snd (colChange)
+
         if changed then seating newGrid true p2 else seating newGrid false p2
 
-let testResult =
-    countFilteredBy (fun x -> x = '#')
-        ((seating testGrid true false)
-         |> Seq.cast<Char>
-         |> Seq.toArray)
+// let testResult =
+//     countFilteredBy (fun x -> x = '#')
+//         ((seating testGrid true false)
+//          |> Seq.cast<Char>
+//          |> Seq.toArray)
 
-printfn "Testresult part 1: %A" testResult
+// printfn "Testresult part 1: %A" testResult
 
-let result =
-    countFilteredBy (fun x -> x = '#')
-        ((seating grid true false)
-         |> Seq.cast<Char>
-         |> Seq.toArray)
+// let result =
+//     countFilteredBy (fun x -> x = '#')
+//         ((seating grid true false)
+//          |> Seq.cast<Char>
+//          |> Seq.toArray)
 
-printfn "Result part 1: %A" result
+// printfn "Result part 1: %A" result
 //Part 2
 let testResultP2 =
     countFilteredBy (fun x -> x = '#')
@@ -182,11 +212,9 @@ let testResultP2 =
          |> Seq.toArray)
 
 printfn "Testresult part 2: %A" testResultP2
-
-let resultP2 =
-    countFilteredBy (fun x -> x = '#')
-        ((seating grid true true)
-         |> Seq.cast<Char>
-         |> Seq.toArray)
-
-printfn "Result part 2: %A" resultP2
+// let resultP2 =
+//     countFilteredBy (fun x -> x = '#')
+//         ((seating grid true true)
+//          |> Seq.cast<Char>
+//          |> Seq.toArray)
+// printfn "Result part 2: %A" resultP2
