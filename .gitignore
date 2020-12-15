@@ -5,3 +5,4 @@
 paket.lock
 .fake
 .vs/
+.idea/
