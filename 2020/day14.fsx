@@ -19,11 +19,13 @@ let program =
 let maskValue (value: string) (mask: string) =
     printfn "To mask %A" value
     printfn "Mask %A" mask
+
     let mutable newValue = ""
     for i = 0 to (mask.Length - 1) do
         if mask.[i] <> 'X'
         then newValue <- newValue + ((mask.[i] |> string))
         else newValue <- newValue + ((value.[i] |> string))
+
     printfn "%A" newValue
     newValue
 
@@ -40,6 +42,7 @@ let rec execute (prog: List<string>) mask reg =
                 |> int
 
             let value = h.[((h.IndexOf "= ") + 2)..] |> int
+
             match reg |> Seq.tryFind (fun a -> fst (a) = memPos) with
             | None ->
                 let unmasked = Convert.ToString(value, 2)
