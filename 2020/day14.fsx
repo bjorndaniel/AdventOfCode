@@ -174,5 +174,3 @@ printfn "Testresult P2 %A" testresultP2
 
 let resultP2 = execute2 program "" []
 printfn "Result P2 %A" resultP2
-let resultP2 = execute2 program "" []
-printfn "Result P2 %A" resultP2

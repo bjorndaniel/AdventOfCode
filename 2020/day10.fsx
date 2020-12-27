@@ -5,7 +5,7 @@ open System.Text.RegularExpressions
 let readLines filePath = System.IO.File.ReadAllText(filePath)
 
 let testLines =
-    readLines @"c:\Projects\bjorndaniel\adventofcode\2020\day10-test.txt"
+    readLines @"D:\Code\bjorndaniel\adventofcode\2020\day10-test.txt"
 
 let ta =
     testLines.Split([| "\r\n" |], StringSplitOptions.RemoveEmptyEntries)
@@ -15,7 +15,7 @@ let ta =
     |> Seq.toList
 
 let lines =
-    readLines @"c:\Projects\bjorndaniel\adventofcode\2020\day10.txt"
+    readLines @"D:\Code\bjorndaniel\adventofcode\2020\day10.txt"
 
 let a =
     lines.Split([| "\r\n" |], StringSplitOptions.RemoveEmptyEntries)
@@ -112,8 +112,8 @@ let tg = createGraph testCombos []
 let g = createGraph combos []
 // printfn "%A" g
 
-let rec countPaths s d g (c: int64) =
-    if c > ("10000000000" |> int64) then printfn "%A %A %A" s c d
+let rec countPaths s d g v (c: int64) =
+    if c % (1000000 |> int64) = (0 |> int64) then (printfn "%A %A" c (System.DateTime.Now.ToLongTimeString()))
     let mutable newCount = c
     if s.Node = d.Node then
         newCount <- newCount + (1 |> int64)
@@ -123,9 +123,16 @@ let rec countPaths s d g (c: int64) =
                 g
                 |> List.choose (fun e -> if e.Node = Some n then (Some e) else None)
 
-            match edge with
-            | [] -> newCount <- countPaths d d g newCount
-            | e -> newCount <- countPaths (List.head e) d g newCount
+            let found =
+                v
+                |> List.choose (fun e -> if e.Node = Some n then (Some e) else None)
+
+            match found with
+            | [] ->
+                match edge with
+                | [] -> newCount <- countPaths d d g v newCount
+                | e -> newCount <- countPaths (List.head e) d g v newCount
+            | _ -> newCount <- countPaths d d g v newCount
     newCount
 
 let rec findStart g (s: Edge) =
@@ -150,10 +157,8 @@ let testDest =
          ({ Node = (Some Int32.MinValue)
             Children = [] }))
 
-printfn "%A" testDest
-
 let testResultP2 =
-    (countPaths testStart testDest tg (0 |> int64))
+    (countPaths testStart testDest tg [ testStart ] (0 |> int64))
 
 printfn "Testresult P2 %A" testResultP2
 
@@ -169,6 +174,7 @@ let dest =
          ({ Node = (Some Int32.MinValue)
             Children = [] }))
 
-// printfn "%A" dest
-let resultP2 = (countPaths start dest g (0 |> int64))
-printfn "Result P2 %A" result
+let resultP2 =
+    (countPaths start dest g [ start ] (0 |> int64))
+
+printfn "Result P2 %A" resultP2
