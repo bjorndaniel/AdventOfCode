@@ -64,17 +64,6 @@ let isValid (c: List<int>) =
     let valid = abs (c.[0] - c.[1]) < 4
     valid
 
-let testCombos =
-    (comb 2 testAdapters)
-    |> List.filter (fun x -> (isValid x))
-    |> List.map (fun x -> (x.[0], x.[1]))
-
-let combos =
-    (comb 2 adapters)
-    |> List.filter (fun x -> (isValid x))
-    |> List.map (fun x -> (x.[0], x.[1]))
-// printfn "%A" testCombos
-
 type Edge =
     { Node: int option
       Children: int list }
@@ -108,73 +97,20 @@ let rec createGraph (l: List<(int * int)>) (g: List<Edge>) =
 
             createGraph t newG
 
+
+
+let testCombos =
+    (comb 2 testAdapters)
+    |> List.filter (fun x -> (isValid x))
+    |> List.map (fun x -> (x.[0], x.[1]))
+
+let combos =
+    (comb 2 adapters)
+    |> List.filter (fun x -> (isValid x))
+    |> List.map (fun x -> (x.[0], x.[1]))
+// printfn "%A" testCombos
+
 let tg = createGraph testCombos []
+
 let g = createGraph combos []
-// printfn "%A" g
-
-let rec countPaths s d g v (c: int64) =
-    if c % (1000000 |> int64) = (0 |> int64) then (printfn "%A %A" c (System.DateTime.Now.ToLongTimeString()))
-    let mutable newCount = c
-    if s.Node = d.Node then
-        newCount <- newCount + (1 |> int64)
-    else
-        for n in s.Children do
-            let edge =
-                g
-                |> List.choose (fun e -> if e.Node = Some n then (Some e) else None)
-
-            let found =
-                v
-                |> List.choose (fun e -> if e.Node = Some n then (Some e) else None)
-
-            match found with
-            | [] ->
-                match edge with
-                | [] -> newCount <- countPaths d d g v newCount
-                | e -> newCount <- countPaths (List.head e) d g v newCount
-            | _ -> newCount <- countPaths d d g v newCount
-    newCount
-
-let rec findStart g (s: Edge) =
-    match g with
-    | [] -> s
-    | h :: t -> if h.Node < s.Node then (findStart t h) else (findStart t s)
-
-let rec findEnd g (s: Edge) =
-    match g with
-    | [] -> s
-    | h :: t -> if h.Node > s.Node then (findEnd t h) else (findEnd t s)
-
-let testStart =
-    (findStart
-        tg
-         ({ Node = Some Int32.MaxValue
-            Children = [] }))
-
-let testDest =
-    (findEnd
-        tg
-         ({ Node = (Some Int32.MinValue)
-            Children = [] }))
-
-let testResultP2 =
-    (countPaths testStart testDest tg [ testStart ] (0 |> int64))
-
-printfn "Testresult P2 %A" testResultP2
-
-let start =
-    (findStart
-        g
-         ({ Node = Some Int32.MaxValue
-            Children = [] }))
-
-let dest =
-    (findEnd
-        g
-         ({ Node = (Some Int32.MinValue)
-            Children = [] }))
-
-let resultP2 =
-    (countPaths start dest g [ start ] (0 |> int64))
-
-printfn "Result P2 %A" resultP2
+printfn "%A" tg
