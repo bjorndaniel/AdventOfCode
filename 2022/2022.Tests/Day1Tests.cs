@@ -6,7 +6,7 @@ public class Day1Tests
     public void Can_parse_input()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day1-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day1-test.txt";
 
         //When
         var result = Day1.ParseInput(filename);
@@ -20,7 +20,7 @@ public class Day1Tests
     public void Can_solve_test_elves_part1()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day1-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day1-test.txt";
 
         //When
         var result = Day1.SolvePart1(filename);
@@ -33,7 +33,7 @@ public class Day1Tests
     public void Can_solve_test_elves_part2()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day1-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day1-test.txt";
 
         //When
         var result = Day1.SolvePart2(filename);

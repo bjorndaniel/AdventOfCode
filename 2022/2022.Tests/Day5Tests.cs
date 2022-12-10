@@ -5,7 +5,7 @@ public class Day5Tests
     public void Can_parse_input()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day5-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day5-test.txt";
 
         //When
         var (stacks, movements) = Day5.ParseInput(filename);
@@ -26,7 +26,7 @@ public class Day5Tests
     public void Can_solve_part1_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day5-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day5-test.txt";
 
         //When
         var result = Day5.SolvePart1(filename);
@@ -39,7 +39,7 @@ public class Day5Tests
     public void Can_solve_part2_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day5-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day5-test.txt";
 
         //When
         var result = Day5.SolvePart2(filename);

@@ -12,7 +12,7 @@ public class Day10Tests
     public void Can_parse_input()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day10-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day10-test.txt";
 
         //When
         var result = Day10.ParseInput(filename);
@@ -28,7 +28,7 @@ public class Day10Tests
     public void Can_solve_part1_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day10-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day10-test.txt";
 
         //When
         var result = Day10.SolvePart1(filename, 220);
@@ -41,7 +41,7 @@ public class Day10Tests
     public void Can_solve_part2_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day10-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day10-test.txt";
 
         //When
         var result = Day10.SolvePart2(filename, int.MaxValue);

@@ -6,7 +6,7 @@ public class Day2Tests
     public void Can_parse_input()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day2-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day2-test.txt";
 
         //When
         var result = Day2.ParseInput(filename).ToList();
@@ -26,7 +26,7 @@ public class Day2Tests
     {
         {
             //Given
-            var filename = $"{Helpers.DirectoryPath}Day2-test.txt";
+            var filename = $"{Helpers.DirectoryPathTests}Day2-test.txt";
 
             //When
             var result = Day2.SolvePart1(filename);
@@ -41,7 +41,7 @@ public class Day2Tests
     {
         {
             //Given
-            var filename = $"{Helpers.DirectoryPath}Day2-test.txt";
+            var filename = $"{Helpers.DirectoryPathTests}Day2-test.txt";
 
             //When
             var result = Day2.SolvePart2(filename);

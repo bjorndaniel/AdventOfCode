@@ -12,7 +12,7 @@ public class Day9Tests
     public void Can_parse_input()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day9-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day9-test.txt";
 
         //When
         var result = Day9.ParseInput(filename);
@@ -30,7 +30,7 @@ public class Day9Tests
     public void Can_solve_part1_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day9-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day9-test.txt";
 
         //When
         var result = Day9.SolvePart1(filename);
@@ -43,7 +43,7 @@ public class Day9Tests
     public void Can_solve_part2_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day9-test2.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day9-test2.txt";
 
         //When
         var result = Day9.SolvePart2(filename);
@@ -64,11 +64,11 @@ public class Day9Tests
             var sb = new StringBuilder();
             for (int col = minCol; col < maxCol; col++)
             {
-                
+
                 if (visited.ContainsKey((row, col)))
                 {
                     var value = visited[(row, col)];
-                    sb.Append((col == 0 && row ==0) ? "s" : "#");
+                    sb.Append((col == 0 && row == 0) ? "s" : "#");
                 }
                 else
                 {

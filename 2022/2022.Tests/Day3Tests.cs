@@ -18,7 +18,7 @@ public class Day3Tests
     public void Can_parse_input()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day3-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day3-test.txt";
 
         //When
         var result = Day3.ParseInput(filename).ToList();
@@ -37,7 +37,7 @@ public class Day3Tests
     public void Can_get_badge_from_chunc()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day3-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day3-test.txt";
         var backpacks = Day3.ParseInput(filename).ToList();
         var chunks = backpacks.Chunk(3);
 
@@ -52,7 +52,7 @@ public class Day3Tests
     public void Can_solve_part1_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day3-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day3-test.txt";
 
         //When 
         var result = Day3.SolvePart1(filename);
@@ -65,7 +65,7 @@ public class Day3Tests
     public void Can_solve_part2_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day3-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day3-test.txt";
 
         //When 
         var result = Day3.SolvePart2(filename);

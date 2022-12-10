@@ -5,7 +5,7 @@ public class Day8Tests
     public void Can_parse_input()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day8-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day8-test.txt";
 
         //When
         var result = Day8.ParseInput(filename);
@@ -23,7 +23,7 @@ public class Day8Tests
     {
         {
             //Given
-            var filename = $"{Helpers.DirectoryPath}Day8-test.txt";
+            var filename = $"{Helpers.DirectoryPathTests}Day8-test.txt";
 
             //When
             var result = Day8.SolvePart1(filename);
@@ -37,7 +37,7 @@ public class Day8Tests
     public void Can_solve_part2_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPath}Day8-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day8-test.txt";
 
         //When
         var result = Day8.SolvePart2(filename);
