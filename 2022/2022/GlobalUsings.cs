@@ -1,4 +1,4 @@
-global using System.Diagnostics;
 global using AoC2022;
-global using System.Collections;
+global using System.Diagnostics;
 global using System.Drawing;
+global using System.Text;

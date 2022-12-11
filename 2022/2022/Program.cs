@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-var watch = new Stopwatch();
+﻿var watch = new Stopwatch();
 var totalTime = new Stopwatch();
 totalTime.Start();
 
@@ -104,7 +102,17 @@ var day10Part2 = Day10.SolvePart2(day10File, int.MaxValue);
 watch.Stop();
 Console.WriteLine($"Day10 part 2 in {watch.ElapsedMilliseconds}ms");
 PrintDay10(day10Part2);
+
+var day11File = $"{Helpers.DirectoryPath}Day11.txt";
+watch.Restart();
+var day11Part1 = Day11.SolvePart1(day11File, 20);
 watch.Stop();
+Console.WriteLine($"Day11 part 1: {day11Part1.result} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day11Part2 = Day11.SolvePart2(day11File, 10000);
+watch.Stop();
+Console.WriteLine($"Day11 part 2: {day11Part2.result} in {watch.ElapsedMilliseconds}ms");
+
 totalTime.Stop();
 Console.WriteLine($"AoC 2022 total running time: {totalTime.Elapsed.TotalMilliseconds}ms");
 
