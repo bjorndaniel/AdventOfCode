@@ -21,8 +21,12 @@ public static class Day12
                 if (lines[row][col] == 'E')
                 {
                     end = new Point(col, row);
+                    result[row, col] = 'z';
                 }
-                result[row, col] = lines[row][col];
+                else
+                {
+                    result[row, col] = lines[row][col];
+                }
             }
         }
         return (result, start, end);
@@ -30,17 +34,18 @@ public static class Day12
     public static (int result, int[,] visited) SolvePart1(string filename)
     {
         var (matrix, s, e) = ParseInput(filename);
+        //matrix[0, 0] = 'a';
         return DijkstraWithObstacles(matrix, s, e);
     }
 
     public static (int result, int[,] visited) DijkstraWithObstacles(char[,] matrix, Point start, Point end)
     {
         var distances = new int[matrix.GetLength(0), matrix.GetLength(1)];
-        for (int y = 0; y < matrix.GetLength(0); y++)
+        for (int row = 0; row < matrix.GetLength(0); row++)
         {
-            for (int x = 0; x < matrix.GetLength(1); x++)
+            for (int col = 0; col < matrix.GetLength(1); col++)
             {
-                distances[y, x] = int.MaxValue;
+                distances[row, col] = int.MaxValue;
             }
         }
         distances[start.Y, start.X] = 0;
@@ -60,7 +65,8 @@ public static class Day12
                 {
                     continue;
                 }
-                var canMove = (current.x == start.X && current.y == start.Y) || matrix[nexty, nextx] - matrix[current.y, current.x] < 2;
+                var currentHeight = matrix[current.y, current.x] == 'S' ? 'a' : matrix[current.y, current.x];
+                var canMove = matrix[nexty, nextx] - currentHeight < 2;
                 if (distances[nexty, nextx] > distances[current.y, current.x] + 1 && canMove)
                 {
                     distances[nexty, nextx] = distances[current.y, current.x] + 1;
@@ -69,6 +75,40 @@ public static class Day12
             }
         }
         return (distances[end.Y, end.X], distances);
+
+    }
+
+    public static int SolvePart2(string filename)
+    {
+        var (m, start, end) = ParseInput(filename);
+        var starts = new List<Point> { start };
+        starts.AddRange(GetPointsForStart(m));
+        m[0, 0] = 'a';
+        var currentLow = int.MaxValue;
+        foreach (var s in starts)
+        {
+            var (r, _) = DijkstraWithObstacles(m, s, end);
+            if (r < currentLow)
+            {
+                currentLow = r;
+            }
+        }
+        return currentLow;
+
+        static IEnumerable<Point> GetPointsForStart(char[,] matrix)
+        {
+            for (int row = 0; row < matrix.GetLength(0); row++)
+            {
+                for (int col = 0; col < matrix.GetLength(1); col++)
+                {
+                    if (matrix[row, col] == 'a')
+                    {
+                        yield return new Point(col, row);
+                    }
+                }
+            }
+        }
+
 
     }
 

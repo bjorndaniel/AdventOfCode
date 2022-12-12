@@ -23,7 +23,7 @@ public class Day12Tests
         Assert.True(matrix[0, 0] == 'S', $"Expected S, got {matrix[0, 0]}");
         Assert.True(matrix[4, 1] == 'b', $"Expected b, got {matrix[4, 1]}");
         Assert.True(matrix[4, 2] == 'd', $"Expected d, got {matrix[4, 2]}");
-        Assert.True(matrix[2, 5] == 'E', $"Expected E, got {matrix[2, 5]}");
+        Assert.True(matrix[2, 5] == 'z', $"Expected E, got {matrix[2, 5]}");
         Assert.True(matrix[matrix.GetLength(0) - 1, matrix.GetLength(1) - 1] == 'i', $"Expected i, got {matrix[matrix.GetLength(0) - 1, matrix.GetLength(1) - 1]}");
     }
 
@@ -39,6 +39,19 @@ public class Day12Tests
         //Then
         Print(matrix);
         Assert.True(31 == result, $"Expected 31, got {result}");
+    }
+
+    [Fact]
+    public void Can_solve_part2_for_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day12-test.txt";
+
+        //When
+        var result = Day12.SolvePart2(filename);
+
+        //Then
+        Assert.True(29 == result, $"Expected 29, got {result}");
     }
 
     private void Print(int[,] matrix)

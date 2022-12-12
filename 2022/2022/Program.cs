@@ -113,6 +113,17 @@ var day11Part2 = Day11.SolvePart2(day11File, 10000);
 watch.Stop();
 Console.WriteLine($"Day11 part 2: {day11Part2.result} in {watch.ElapsedMilliseconds}ms");
 
+var day12File = $"{Helpers.DirectoryPath}Day12.txt";
+watch.Restart();
+var day12Part1 = Day12.SolvePart1(day12File);
+watch.Stop();
+Console.WriteLine($"Day12 part 1: {day12Part1.result} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day12Part2 = Day12.SolvePart2(day12File);
+watch.Stop();
+Console.WriteLine($"Day12 part 2: {day12Part2} in {watch.ElapsedMilliseconds}ms");
+
+
 totalTime.Stop();
 Console.WriteLine($"AoC 2022 total running time: {totalTime.Elapsed.TotalMilliseconds}ms");
 
