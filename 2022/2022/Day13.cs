@@ -1,6 +1,7 @@
 ﻿namespace AoC2022;
 public static class Day13
 {
+
     public static List<Pair> ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
@@ -27,6 +28,7 @@ public static class Day13
         var counter = 1;
         foreach (var p in pairs)
         {
+
             if (ComparePair(p))
             {
                 indices.Add(counter);
@@ -45,14 +47,6 @@ public static class Day13
         {
             return true;
         }
-        //if (left.StartsWith('[') && !right.StartsWith('['))
-        //{
-        //    return false;
-        //}
-        //if (!left.StartsWith('[') && !right.StartsWith('[') && left.IndexOf(']') < right.IndexOf(']'))
-        //{
-        //    return false;
-        //}
         if (left.StartsWith("[[") && !right.StartsWith("[["))
         {
             var (fl, rl) = GetFirst(left);
@@ -63,7 +57,19 @@ public static class Day13
                 {
                     return false;
                 }
+                if (rl.StartsWith("],"))
+                {
+                    rl = rl[2..];
+                }
+                if (rr.StartsWith("],"))
+                {
+                    rl = rl[2..];
+                }
                 return ComparePair(new Pair(rl, rr));
+            }
+            if (fl.Length == 0 && fr.Length != 0)
+            {
+                return true;
             }
             if (fl.Length > 0 && fr.Length > 0)
             {
@@ -83,7 +89,31 @@ public static class Day13
         }
         var (firstLeft, remainLeft) = GetFirst(left);
         var (firstRight, remainRight) = GetFirst(right);
-        if (remainRight.StartsWith("[[") && !remainLeft.StartsWith("[["))
+
+        if (firstLeft.Any() && !firstRight.Any())
+        {
+            return false;
+        }
+        if (firstLeft.Any() && firstRight.Any() && firstLeft[0] < firstRight[0])
+        {
+            return true;
+        }
+        
+
+        if (remainLeft.StartsWith(']') && !remainRight.StartsWith(']'))
+        {
+            if (firstLeft.Any() && firstRight.Any() && firstLeft[0] > firstRight[0])
+            {
+                return false;
+            }
+            return true;
+        }
+        if (remainRight.StartsWith(']') && !remainLeft.StartsWith(']'))
+        {
+            return false;
+        }
+
+        if (remainRight.StartsWith("[[") && !remainLeft.StartsWith("[[") && !char.IsDigit(remainLeft[0]))
         {
             return false;
         }
@@ -107,7 +137,14 @@ public static class Day13
         {
             return true;
         }
-
+        if (remainLeft.StartsWith("],"))
+        {
+            remainLeft = remainLeft[2..];
+        }
+        if (remainRight.StartsWith("],"))
+        {
+            remainRight = remainRight[2..];
+        }
         return ComparePair(new Pair(remainLeft, remainRight));
 
         static (int[] first, string rest) GetFirst(string input)
@@ -118,7 +155,17 @@ public static class Day13
             }
             if (!input.Contains('['))
             {
-                return (input.Split(',').Select(_ => int.Parse(_)).ToArray(), string.Empty);
+                for (int i = 0; i < input.Length; i++)
+                {
+                    if (char.IsDigit(input[i]))
+                    {
+                        return (new int[] { int.Parse(input[i].ToString()) }, input[(i + 1)..]);
+                    }
+                }
+
+                return (new int[0], string.Empty);
+
+                // return (input.TrimStart(']').Split(',', StringSplitOptions.RemoveEmptyEntries).Select(_ => int.Parse(_.Trim(']'))).ToArray(), string.Empty);
             }
             if (input.Count(_ => _ == '[') == 1 && input.EndsWith(']'))
             {
@@ -126,13 +173,28 @@ public static class Day13
                 {
                     return (new int[0], string.Empty);
                 }
-                return (input.Trim('[').Trim(']').Split(',').Select(_ => int.Parse(_.Trim(']').Trim('['))).ToArray(), string.Empty);
+                return (input.Trim('[').Trim(']').Split(',', StringSplitOptions.RemoveEmptyEntries).Select(_ => int.Parse(_.Trim(']').Trim('['))).ToArray(), string.Empty);
             }
             if (!input.StartsWith('['))
             {
                 var first = input[0..input.IndexOf(',')];
-                var rest = input[input.IndexOf(',')..].Trim(',');
-                return (new int[] { int.Parse(first.Trim(']')) }, rest);
+                var rest = input[input.IndexOf(',')..];
+
+                if (first.EndsWith(']'))
+                {
+                    rest = $"]{rest}";
+                }
+                else
+                {
+                    rest = rest.Trim(',');
+                }
+
+                if (int.TryParse(first?.Trim(']') ?? "", out var result))
+                {
+                    return (new int[] { result }, rest);
+
+                }
+                return (new int[0], rest);
             }
             else if (input.IndexOf(',') < 0)
             {
@@ -141,14 +203,15 @@ public static class Day13
             else
             {
                 var left = input[1..input.IndexOf(',')];
-                var rest = input[input.IndexOf(',')..].Trim(',');
+                var rest = input[input.IndexOf(',')..];
                 if (left.EndsWith(']'))
                 {
                     left = left.Trim(']');
+                    rest = $"]{rest}";
                 }
-                else
+                else if (left.Contains(']'))
                 {
-                    rest = rest.Remove(rest.LastIndexOf(']'), 1);
+                    rest = rest.Trim(',').Remove(rest.LastIndexOf(']'), 1);
                 }
                 if (string.IsNullOrWhiteSpace(left))
                 {
@@ -164,6 +227,7 @@ public static class Day13
                 }
             }
         }
+
     }
 
     static (Part left, string right) GetNext(string input)
@@ -270,6 +334,7 @@ public static class Day13
 
         return (newInput, comparer);
     }
+    
 }
 
 public class Part
