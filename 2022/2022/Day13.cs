@@ -45,21 +45,49 @@ public static class Day13
         {
             return true;
         }
-        if (!string.IsNullOrEmpty(left) && string.IsNullOrEmpty(right))
+        //if (left.StartsWith('[') && !right.StartsWith('['))
+        //{
+        //    return false;
+        //}
+        //if (!left.StartsWith('[') && !right.StartsWith('[') && left.IndexOf(']') < right.IndexOf(']'))
+        //{
+        //    return false;
+        //}
+        if (left.StartsWith("[[") && !right.StartsWith("[["))
         {
-            return false;
+            var (fl, rl) = GetFirst(left);
+            var (fr, rr) = GetFirst(right);
+            if (fl.Length == 0 && fr.Length == 0)
+            {
+                if (rr.Length == 0 && rl.Length != 0)
+                {
+                    return false;
+                }
+                return ComparePair(new Pair(rl, rr));
+            }
+            if (fl.Length > 0 && fr.Length > 0)
+            {
+
+                if (fl[0] < fr[0])
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            if (rl.Length > rr.Length)
+            {
+                return false;
+            }
+
         }
-        if (left.StartsWith('[') && !right.StartsWith('['))
-        {
-            return true;
-        }
-        if (!left.StartsWith('[') && !right.StartsWith('[') && left.IndexOf(']') < right.IndexOf(']'))
+        var (firstLeft, remainLeft) = GetFirst(left);
+        var (firstRight, remainRight) = GetFirst(right);
+        if (remainRight.StartsWith("[[") && !remainLeft.StartsWith("[["))
         {
             return false;
         }
 
-        var (firstLeft, remainLeft) = GetFirst(left);
-        var (firstRight, remainRight) = GetFirst(right);
         for (int i = 0; i < firstLeft.Length; i++)
         {
             if (i >= firstRight.Length)
@@ -79,13 +107,15 @@ public static class Day13
         {
             return true;
         }
-        if (remainRight.StartsWith("[[") && !remainLeft.StartsWith("[["))
-        {
-            return false;
-        }
+
         return ComparePair(new Pair(remainLeft, remainRight));
+
         static (int[] first, string rest) GetFirst(string input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return (new int[0], string.Empty);
+            }
             if (!input.Contains('['))
             {
                 return (input.Split(',').Select(_ => int.Parse(_)).ToArray(), string.Empty);
@@ -96,7 +126,7 @@ public static class Day13
                 {
                     return (new int[0], string.Empty);
                 }
-                return (input.Trim('[').Trim(']').Split(',').Select(_ => int.Parse(_)).ToArray(), string.Empty);
+                return (input.Trim('[').Trim(']').Split(',').Select(_ => int.Parse(_.Trim(']').Trim('['))).ToArray(), string.Empty);
             }
             if (!input.StartsWith('['))
             {
@@ -132,101 +162,8 @@ public static class Day13
                 {
                     return (new int[0], rest);
                 }
-
             }
-            return (null, null);
         }
-
-        //if (left.StartsWith('['))
-        //{
-        //    if (!right.StartsWith('['))
-        //    {
-        //        var index = right.IndexOf(",");
-        //        if (index < 1)
-        //        {
-        //            right = $"[{right}]";
-        //        }
-        //        else
-        //        {
-        //            right = $"[{right[1..index]}]{right[(index + 1)..]}";
-        //        }
-        //    }
-        //}
-        //else if (right.StartsWith('['))
-        //{
-        //    if (!left.StartsWith('['))
-        //    {
-        //        var index = left.IndexOf(",");
-        //        if (index < 1)
-        //        {
-        //            left = $"[{left}]";
-        //        }
-        //        else
-        //        {
-        //            left = $"[{left[1..index]}]{left[(index + 1)..]}";
-        //        }
-        //    }
-        //}
-
-        var (newLeft, nextLeft) = GetNext(left);
-        var (newRight, nextRight) = GetNext(right);
-        if (newLeft.ValueInt < newRight.ValueInt)
-        {
-            return true;
-        }
-        if (newLeft.GetValueAt(0) < newRight.GetValueAt(0))
-        {
-            return true;
-        }
-        if (newLeft.GetValueAt(0) > newRight.GetValueAt(0))
-        {
-            return false;
-        }
-        //if (compareL == null && compareR == null)
-        //{
-        //    return true;
-        //}
-        //if (compareL != null && compareR == null)
-        //{
-        //    return false;
-        //}
-        //if (compareL == null && compareR != null)
-        //{
-        //    return true;
-        //}
-        //for (int i = 0; i < compareL.Length; i++)
-        //{
-
-        //    if (compareL[i] < compareR[i])
-        //    {
-        //        return true;
-        //    }
-        //    if (compareL[i] > compareR[i])
-        //    {
-        //        return false;
-        //    }
-        //}
-        //if (compareL.HasValue && !compareR.HasValue)
-        //{
-        //    return false;
-        //}
-        //if (!compareL.HasValue && !compareR.HasValue)
-        //{
-        //    return false;
-        //}
-        //if (!compareL.HasValue && compareR.HasValue)
-        //{
-        //    return false;
-        //}
-        //if (compareL < compareR)
-        //{
-        //    return true;
-        //}
-        //if (compareR < compareL)
-        //{
-        //    return false;
-        //}
-        return (ComparePair(new Pair(nextLeft, nextRight)));
     }
 
     static (Part left, string right) GetNext(string input)
