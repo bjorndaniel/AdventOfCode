@@ -48,6 +48,7 @@ public static class Day14
         }
         return (matrix, floorLevel);
     }
+
     public static (int result, char?[,] matrix) SolvePart1(string filename)
     {
         var (matrix, floorLevel) = ParseInput(filename);
@@ -76,19 +77,10 @@ public static class Day14
             var x = dropPoint.X;
             while (dropIt)
             {
-                if(sandUnits >= 53)
+                if (x == 0 || x > matrix.GetLength(1) - 4 && isPart2)
                 {
-                    Print(matrix);
-                    _ = "break here";
-                }
-
-                if (x == 0 || x > matrix.GetLength(1) - 4)
-                {
-                    Print(matrix);
                     matrix = ExpandMatrix(matrix, x == 0);
-                    Print(matrix);
                     x = x == 0 ? 1 : x;
-                    y = 0;
                     break;
                 }
                 if (y >= floorLevel)
@@ -96,14 +88,12 @@ public static class Day14
                     intoTheVoid = true;
                     break;
                 }
-                if (y == 0 && x == dropPoint.X && matrix[y, x] == '0')
+                if (y == 0 && x == dropPoint.X && matrix[y, x] == 'o')
                 {
-                    matrix[0, dropPoint.X] = 'o';
-                    sandUnits++;
                     intoTheVoid = true;
                     break;
                 }
-                
+
                 if (matrix[y + 1, x] == 'o' || matrix[y + 1, x] == '#')
                 {
                     //Try left
@@ -158,26 +148,13 @@ public static class Day14
                     }
                 }
             }
-            for (int col = 0; col < matrix.GetLength(1); col++)
+            for (int col = 0; col < newMatrix.GetLength(1); col++)
             {
-                matrix[floorLevel, col] = '#';
+                newMatrix[floorLevel, col] = '#';
             }
             return newMatrix;
         }
 
-    }
-    private static void Print(char?[,] matrix)
-    {
-        for (int row = 0; row < matrix.GetLength(0); row++)
-        {
-            var sb = new StringBuilder();
-            for (int col = 480; col < matrix.GetLength(1); col++)
-            {
-                sb.Append(matrix[row, col] ?? '.');
-            }
-            Debug.WriteLine(sb.ToString());
-        }
-        Debug.WriteLine("");
     }
 }
 public record CoOrdList(IEnumerable<Point> Coords) { }
