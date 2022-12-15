@@ -43,9 +43,13 @@ public class Day13Tests
 
     [InlineData("1,[2,[3,[4,[5,6,7]]]],8,9", "1,[2,[3,[4,[5,6,0]]]],8,9", false)]
     [InlineData("1,[2,[3,[4,[5,6,0]]]],8,9", "1,[2,[3,[4,[5,6,7]]]],8,9", true)]
-
-
-
+    [InlineData("[1],[2,3,4]", "1,1,3,1,1", false)]
+    [InlineData("[1],[2,3,4]", "1,1,5,1,1", false)]
+    [InlineData("[]", "[1],[2,3,4]", true)]
+    [InlineData("1,1,5,1,1", "[1],4", true)]
+    [InlineData("1,[2,[3,[4,[5,6,7]]]],8,9", "[1],[2,3,4]", false)]
+    [InlineData("1,[2,[3,[4,[5,6,7]]]],8,9", "[1],4", true)]
+    [InlineData("[]", "", false)]
     public void Can_compare_pair(string left, string right, bool expected)
     {
         //Given
@@ -70,5 +74,18 @@ public class Day13Tests
 
         //Then
         Assert.True(13 == result, $"Expected 13, got {result}");
+    }
+
+    [Fact]
+    public void Can_solve_part2_for_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day13-test.txt";
+
+        //When
+        var result = Day13.SolvePart2(filename);
+
+        //Then
+        Assert.True(140 == result, $"Expected 140, got {result}");
     }
 }

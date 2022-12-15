@@ -128,6 +128,20 @@ watch.Restart();
 var day13Part1 = Day13.SolvePart1(day13File);
 watch.Stop();
 Console.WriteLine($"Day13 part 1: {day13Part1} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day13Part2 = Day13.SolvePart2(day13File);
+watch.Stop();
+Console.WriteLine($"Day13 part 2: {day13Part2} in {watch.ElapsedMilliseconds}ms");
+
+var day14File = $"{Helpers.DirectoryPath}Day14.txt";
+watch.Restart();
+var day14Part1 = Day14.SolvePart1(day14File);
+watch.Stop();
+Console.WriteLine($"Day14 part 1: {day14Part1.result} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day14Part2 = Day14.SolvePart2(day14File);
+watch.Stop();
+Console.WriteLine($"Day14 part 2: {day14Part2.result} in {watch.ElapsedMilliseconds}ms");
 
 totalTime.Stop();
 Console.WriteLine($"AoC 2022 total running time: {totalTime.Elapsed.TotalMilliseconds}ms");

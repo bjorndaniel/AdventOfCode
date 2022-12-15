@@ -39,6 +39,19 @@ public static class Day13
         return indices.Sum();
     }
 
+    public static int SolvePart2(string filename)
+    {
+        var pairs = ParseInput(filename);
+        pairs.Add(new Pair("[2]", "[6]"));
+
+        var all = pairs.Select(_ => _.Left).ToList();
+        all.AddRange(pairs.Select(_ => _.Right));
+        var ordered = all.OrderBy(_ => _, new Comparer()).ToList();
+        var index1 = ordered.IndexOf("[2]") + 1;
+        var index2 = ordered.IndexOf("[6]") + 1;
+        return (index1 * index2);
+    }
+
     public static bool ComparePair(Pair pair)
     {
         var left = pair.Left;
@@ -46,6 +59,10 @@ public static class Day13
         if (string.IsNullOrEmpty(left) && !string.IsNullOrEmpty(right))
         {
             return true;
+        }
+        if(string.IsNullOrEmpty(right) && !string.IsNullOrEmpty(left))
+        {
+            return false;
         }
         if (left.StartsWith("[[") && !right.StartsWith("[["))
         {
@@ -89,6 +106,13 @@ public static class Day13
         }
         var (firstLeft, remainLeft) = GetFirst(left);
         var (firstRight, remainRight) = GetFirst(right);
+        if(string.IsNullOrEmpty(remainLeft) && string.IsNullOrEmpty(remainRight))
+        {
+            if(!firstLeft.Any() && !firstRight.Any())
+            {
+                return true;
+            }
+        }
 
         if (firstLeft.Any() && !firstRight.Any())
         {
@@ -98,7 +122,10 @@ public static class Day13
         {
             return true;
         }
-        
+        if (!firstLeft.Any() && firstRight.Any())
+        {
+            return true;
+        }
 
         if (remainLeft.StartsWith(']') && !remainRight.StartsWith(']'))
         {
@@ -106,9 +133,13 @@ public static class Day13
             {
                 return false;
             }
+            if (remainLeft.EndsWith(']') && !remainRight.Contains(']'))
+            {
+                return false;
+            }
             return true;
         }
-        if (remainRight.StartsWith(']') && !remainLeft.StartsWith(']'))
+        if (remainRight.StartsWith(']') && !remainLeft.StartsWith(']') && !remainLeft.StartsWith('[') && remainLeft.Contains(']'))
         {
             return false;
         }
@@ -145,6 +176,14 @@ public static class Day13
         {
             remainRight = remainRight[2..];
         }
+        if (remainLeft.StartsWith(","))
+        {
+            remainLeft = remainLeft[1..];
+        }
+        if (remainRight.StartsWith(","))
+        {
+            remainRight = remainRight[1..];
+        }
         return ComparePair(new Pair(remainLeft, remainRight));
 
         static (int[] first, string rest) GetFirst(string input)
@@ -173,7 +212,26 @@ public static class Day13
                 {
                     return (new int[0], string.Empty);
                 }
-                return (input.Trim('[').Trim(']').Split(',', StringSplitOptions.RemoveEmptyEntries).Select(_ => int.Parse(_.Trim(']').Trim('['))).ToArray(), string.Empty);
+                if (input.Count(_ => _ == ']') == 1 && input.Contains(','))
+                {
+                    if (input.StartsWith(','))
+                    {
+                        return (new int[0], input[1..]);
+                    }
+                    var left = input[1..input.IndexOf(',')];
+                    var right = input[input.IndexOf(',')..];
+                    return (new int[] { int.Parse(left) }, right);
+                }
+                var value = input.Trim('[').Trim(']').Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(_ => _.Trim(']').Trim('['));
+                if (value.Any() && value.All(_ => _.Any() && _.All(_ => char.IsDigit(_))))
+                {
+                    return (value.Select(_ => int.Parse(_)).ToArray(), string.Empty);
+                }
+                return (new int[0], string.Empty);
+
+
+                //.Select(_ => int.Parse(_.Trim(']').Trim('['))).ToArray(), string.Empty);  
             }
             if (!input.StartsWith('['))
             {
@@ -229,117 +287,21 @@ public static class Day13
         }
 
     }
+}
 
-    static (Part left, string right) GetNext(string input)
+public class Comparer : IComparer<string>
+{
+    public int Compare(string? a, string? b)
     {
-        if (input.StartsWith('['))
-        {
-            var left = input[0..(input.LastIndexOf(']') + 1)];
-            var right = input[input.LastIndexOf(']')..].Trim(',');
-            return (new Part { Raw = left }, right);
-        }
-        if (input.Contains(','))
-        {
-
-            var left = input[0..input.IndexOf(',')];
-            var right = input[input.IndexOf(',')..];
-            return (new Part { Raw = left }, right.Trim(','));
-        }
-        else
-        {
-            return (new Part { Raw = input }, string.Empty);
-        }
-        return (null, null);
-
-        //if (string.IsNullOrEmpty(input))
-        //{
-        //    return ("", null);
-        //}
-        //var newInput = string.Empty;
-        //int[]? comparer = null;
-        //if (input.All(_ => _ == '[' || _ == ']'))
-        //{
-        //    return (input[1..^1], new int[0]);
-        //}
-        //if (input.All(_ => char.IsDigit(_)))
-        //{
-        //    comparer = new int[] { int.Parse(input) };
-        //}
-        //else
-        //{
-        //    var left = "";
-        //    if (input.IndexOf(',') < 0)
-        //    {
-        //        left = input.Trim('[').Trim(']');
-        //    }
-        //    else
-        //    {
-        //        left = input[0..input.IndexOf(',')].Trim('[').Trim(']');
-        //    }
-        //    newInput = input[(input.IndexOf(',') + 1)..];
-        //    if (string.IsNullOrEmpty(left))
-        //    {
-        //        comparer = null;
-        //    }
-        //    else if (left.All(_ => char.IsDigit(_)))
-        //    {
-        //        comparer = new int[] { int.Parse(left) };
-        //    }
-        //}
-        //return (newInput, comparer);
+        var p = new Pair(a!, b!);
+        var r = Day13.ComparePair(p);
+        return r ? -1 : 1;
     }
-
-    static (string newString, int? comparer) GetNextDigit(string input)
-    {
-        if (string.IsNullOrEmpty(input))
-        {
-            return ("", null);
-        }
-        var newInput = input;
-        int? comparer = null;
-        if (input.All(_ => _ == '[' || _ == ']'))
-        {
-            return (input[1..^1], null);
-        }
-        if (input.StartsWith("["))
-        {
-            var index = input.IndexOf(",");
-            if (index < 1)
-            {
-                index = input.IndexOf("]");
-                newInput = input[(index + 1)..];
-                comparer = index < 2 ? null : int.Parse(input[1..index].Trim(']'));
-            }
-            else
-            {
-                newInput = input[(index + 1)..];
-                var content = input[1..index].Trim(']').Trim('[');
-                comparer = string.IsNullOrWhiteSpace(content) ? null : int.Parse(content.Trim('['));
-            }
-        }
-        else
-        {
-            var index = input.IndexOf(",");
-            if (index == -1)
-            {
-                comparer = int.Parse(input.Trim(']'));
-                newInput = string.Empty;
-            }
-            else
-            {
-                comparer = int.Parse(input[..index].Trim(']'));
-                newInput = input[(index + 1)..];
-            }
-        }
-
-        return (newInput, comparer);
-    }
-    
 }
 
 public class Part
 {
-    public string Raw { get; set; }
+    public string Raw { get; set; } = "";
     public int ValueInt =>
         Raw.All(_ => char.IsDigit(_)) ? int.Parse(Raw) : 0;
     public bool IsDigit => Raw.All(_ => char.IsDigit(_));
@@ -364,4 +326,29 @@ public class Part
     }
 }
 
-public record Pair(string Left, string Right);
+public record Pair(string Left, string Right)
+{
+    public Pair ReOrder() =>
+        new Pair(Right, Left);
+}
+
+public class Packet
+{
+    public Packet(string raw)
+    {
+        Raw = raw;
+    }
+
+    public string Raw { get; private set; }
+
+    public override bool Equals(object? obj)
+    {
+        var p = (Packet)obj!;
+        return Day13.ComparePair(new Pair(Raw, p.Raw));
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+}
