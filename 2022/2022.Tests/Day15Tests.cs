@@ -73,6 +73,29 @@ public class Day15Tests
 
     }
 
+    [Theory]
+    [InlineData(-2, 8, 8)]
+    [InlineData(16, 8, 8)]
+    [InlineData(7, -1, 17)]
+    [InlineData(6, 0, 16)]
+    [InlineData(8, 0, 16)]
+    [InlineData(5, 1, 15)]
+    [InlineData(9, 1, 15)]
+    public void Test_ranges(int row, int expectedLow, int expectedHigh)
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day15-test.txt";
+        //var sensors = Day15.ParseInput(filename);
+
+        //When
+        var result = new Sensor(new Point(8, 7), new Beacon(new Point(2, 10))).GetRange(row);
+
+        //Then
+        Assert.True(expectedLow == result.low, $"Expected {expectedLow} but got {result.low}");
+        Assert.True(expectedHigh == result.high, $"Expected {expectedHigh} but got {result.high}");
+
+    }
+
     private void Print(IEnumerable<Point> points, Point center)
     {
         for (int row = points.Min(_ => _.Y) - 1; row < points.Max(_ => _.Y) + 2; row++)

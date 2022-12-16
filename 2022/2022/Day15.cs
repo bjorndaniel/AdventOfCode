@@ -28,38 +28,50 @@ public static class Day15
     public static long SolvePart2(string filename, int lower, int upper)
     {
         var sensors = ParseInput(filename);
-        var queue = new Queue<Sensor>(sensors);
-        var first = queue.Dequeue();
-        var uncovered = new List<Point>();
-        while (queue.Any())
+        var ranges = new List<(int l, int u)>();
+        for(int i = lower; i < upper; i++)
         {
-            foreach (var s in sensors)
+            Parallel.ForEach(sensors, s =>
             {
-                if (s == first)
-                {
-                    continue;
-                }
-
-                var (covered, p) = first.GetBorder(s, upper);
-                if (covered)
-                {
-                    if (uncovered.Contains(p.Value))
-                    {
-                        uncovered.Remove(p.Value);
-                    }
-                    first = queue.Dequeue();
-                    continue;
-                }
-                if (p.HasValue && !uncovered.Contains(p.Value))
-                {
-                    uncovered.Add(p.Value);
-                }
-            }
-
-            first = queue.Dequeue();
-            Console.WriteLine($"Queue: {queue.Count()}");
+                ranges.Add(s.GetRange(i));
+            });
+                
         }
-        return uncovered.First().X * 4000000 + uncovered.First().Y;
+        
+
+        return 0;
+        //var queue = new Queue<Sensor>(sensors);
+        //var first = queue.Dequeue();
+        //var uncovered = new List<Point>();
+        //while (queue.Any())
+        //{
+        //    foreach (var s in sensors)
+        //    {
+        //        if (s == first)
+        //        {
+        //            continue;
+        //        }
+
+        //        var (covered, p) = first.GetBorder(s, upper);
+        //        if (covered)
+        //        {
+        //            if (uncovered.Contains(p.Value))
+        //            {
+        //                uncovered.Remove(p.Value);
+        //            }
+        //            first = queue.Dequeue();
+        //            continue;
+        //        }
+        //        if (p.HasValue && !uncovered.Contains(p.Value))
+        //        {
+        //            uncovered.Add(p.Value);
+        //        }
+        //    }
+
+        //    first = queue.Dequeue();
+        //    Console.WriteLine($"Queue: {queue.Count()}");
+        //}
+        //return uncovered.First().X * 4000000 + uncovered.First().Y;
         //foreach (var s in sensors)
         //{
         //    var scannerMatrix =
@@ -109,14 +121,14 @@ public static class Day15
         return 0;
     }
 
-    public static long ManhattanDistance(Point p1, Point p2) =>
+    public static int ManhattanDistance(Point p1, Point p2) =>
         Math.Abs(p1.X - p2.X) + Math.Abs(p1.Y - p2.Y);
 
 }
 
 public record Sensor(Point Position, Beacon Beacon)
 {
-    public long DistanceToBeacon() =>
+    public int DistanceToBeacon() =>
         Day15.ManhattanDistance(Position, Beacon.Position);
 
     public IEnumerable<Point> GetAllPointsCovered(int targetRow = -1, bool getBorder = false)//, int lower = 0, int upper = 0, bool isPart2 = false*/)
@@ -169,42 +181,85 @@ public record Sensor(Point Position, Beacon Beacon)
         return false;
     }
 
-    public (bool covers, Point? p) GetBorder(Sensor tester, int upper)
+    public IEnumerable<Point> GetBorders()
     {
-        var points = new List<Point>();
-        var distance = (int)DistanceToBeacon();
-        var minX = Position.X - distance - 2;
-        var maxX = Position.X + distance + 2;
-        var minY = Position.Y - distance - 2;
-        var maxY = Position.Y + distance + 2;
-        //minX = minX < 0 ? 0 : minX;
-        //minY = minY < 0 ? 0 : minY;
-        //maxX = maxX > upper ? upper : maxX;
-        //maxY = maxY > upper ? upper : maxY;
-        Point? unCovered = null;
-        for (int row = minY; row < maxY; row++)
+        var startX = Position.X;
+        var startY = Position.Y;
+        var distance = DistanceToBeacon();
+        for (int i = 0; i < distance; i++)
         {
-            for (int col = minX; col < maxX; col++)
-            {
-                if (col < 0 || col > upper || row < 0 || row > upper)
-                {
-                    continue;
-                }
-                unCovered = new Point(col, row);
-
-                if (Day15.ManhattanDistance(unCovered.Value, Position) == distance + 1)
-                {
-                    if (!tester.CoversPoint(unCovered.Value) && tester.Beacon.Position != unCovered.Value)
-                    {
-                        return (false, unCovered);
-                    }
-                }
-            }
+            // Move right
+            startX += 1;
+            // Move up or down
+            startY += (i % 2 == 0) ? 1 : -1;
+            yield return new Point(startX, startY);
         }
-        return (true, unCovered);
+        //int startX = 0; // starting x coordinate
+        //int startY = 0; // starting y coordinate
+        //int distance = 3; // Manhattan distance to move
+
+        //for (int i = 0; i < distance; i++)
+        //{
+        //    // Move right
+        //    startX += 1;
+        //    // Move up or down
+        //    startY += (i % 2 == 0) ? 1 : -1;
+        //}
+    }
+    public (int low, int high) GetRange(int row)
+    {
+        var distance = DistanceToBeacon();
+        if(row == Position.Y)
+        {
+            return (Position.X - distance, Position.X + distance);
+        }
+        if(Math.Abs(row - Position.Y) == distance)
+        {
+            return (Position.X, Position.X);
+        }
+        var offset = Math.Abs(row - Position.Y);
+
+        return (Position.X - distance + offset, Position.X + distance - offset);
     }
 
+    //public (bool covers, Point? p) GetBorder(Sensor tester, int upper)
+    //{
+    //    var points = new List<Point>();
+    //    var distance = (int)DistanceToBeacon();
+    //    var minX = Position.X - distance - 2;
+    //    var maxX = Position.X + distance + 2;
+    //    var minY = Position.Y - distance - 2;
+    //    var maxY = Position.Y + distance + 2;
+    //    //minX = minX < 0 ? 0 : minX;
+    //    //minY = minY < 0 ? 0 : minY;
+    //    //maxX = maxX > upper ? upper : maxX;
+    //    //maxY = maxY > upper ? upper : maxY;
+    //    Point? unCovered = null;
+    //    for (int row = minY; row < maxY; row++)
+    //    {
+    //        for (int col = minX; col < maxX; col++)
+    //        {
+    //            if (col < 0 || col > upper || row < 0 || row > upper)
+    //            {
+    //                continue;
+    //            }
+    //            unCovered = new Point(col, row);
+
+    //            if (Day15.ManhattanDistance(unCovered.Value, Position) == distance + 1)
+    //            {
+    //                if (!tester.CoversPoint(unCovered.Value) && tester.Beacon.Position != unCovered.Value)
+    //                {
+    //                    return (false, unCovered);
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return (true, unCovered);
+    //}
+
 }
+
 public record Beacon(Point Position) { }
+
 
 
