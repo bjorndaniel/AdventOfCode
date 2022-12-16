@@ -17,4 +17,17 @@ public class Day16Tests
         Assert.True(3 == first.Adjacent.Count(), $"Expected {3}, got {first.Adjacent.Count()}");
         Assert.Contains(first.Adjacent, _ => _.Name == "DD" && _.FlowRate == 20);
     }
+
+    [Fact]
+    public void Can_solve_part1_for_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day16-test.txt";
+
+        //When
+        var result = Day16.SolvePart1(filename);
+
+        //Then
+        Assert.Equal(1651, result);
+    }
 }
