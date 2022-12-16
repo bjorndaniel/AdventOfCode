@@ -74,25 +74,32 @@ public class Day15Tests
     }
 
     [Theory]
-    [InlineData(-2, 8, 8)]
-    [InlineData(16, 8, 8)]
-    [InlineData(7, -1, 17)]
-    [InlineData(6, 0, 16)]
-    [InlineData(8, 0, 16)]
-    [InlineData(5, 1, 15)]
-    [InlineData(9, 1, 15)]
-    public void Test_ranges(int row, int expectedLow, int expectedHigh)
+    [InlineData(-2, 8, 8, true, -20, 20)]
+    [InlineData(16, 8, 8, true, -20, 20)]
+    [InlineData(7, -1, 17, true, -20, 20)]
+    [InlineData(6, 0, 16, true, -20, 20)]
+    [InlineData(8, 0, 16, true, -20, 20)]
+    [InlineData(5, 1, 15, true, -20, 20)]
+    [InlineData(9, 1, 15, true, -20, 20)]
+    [InlineData(7, 0, 10, true, 0, 10)]
+    [InlineData(8, 1, 14, true, 1, 14)]
+    [InlineData(8, 0, 0, true, -10, 0)]
+    [InlineData(7, -1, 12, true, -10, 12)]
+    [InlineData(16, 0, 0, false, -20, -10)]
+    [InlineData(5, 0, 0, false, 16, 20)]
+    public void Test_ranges(int row, int expectedLow, int expectedHigh, bool expected, int lower, int upper)
     {
         //Given
         var filename = $"{Helpers.DirectoryPathTests}Day15-test.txt";
         //var sensors = Day15.ParseInput(filename);
 
         //When
-        var result = new Sensor(new Point(8, 7), new Beacon(new Point(2, 10))).GetRange(row);
+        var (success, result) = new Sensor(new Point(8, 7), new Beacon(new Point(2, 10))).GetRange(row, lower, upper);
 
         //Then
-        Assert.True(expectedLow == result.low, $"Expected {expectedLow} but got {result.low}");
+        Assert.True(expected == success, $"Expected {expected}, got {success}");
         Assert.True(expectedHigh == result.high, $"Expected {expectedHigh} but got {result.high}");
+        Assert.True(expectedLow == result.low, $"Expected {expectedLow} but got {result.low}");
 
     }
 

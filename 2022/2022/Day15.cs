@@ -27,102 +27,135 @@ public static class Day15
 
     public static long SolvePart2(string filename, int lower, int upper)
     {
-        var sensors = ParseInput(filename);
-        var ranges = new List<(int l, int u)>();
-        for(int i = lower; i < upper; i++)
+        var sensors = ParseInput(filename).ToList();
+        var ranges = new List<(int low, int high)>();
+        for (int i = lower; i < upper; i++)
         {
             Parallel.ForEach(sensors, s =>
             {
-                ranges.Add(s.GetRange(i));
+                var (success, range) = s.GetRange(i, lower, upper);
+                if (success)
+                {
+                    ranges.Add(range);
+                }
             });
-                
+            if (!ranges.Any())
+            {
+                continue;
+            }
+            var lowest = ranges.OrderBy(_ => _.low);
+            var newRange = lowest.First();
+            foreach (var r in lowest.Skip(1))
+            {
+                if (Overlap(newRange, r))
+                {
+                    newRange.high = Math.Max(newRange.high, r.high);
+                    newRange.low = Math.Min(newRange.low, r.low);
+                    continue;
+                }
+
+                return r.low * (long)4000000 + i;
+            }
+            ranges.Clear();
         }
-        
-
-        return 0;
-        //var queue = new Queue<Sensor>(sensors);
-        //var first = queue.Dequeue();
-        //var uncovered = new List<Point>();
-        //while (queue.Any())
-        //{
-        //    foreach (var s in sensors)
-        //    {
-        //        if (s == first)
-        //        {
-        //            continue;
-        //        }
-
-        //        var (covered, p) = first.GetBorder(s, upper);
-        //        if (covered)
-        //        {
-        //            if (uncovered.Contains(p.Value))
-        //            {
-        //                uncovered.Remove(p.Value);
-        //            }
-        //            first = queue.Dequeue();
-        //            continue;
-        //        }
-        //        if (p.HasValue && !uncovered.Contains(p.Value))
-        //        {
-        //            uncovered.Add(p.Value);
-        //        }
-        //    }
-
-        //    first = queue.Dequeue();
-        //    Console.WriteLine($"Queue: {queue.Count()}");
-        //}
-        //return uncovered.First().X * 4000000 + uncovered.First().Y;
-        //foreach (var s in sensors)
-        //{
-        //    var scannerMatrix =
-        //}
-
-        //var coveredPoints = sensors.SelectMany(_ => _.GetAllPointsCovered(i, lower, upper, true));
-
-
-
-        ////var watch = new Stopwatch();
-        ////var rows = new Dictionary<int, IEnumerable<int>>();
-        ////watch.Start();
-        //for (int i = lower; i < upper; i++)
-        //{
-        //    //    var x = sensors.SelectMany(_ => _.GetAllPointsCovered(i, lower, upper, true));
-        //    //    var unavailable = x.Where(_ => _.Y == i && _.X >= 0 && _.X <= upper).Select(_ => _.X).Distinct().Order();
-        //    //    ////var missing = all.Intersect(unavailable);
-        //    //    if (!all.SequenceEqual(unavailable))
-        //    //    {
-        //    //        return all.Except(unavailable).First() * 4000000 + i;
-        //    //    }
-
-        //    //    //var all = Enumerable.Range(lower, upper);
-        //    //    if (i % 10 == 0)
-        //    //    {
-        //    //        Console.WriteLine(DateTime.Now.Ticks.ToString());
-        //    //    }
-        //    //    //if (unavailable.Count() < 4000001)
-        //    //    //{
-        //    //    //    Console.Write("asdf");
-        //    //    //}
-        //    //    //var y = all.Except(unavailable.Distinct()).ToArray();
-        //    //    //if (y.Any())
-        //    //    //{
-        //    //    //}
-        //    //    //    var unavailable = sensors.Where(_ => _.GetAllPointsCovered(i, true).Any(_ => _.Y == i)).SelectMany(_ => _.GetAllPointsCovered(i).Select(_ => _.X));
-        //    //    //    //var beaconsOnRow = sensors.Where(_ => _.Beacon.Position.Y == i).Select(_ => _.Beacon.Position.X).Distinct();
-        //    //    //    //var count = unavailable.Distinct().Count();
-        //    //    //    //var all = Enumerable.Range(0, 4000000);
-        //    //    //    //if (all.Except(unavailable).Count() == 1)
-        //    //    //    //{
-        //    //    //    //    var y = all.Except(unavailable);
-        //    //    //    //    return sensors.Select(_ => _.Beacon).Single(_ => _.Position.X == y.Single()).Position.X * 4000000 + 1;
-        //    //    //    //}
-        //}
-
         return 0;
     }
+    //var queue = new Queue<Sensor>(sensors);
+    //var first = queue.Dequeue();
+    //var uncovered = new List<Point>();
+    //while (queue.Any())
+    //{
+    //    foreach (var s in sensors)
+    //    {
+    //        if (s == first)
+    //        {
+    //            continue;
+    //        }
+
+    //        var (covered, p) = first.GetBorder(s, upper);
+    //        if (covered)
+    //        {
+    //            if (uncovered.Contains(p.Value))
+    //            {
+    //                uncovered.Remove(p.Value);
+    //            }
+    //            first = queue.Dequeue();
+    //            continue;
+    //        }
+    //        if (p.HasValue && !uncovered.Contains(p.Value))
+    //        {
+    //            uncovered.Add(p.Value);
+    //        }
+    //    }
+
+    //    first = queue.Dequeue();
+    //    Console.WriteLine($"Queue: {queue.Count()}");
+    //}
+    //return uncovered.First().X * 4000000 + uncovered.First().Y;
+    //foreach (var s in sensors)
+    //{
+    //    var scannerMatrix =
+    //}
+
+    //var coveredPoints = sensors.SelectMany(_ => _.GetAllPointsCovered(i, lower, upper, true));
+
+
+
+    ////var watch = new Stopwatch();
+    ////var rows = new Dictionary<int, IEnumerable<int>>();
+    ////watch.Start();
+    //for (int i = lower; i < upper; i++)
+    //{
+    //    //    var x = sensors.SelectMany(_ => _.GetAllPointsCovered(i, lower, upper, true));
+    //    //    var unavailable = x.Where(_ => _.Y == i && _.X >= 0 && _.X <= upper).Select(_ => _.X).Distinct().Order();
+    //    //    ////var missing = all.Intersect(unavailable);
+    //    //    if (!all.SequenceEqual(unavailable))
+    //    //    {
+    //    //        return all.Except(unavailable).First() * 4000000 + i;
+    //    //    }
+
+    //    //    //var all = Enumerable.Range(lower, upper);
+    //    //    if (i % 10 == 0)
+    //    //    {
+    //    //        Console.WriteLine(DateTime.Now.Ticks.ToString());
+    //    //    }
+    //    //    //if (unavailable.Count() < 4000001)
+    //    //    //{
+    //    //    //    Console.Write("asdf");
+    //    //    //}
+    //    //    //var y = all.Except(unavailable.Distinct()).ToArray();
+    //    //    //if (y.Any())
+    //    //    //{
+    //    //    //}
+    //    //    //    var unavailable = sensors.Where(_ => _.GetAllPointsCovered(i, true).Any(_ => _.Y == i)).SelectMany(_ => _.GetAllPointsCovered(i).Select(_ => _.X));
+    //    //    //    //var beaconsOnRow = sensors.Where(_ => _.Beacon.Position.Y == i).Select(_ => _.Beacon.Position.X).Distinct();
+    //    //    //    //var count = unavailable.Distinct().Count();
+    //    //    //    //var all = Enumerable.Range(0, 4000000);
+    //    //    //    //if (all.Except(unavailable).Count() == 1)
+    //    //    //    //{
+    //    //    //    //    var y = all.Except(unavailable);
+    //    //    //    //    return sensors.Select(_ => _.Beacon).Single(_ => _.Position.X == y.Single()).Position.X * 4000000 + 1;
+    //    //    //    //}
+    //}
+
+    //    return 0;
+    //}
 
     public static int ManhattanDistance(Point p1, Point p2) =>
         Math.Abs(p1.X - p2.X) + Math.Abs(p1.Y - p2.Y);
+
+    public static bool Overlap((int low, int high) r1, (int low, int high) r2)
+    {
+        if (r1.low <= r2.high && r2.low <= r1.high)
+        {
+            return true;
+        }
+        else if (r1.high - r2.low == 1)
+        {
+            return true;
+        }
+        return false;
+    }
 
 }
 
@@ -206,20 +239,29 @@ public record Sensor(Point Position, Beacon Beacon)
         //    startY += (i % 2 == 0) ? 1 : -1;
         //}
     }
-    public (int low, int high) GetRange(int row)
+
+    public (bool inRange, (int low, int high)) GetRange(int row, int lowerBound, int upperBound)
     {
         var distance = DistanceToBeacon();
-        if(row == Position.Y)
-        {
-            return (Position.X - distance, Position.X + distance);
-        }
-        if(Math.Abs(row - Position.Y) == distance)
-        {
-            return (Position.X, Position.X);
-        }
         var offset = Math.Abs(row - Position.Y);
-
-        return (Position.X - distance + offset, Position.X + distance - offset);
+        var (low, high) = (Position.X - distance + offset, Position.X + distance - offset);
+        if (!Day15.Overlap((low, high), (lowerBound, upperBound)))
+        {
+            return (false, (0, 0));
+        }
+        if (low < lowerBound)
+        {
+            low = lowerBound;
+        }
+        if (high > upperBound)
+        {
+            high = upperBound;
+        }
+        if (high < low)
+        {
+            low = high;
+        }
+        return (true, (low, high));
     }
 
     //public (bool covers, Point? p) GetBorder(Sensor tester, int upper)
