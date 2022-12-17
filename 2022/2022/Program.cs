@@ -156,9 +156,6 @@ Console.WriteLine($"Day15 part 2: {day15Part2} in {watch.ElapsedMilliseconds}ms"
 totalTime.Stop();
 Console.WriteLine($"AoC 2022 total running time: {totalTime.Elapsed.TotalMilliseconds}ms");
 
-
-
-
 void PrintDay10(char?[,] chars)
 {
     for (int row = 0; row < chars.GetLength(0); row++)
