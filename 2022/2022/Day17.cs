@@ -8,29 +8,37 @@ public static class Day17
         return lines.First().Select(_ => _ == '>' ? Direction.Right : Direction.Left);
     }
 
-    public static Chamber SolvePart1(string filename, int nrOfRocks, IPrinter printer)
+    public static Chamber SolvePart1(string filename, long nrOfRocks, IPrinter printer)
     {
         var chamber = new Chamber();
         var input = ParseInput(filename);
         var moveCount = 0;
         var rockCount = 0;
         Rock? current = null;
-        var totalRocks = 0;
+        var totalRocks = 1;
+        var watch = new Stopwatch();
+        watch.Start();
         while (totalRocks < nrOfRocks)
         {
+
             if (current == null)
             {
                 current = GetRock(rockCount);
                 rockCount++;
                 totalRocks++;
-                if (rockCount >= 4)
+                if (totalRocks % 25000 == 0)
+                {
+                    printer.Print($"Total rocks: {totalRocks} in {watch.ElapsedMilliseconds}");
+                }
+                if (rockCount > 4)
                 {
                     rockCount = 0;
                 }
-
                 current.BottomLeft = chamber.GetNextDrop();
                 chamber.Rocks.Add(current);
-                chamber.Print(printer);
+                var removeBelow = chamber.CurrentBottom - 100;
+                chamber.Rocks = chamber.Rocks.Where(_ => _.BottomLeft.Y >= removeBelow).ToList();
+                //chamber.Print(printer);
                 continue;
             }
             var nextMove = input.ElementAt(moveCount);
@@ -45,7 +53,7 @@ public static class Day17
             {
                 current = null;
             }
-            chamber.Print(printer);
+            //chamber.Print(printer);
         }
         return chamber;
         static Rock GetRock(int count) =>
@@ -125,8 +133,7 @@ public class Chamber
     {
         var positionsNeeded = current.PositionsNeeded(nextMove).ToList();
         var other = Rocks.Except(new List<Rock> { current }).SelectMany(_ => _.Points);
-        var positonsNeeded = current.PositionsNeeded(Day17.Direction.Down);
-        if (positonsNeeded.Any(_ => _.Y == 0))
+        if (positionsNeeded.Any(_ => _.Y == 0))
         {
             return;
         }
@@ -134,7 +141,7 @@ public class Chamber
         {
             return;
         }
-        if (positonsNeeded.Intersect(other).Any())
+        if (positionsNeeded.Intersect(other).Any())
         {
             return;
         }
@@ -181,20 +188,19 @@ public class Rock
             },
             RockFormation.Plus => new List<Point>
             {
-                new Point(BottomLeft.X + 2, BottomLeft.Y),
-                new Point(BottomLeft.X + 1, BottomLeft.Y + 1),
+                new Point(BottomLeft.X + 1, BottomLeft.Y),
+                new Point(BottomLeft.X , BottomLeft.Y + 1),
+                new Point(BottomLeft.X  + 1, BottomLeft.Y + 1),
                 new Point(BottomLeft.X + 2, BottomLeft.Y + 1),
-                new Point(BottomLeft.X + 3, BottomLeft.Y + 1),
-                new Point(BottomLeft.X + 2, BottomLeft.Y + 2)
+                new Point(BottomLeft.X + 1, BottomLeft.Y + 2)
             },
             RockFormation.ReverseL => new List<Point>
             {
                 new Point(BottomLeft.X, BottomLeft.Y),
-
                 new Point(BottomLeft.X + 1, BottomLeft.Y),
                 new Point(BottomLeft.X + 2, BottomLeft.Y),
                 new Point(BottomLeft.X + 2, BottomLeft.Y + 1),
-                new Point(BottomLeft.X + 2, BottomLeft.Y + 1)
+                new Point(BottomLeft.X + 2, BottomLeft.Y + 2)
             },
             RockFormation.VLine => new List<Point>
             {

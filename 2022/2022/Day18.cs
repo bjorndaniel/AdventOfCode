@@ -83,7 +83,6 @@ public static class Day18
             }
         }
         return cubes.Select(_ => _.FreeSides.Count()).Sum() - airCubes.Count() * 6;
-        //return result - (airCubes.Count(_ => _.FreeSides.Count() == 0) * 6);
         static List<Cube> GetSurrounding(Cube c)
         {
             return new List<Cube>
