@@ -32,7 +32,7 @@ public class Day17Tests
         var printer = new TestPrinter(_output);
 
         //When
-        var result = Day17.SolvePart1(filename, 5, printer);
+        var result = Day17.SolvePart1(filename, 4, printer);
 
         //Then
         Assert.True(3068 == result.Height, $"Expected 3068, got {result.Height}");

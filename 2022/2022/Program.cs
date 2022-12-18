@@ -153,6 +153,36 @@ var day15Part2 = Day15.SolvePart2(day15File, 0, 4000000);
 watch.Stop();
 Console.WriteLine($"Day15 part 2: {day15Part2} in {watch.ElapsedMilliseconds}ms");
 
+//var Day16File = $"{Helpers.DirectoryPath}Day16.txt";
+//watch.Restart();
+//var Day16Part1 = Day16.SolvePart1(Day16File, 2000000);
+//watch.Stop();
+//Console.WriteLine($"Day16 part 1: {Day16Part1} in {watch.ElapsedMilliseconds}ms");
+//watch.Restart();
+//var Day16Part2 = Day16.SolvePart2(Day16File, 0, 4000000);
+//watch.Stop();
+//Console.WriteLine($"Day16 part 2: {Day16Part2} in {watch.ElapsedMilliseconds}ms");
+
+//var Day17File = $"{Helpers.DirectoryPath}Day17.txt";
+//watch.Restart();
+//var Day17Part1 = Day17.SolvePart1(Day17File, 2000000);
+//watch.Stop();
+//Console.WriteLine($"Day17 part 1: {Day17Part1} in {watch.ElapsedMilliseconds}ms");
+//watch.Restart();
+//var Day17Part2 = Day17.SolvePart2(Day17File, 0, 4000000);
+//watch.Stop();
+//Console.WriteLine($"Day17 part 2: {Day17Part2} in {watch.ElapsedMilliseconds}ms");
+
+var day18File = $"{Helpers.DirectoryPath}Day18.txt";
+watch.Restart();
+var day18Part1 = Day18.SolvePart1(day18File);
+watch.Stop();
+Console.WriteLine($"Day18 part 1: {day18Part1.result} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day18Part2 = Day18.SolvePart2(day18File);
+watch.Stop();
+Console.WriteLine($"Day15 part 2: {day18Part2} in {watch.ElapsedMilliseconds}ms");
+
 totalTime.Stop();
 Console.WriteLine($"AoC 2022 total running time: {totalTime.Elapsed.TotalMilliseconds}ms");
 

@@ -94,7 +94,7 @@ public class Day15Tests
         //var sensors = Day15.ParseInput(filename);
 
         //When
-        var (success, result) = new Sensor(new Point(8, 7), new Beacon(new Point(2, 10))).GetRange(row, lower, upper);
+        var (success, result) = new Sensor(new PointL(8, 7), new Beacon(new PointL(2, 10))).GetRange(row, lower, upper);
 
         //Then
         Assert.True(expected == success, $"Expected {expected}, got {success}");
@@ -103,14 +103,14 @@ public class Day15Tests
 
     }
 
-    private void Print(IEnumerable<Point> points, Point center)
+    private void Print(IEnumerable<PointL> points, PointL center)
     {
-        for (int row = points.Min(_ => _.Y) - 1; row < points.Max(_ => _.Y) + 2; row++)
+        for (long row = points.Min(_ => _.Y) - 1; row < points.Max(_ => _.Y) + 2; row++)
         {
             var sb = new StringBuilder();
-            for (int col = points.Min(_ => _.X) - 1; col < points.Max(_ => _.X) + 2; col++)
+            for (long col = points.Min(_ => _.X) - 1; col < points.Max(_ => _.X) + 2; col++)
             {
-                var p = new Point(col, row);
+                var p = new PointL(col, row);
                 if (points.Contains(p))
                 {
                     if (p == center)

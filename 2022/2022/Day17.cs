@@ -1,5 +1,4 @@
-﻿using static AoC2022.Day17;
-namespace AoC2022;
+﻿namespace AoC2022;
 public static class Day17
 {
     public static IEnumerable<Direction> ParseInput(string filename)
@@ -8,26 +7,28 @@ public static class Day17
         var lines = File.ReadAllLines(filename);
         return lines.First().Select(_ => _ == '>' ? Direction.Right : Direction.Left);
     }
-    public static Chamber SolvePart1(string filename, int nrOfSteps, IPrinter printer)
+
+    public static Chamber SolvePart1(string filename, int nrOfRocks, IPrinter printer)
     {
         var chamber = new Chamber();
         var input = ParseInput(filename);
         var moveCount = 0;
         var rockCount = 0;
         Rock? current = null;
-        var position = new Point(2, 3);
-        for (int i = 0; i < nrOfSteps; i++)
+        var totalRocks = 0;
+        while (totalRocks < nrOfRocks)
         {
             if (current == null)
             {
                 current = GetRock(rockCount);
                 rockCount++;
+                totalRocks++;
                 if (rockCount >= 4)
                 {
                     rockCount = 0;
                 }
-                position = chamber.GetNextDrop();
-                current.BottomLeft = position;
+
+                current.BottomLeft = chamber.GetNextDrop();
                 chamber.Rocks.Add(current);
                 chamber.Print(printer);
                 continue;
@@ -40,14 +41,14 @@ public static class Day17
             }
             chamber.TryMove(nextMove, current);
             var couldDrop = chamber.TryDrop(current);
-            chamber.Print(printer);
             if (!couldDrop)
             {
                 current = null;
             }
+            chamber.Print(printer);
         }
         return chamber;
-        Rock GetRock(int count) =>
+        static Rock GetRock(int count) =>
             count switch
             {
                 0 => new Rock(RockFormation.HLine),
@@ -57,13 +58,13 @@ public static class Day17
                 4 => new Rock(RockFormation.Square),
                 _ => throw new Exception($"Unexpected rock count {count}")
             }; ;
-
     }
 
     public enum Direction
     {
         Left,
-        Right
+        Right,
+        Down
     }
 
     public enum RockFormation
@@ -76,33 +77,37 @@ public static class Day17
     }
 }
 
-
 public class Chamber
 {
-    public int Width => 7;
+    public static int Width => 7;
+
     public int Height =>
-        Rocks.Max(_ => _.TopRight.Y);
+        Rocks.Max(_ => _.Points.Max(_ => _.Y));
+
     public List<Rock> Rocks { get; set; } = new();
-    public int CurrentBottom { get; private set; }
+
+    public int CurrentBottom =>
+       !Rocks.Any() ? 0 : Rocks.Max(_ => _.Points.Max(p => p.Y));
+
     public Point GetNextDrop() =>
-        new Point(2, CurrentBottom + 3);
+        new(3, CurrentBottom == 0 ? 4 : CurrentBottom + 4);
+
     public void Print(IPrinter printer)
     {
-        for (int row = Height; row > -2; row--)
+        for (int row = Height; row >= 0; row--)
         {
-            var rocks = Rocks.Where(_ => _.IsOnRow(row));
-            for (int col = -1; col < 8; col++)
+            for (int col = 0; col < 9; col++)
             {
-                if (col == -1 || col == 7)
+                if (col == 0 || col == 8)
                 {
                     printer.Print("|");
                     continue;
                 }
-                else if (row < 0)
+                else if (row == 0)
                 {
                     printer.Print("-");
                 }
-                else if (rocks.Any(_ => _.IsOnColumn(new Point(col, row))))
+                else if (Rocks.Any(_ => _.Points.Any(_ => _.X == col && _.Y == row)))
                 {
                     printer.Print("#");
                 }
@@ -115,33 +120,36 @@ public class Chamber
         }
         printer.Flush();
     }
+
     public void TryMove(Day17.Direction nextMove, Rock current)
     {
-        var positionsNeeded = current.GetPositionsNeeded(nextMove);
-        var other = Rocks.Except(new List<Rock> { current });
-        var canMove = true;
-        if (positionsNeeded.Any(_ => _.X < 0 || _.X > 6))
+        var positionsNeeded = current.PositionsNeeded(nextMove).ToList();
+        var other = Rocks.Except(new List<Rock> { current }).SelectMany(_ => _.Points);
+        var positonsNeeded = current.PositionsNeeded(Day17.Direction.Down);
+        if (positonsNeeded.Any(_ => _.Y == 0))
         {
             return;
         }
-        foreach (var p in positionsNeeded)
+        if (positionsNeeded.Any(_ => _.X < 1 || _.X > 7))
         {
-            if (other.Any(_ => _.IsOnPosition(p)))
-            {
-                return;
-            }
-            if (canMove)
-            {
-                current.Move(nextMove);
-            }
-
+            return;
         }
+        if (positonsNeeded.Intersect(other).Any())
+        {
+            return;
+        }
+        current.Move(nextMove);
     }
 
     public bool TryDrop(Rock current)
     {
-        //TODO: check positions
-        if (current.BottomLeft.Y - 1 < 0)
+        var other = Rocks.Except(new List<Rock> { current }).SelectMany(_ => _.Points);
+        var positonsNeeded = current.PositionsNeeded(Day17.Direction.Down);
+        if (positonsNeeded.Any(_ => _.Y == 0))
+        {
+            return false;
+        }
+        if (positonsNeeded.Intersect(other).Any())
         {
             return false;
         }
@@ -159,142 +167,51 @@ public class Rock
         _formation = formation;
     }
 
-    public Point TopRight =>
-        new Point(BottomLeft.X + Width - 1, BottomLeft.Y + Height - 1);
-
     public Point BottomLeft { get; set; }
 
-    public int Width =>
+    public List<Point> Points =>
         _formation switch
         {
-            RockFormation.HLine => 4,
-            RockFormation.Plus => 3,
-            RockFormation.ReverseL => 2,
-            RockFormation.VLine => 1,
-            RockFormation.Square => 2,
-            _ => throw new Exception($"Unexpected rock formation {_formation}")
-        };
-
-    public int Height =>
-        _formation switch
-        {
-            RockFormation.HLine => 1,
-            RockFormation.Plus => 3,
-            RockFormation.ReverseL => 3,
-            RockFormation.VLine => 4,
-            RockFormation.Square => 2,
-            _ => throw new Exception($"Unexpected rock formation {_formation}")
-        };
-
-    public char[,] Print() =>
-         _formation switch
-         {
-             RockFormation.Plus => new[,]
-              {
-                  {'.', '#', '.'},
-                  {'#', '#', '#'},
-                  {'.', '#', '.'},
-              },
-             RockFormation.HLine => new[,]
-             {
-                 {'#', '#', '#', '#'},
-            },
-             RockFormation.VLine => new[,]
-             {
-                 {'#'},
-                 {'#'},
-                 {'#'},
-                 {'#'},
-             },
-             RockFormation.Square => new[,]
-             {
-                 {'#', '#'},
-                 {'#', '#'},
-             },
-             RockFormation.ReverseL => new[,]
-             {
-                 {'.', '#'},
-                 {'.', '#'},
-                 {'#', '#'},
-             },
-             _ => throw new NotImplementedException(),
-         };
-
-    public bool IsOnRow(int row) =>
-        row >= BottomLeft.Y && row < TopRight.Y || (row == BottomLeft.Y && Height == 1);
-
-    public bool IsOnColumn(Point p)
-    {
-        if (IsOnRow(p.Y))
-        {
-            if (p.X >= BottomLeft.X && p.X <= TopRight.X)
+            RockFormation.HLine => new List<Point>
             {
-                switch (_formation)
-                {
-                    case RockFormation.Square:
-                        return true;
-                    case RockFormation.HLine:
-                        return p.X >= BottomLeft.X && p.X <= TopRight.X;
-                    case RockFormation.Plus:
-                        if (p.Y == BottomLeft.Y || p.Y == TopRight.Y)
-                        {
-                            return p.X == BottomLeft.X + 1;
-                        }
-                        else if (p.Y == BottomLeft.Y + 1)
-                        {
-                            return p.X >= BottomLeft.X && p.X <= TopRight.X;
-                        }
-                        return false;
-                    case RockFormation.VLine:
-                        return p.X == BottomLeft.X;
-                    case RockFormation.ReverseL:
-                        if (p.Y == BottomLeft.Y)
-                        {
-                            return p.X >= BottomLeft.X && p.X <= TopRight.X;
-                        }
-                        else if (p.X == TopRight.X)
-                        {
-                            return true;
-                        }
-                        return false;
-                    default:
-                        throw new ArgumentException("Unexpected rock formation");
-                }
-            }
-        }
-        return false;
-    }
+                new Point(BottomLeft.X, BottomLeft.Y),
+                new Point(BottomLeft.X + 1, BottomLeft.Y),
+                new Point(BottomLeft.X + 2, BottomLeft.Y),
+                new Point(BottomLeft.X + 3, BottomLeft.Y)
+            },
+            RockFormation.Plus => new List<Point>
+            {
+                new Point(BottomLeft.X + 2, BottomLeft.Y),
+                new Point(BottomLeft.X + 1, BottomLeft.Y + 1),
+                new Point(BottomLeft.X + 2, BottomLeft.Y + 1),
+                new Point(BottomLeft.X + 3, BottomLeft.Y + 1),
+                new Point(BottomLeft.X + 2, BottomLeft.Y + 2)
+            },
+            RockFormation.ReverseL => new List<Point>
+            {
+                new Point(BottomLeft.X, BottomLeft.Y),
 
-    public List<Point> GetPositionsNeeded(Day17.Direction nextMove)
-    {
-        var positionsNeeded = new List<Point>();
-        var position = nextMove == Day17.Direction.Left ? -1 : Width;
-        switch (_formation)
-        {
-            case RockFormation.Plus:
-                positionsNeeded.Add(new Point(BottomLeft.X + position, BottomLeft.Y + 1));
-                break;
-            case RockFormation.ReverseL:
-                positionsNeeded.Add(new Point(BottomLeft.X + position, BottomLeft.Y));
-                break;
-            case RockFormation.Square:
-                positionsNeeded.Add(new Point(BottomLeft.X + position, BottomLeft.Y));
-                positionsNeeded.Add(new Point(BottomLeft.X + position, BottomLeft.Y + 1));
-                break;
-            case RockFormation.HLine:
-                positionsNeeded.Add(new Point(BottomLeft.X + position, BottomLeft.Y));
-                break;
-            case RockFormation.VLine:
-                positionsNeeded.Add(new Point(BottomLeft.X + position, BottomLeft.Y));
-                positionsNeeded.Add(new Point(BottomLeft.X + position, BottomLeft.Y + 1));
-                positionsNeeded.Add(new Point(BottomLeft.X + position, BottomLeft.Y + 2));
-                positionsNeeded.Add(new Point(BottomLeft.X + position, BottomLeft.Y + 3));
-                break;
-            default:
-                throw new ArgumentException("");
-        }
-        return positionsNeeded;
-    }
+                new Point(BottomLeft.X + 1, BottomLeft.Y),
+                new Point(BottomLeft.X + 2, BottomLeft.Y),
+                new Point(BottomLeft.X + 2, BottomLeft.Y + 1),
+                new Point(BottomLeft.X + 2, BottomLeft.Y + 1)
+            },
+            RockFormation.VLine => new List<Point>
+            {
+                new Point(BottomLeft.X, BottomLeft.Y),
+                new Point(BottomLeft.X, BottomLeft.Y + 1),
+                new Point(BottomLeft.X, BottomLeft.Y + 2),
+                new Point(BottomLeft.X, BottomLeft.Y + 3)
+            },
+            RockFormation.Square => new List<Point>
+            {
+                new Point(BottomLeft.X, BottomLeft.Y),
+                new Point(BottomLeft.X + 1, BottomLeft.Y),
+                new Point(BottomLeft.X, BottomLeft.Y + 1),
+                new Point(BottomLeft.X + 1, BottomLeft.Y + 1)
+            },
+            _ => throw new Exception($"Unexpected formation {_formation}")
+        };
 
     public void Move(Day17.Direction nextMove)
     {
@@ -306,7 +223,15 @@ public class Rock
         BottomLeft = new Point(BottomLeft.X, BottomLeft.Y - 1);
 
     public bool IsOnPosition(Point p) =>
-        IsOnRow(p.Y) && IsOnColumn(p);
+        Points.Any(_ => _.X == p.X && _.Y == p.Y);
 
+    public List<Point> PositionsNeeded(Day17.Direction nextMove) =>
+        nextMove switch
+        {
+            Day17.Direction.Left => Points.Select(_ => new Point(_.X - 1, _.Y)).ToList(),
+            Day17.Direction.Right => Points.Select(_ => new Point(_.X + 1, _.Y)).ToList(),
+            Day17.Direction.Down => Points.Select(_ => new Point(_.X, _.Y - 1)).ToList(),
+            _ => throw new ArgumentException("Unexpected direction"),
+        };
 
 }
