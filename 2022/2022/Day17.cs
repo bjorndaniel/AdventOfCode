@@ -8,19 +8,26 @@ public static class Day17
         return lines.First().Select(_ => _ == '>' ? Direction.Right : Direction.Left);
     }
 
-    public static int SolvePart1(string filename, long nrOfRocks, IPrinter printer)
+    public static long SolvePart1(string filename, long nrOfRocks, IPrinter printer)
     {
+        var key = new List<string>();
         var chamber = new Chamber();
         var input = ParseInput(filename);
         var moveCount = 0;
         var rockCount = 0;
         Rock? current = null;
         var totalRocks = 1;
-        
+        var watch = new Stopwatch();
+        watch.Start();
         while (totalRocks < nrOfRocks)
         {
             if (current == null)
             {
+                if (totalRocks % 10000 == 0)
+                {
+                    printer.Print($"Total rocks: {totalRocks} Elapsed:{watch.Elapsed.TotalSeconds}");
+                }
+
                 current = GetRock(rockCount);
                 rockCount++;
                 totalRocks++;
@@ -40,14 +47,7 @@ public static class Day17
             if (moveCount >= input.Count())
             {
                 moveCount = 0;
-                if(rockCount == 0 && totalRocks > 4)
-                {
-                    //we have found a repeating pattern
-                    var rocksBeforeRepeat = totalRocks;
-                    var timesToRepeat = nrOfRocks / 35;
-                    var height = chamber.Height * timesToRepeat;
-                    //return (int)height;
-                }
+
             }
             chamber.TryMove(nextMove, current);
             var couldDrop = chamber.TryDrop(current);
@@ -55,9 +55,28 @@ public static class Day17
             {
                 current = null;
             }
+            if (totalRocks % 100 == 0)
+            {
+                if (totalRocks == 100)
+                {
+                    key.Add($"{chamber.Flatten(true)}{current}{nextMove}");
+                }
+                else if (key.Any(_ => _ == $"{chamber.Flatten()}{current}{nextMove}"))
+                {
+                    var rocksBeforeRepeat = totalRocks;
+                    var timesToRepeat = nrOfRocks / rocksBeforeRepeat;
+                    var height = chamber.Height * timesToRepeat;
+                    return height;
+                }
+                else
+                {
+                    key.Add($"{chamber.Flatten()}{current}{nextMove}");
+                }
+
+            }
             //chamber.Print(printer);
         }
-        return chamber.Height;
+        return (long)chamber.Height;
         static Rock GetRock(int count) =>
             count switch
             {
@@ -101,6 +120,37 @@ public class Chamber
 
     public Point GetNextDrop() =>
         new(3, CurrentBottom == 0 ? 4 : CurrentBottom + 4);
+
+    public string Flatten(bool start = false)
+    {
+        var sb = new StringBuilder();
+        for (int row = Height; row >= (start ? 0 : 100); row--)
+        {
+            for (int col = 0; col < 9; col++)
+            {
+                if (col == 0 || col == 8)
+                {
+                    //printer.Print("|");
+                    continue;
+                }
+                else if (row == 0)
+                {
+                    //printer.Print("-");
+                }
+                else if (Rocks.Any(_ => _.Points.Any(_ => _.X == col && _.Y == row)))
+                {
+                    sb.Append("#");
+                }
+                else
+                {
+                    sb.Append(".");
+                    //printer.Print(".");
+                }
+            }
+            //printer.Flush();
+        }
+        return sb.ToString();
+    }
 
     public void Print(IPrinter printer)
     {

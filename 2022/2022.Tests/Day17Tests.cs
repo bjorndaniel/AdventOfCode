@@ -35,7 +35,7 @@ public class Day17Tests
         var result = Day17.SolvePart1(filename, 2022, printer);
 
         //Then
-        Assert.True(3068 == result, $"Expected 3068, got {result}");
+        Assert.True(3068 == result, $"Expected 1514285714288, got {result}");
         //result.Print(printer);
     }
 
