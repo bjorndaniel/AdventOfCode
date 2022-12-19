@@ -8,7 +8,7 @@ public static class Day17
         return lines.First().Select(_ => _ == '>' ? Direction.Right : Direction.Left);
     }
 
-    public static Chamber SolvePart1(string filename, long nrOfRocks, IPrinter printer)
+    public static int SolvePart1(string filename, long nrOfRocks, IPrinter printer)
     {
         var chamber = new Chamber();
         var input = ParseInput(filename);
@@ -16,20 +16,14 @@ public static class Day17
         var rockCount = 0;
         Rock? current = null;
         var totalRocks = 1;
-        var watch = new Stopwatch();
-        watch.Start();
+        
         while (totalRocks < nrOfRocks)
         {
-
             if (current == null)
             {
                 current = GetRock(rockCount);
                 rockCount++;
                 totalRocks++;
-                if (totalRocks % 25000 == 0)
-                {
-                    printer.Print($"Total rocks: {totalRocks} in {watch.ElapsedMilliseconds}");
-                }
                 if (rockCount > 4)
                 {
                     rockCount = 0;
@@ -46,6 +40,14 @@ public static class Day17
             if (moveCount >= input.Count())
             {
                 moveCount = 0;
+                if(rockCount == 0 && totalRocks > 4)
+                {
+                    //we have found a repeating pattern
+                    var rocksBeforeRepeat = totalRocks;
+                    var timesToRepeat = nrOfRocks / 35;
+                    var height = chamber.Height * timesToRepeat;
+                    //return (int)height;
+                }
             }
             chamber.TryMove(nextMove, current);
             var couldDrop = chamber.TryDrop(current);
@@ -55,7 +57,7 @@ public static class Day17
             }
             //chamber.Print(printer);
         }
-        return chamber;
+        return chamber.Height;
         static Rock GetRock(int count) =>
             count switch
             {

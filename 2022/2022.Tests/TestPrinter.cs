@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-namespace AoC2022.Tests;
+﻿namespace AoC2022.Tests;
 public class TestPrinter : IPrinter
 {
     private readonly ITestOutputHelper _output;
