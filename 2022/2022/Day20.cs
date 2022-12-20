@@ -162,7 +162,7 @@ public class DoublyLinkedList
         var current = _head;
         for (int i = 0; i < Count; i++)
         {
-            if (current!.OriginalPosition == i)
+            if (current!.OriginalPosition == index)
             {
                 return current;
             }
