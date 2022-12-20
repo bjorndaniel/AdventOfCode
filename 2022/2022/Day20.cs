@@ -1,14 +1,14 @@
 ﻿namespace AoC2022;
 public static class Day20
 {
-    public static DoublyLinkedList ParseInput(string filename)
+    public static DoublyLinkedList ParseInput(string filename, bool part2 = false)
     {
         var lines = File.ReadAllLines(filename);
         var list = new DoublyLinkedList();
         var counter = 0;
-        foreach(var l in lines)
+        foreach (var l in lines)
         {
-            list.AddLast(int.Parse(l), counter);
+            list.AddLast(long.Parse(l) * (part2 ? 811589153 : 1), counter);
             counter++;
         }
         return list;
@@ -17,51 +17,68 @@ public static class Day20
     public static long SolvePart1(string filename, IPrinter printer)
     {
         var keys = ParseInput(filename);
-        printer.Print(keys.Print());
-        printer.Flush();
-        printer.Flush();
-        for (int i = 0; i < keys.Count; i++)
+        //printer.Print(keys.Print());
+        //printer.Flush();
+        //printer.Flush();
+        return Solver(printer, keys);
+    }
+
+    private static long Solver(IPrinter printer, DoublyLinkedList keys, int nrOfRounds = 1)
+    {
+        //    printer
+        //.Print(keys.Print());
+        //    printer.Flush();
+        //    printer.Flush();
+        for (int mix = 0; mix < nrOfRounds; mix++)
         {
-            var k = keys.GetOriginalElementAt(i);
-            var current = keys.GetPosition(k);
-            var value = k.Value + current;
-            if(value < 0)
+            for (int i = 0; i < keys.Count; i++)
             {
-                value = keys.Count - value - 1;
+                var k = keys.GetOriginalElementAt(i);
+                var current = keys.GetPosition(k);
+                var mod = keys.Count - 1;
+                if (k.Value == 0)
+                {
+                    continue;
+                }
+                var value = k.Value + current;
+                value = (value % mod + mod) % mod;
+                if (value == 0)
+                {
+                    value = keys.Count - 1;
+                }
+                //if (value >= keys.Count)
+                //{
+                //    value = 0;
+                //}
+                keys.Move(current, value);
+                //printer
+                //    .Print(keys.Print());
+                //printer.Flush();
+                //printer.Flush();
             }
-            keys.Move(current, value);
             printer
-                .Print(keys.Print());
+            .Print(keys.Print());
             printer.Flush();
             printer.Flush();
-            _ = "";
         }
-        var (k1, k2, k3) = (0, 0, 0);
-        var keyCounter = 0;
-        for (int i = 0; i < 3002; i++)
-        {
-            if (i == 1001)
-            {
-                k1 = keys.GetElementAt(keyCounter).Value;
-                Debug.Assert(k1 == 4);
-            }
-            if (i == 2001)
-            {
-                k2 = keys.GetElementAt(keyCounter).Value;
-                Debug.Assert(k1 == -3);
-            }
-            if (i == 3001)
-            {
-                k3 = keys.GetElementAt(keyCounter).Value;
-                Debug.Assert(k1 == 2);
-            }
-            keyCounter++;
-            if (keyCounter >= keys.Count)
-            {
-                keyCounter = 0;
-            }
-        }
+
+        //printer
+        //    .Print(keys.Print());
+        //printer.Flush();
+        //printer.Flush();
+        var index = keys.GetIndexOfValue(0);
+        var index1 = ((1000 + index + 1) % keys.Count - 1);
+        var index2 = ((2000 + index + 1) % keys.Count - 1);
+        var index3 = ((3000 + index + 1) % keys.Count - 1);
+        var k1 = keys.GetElementAt(index1).Value;
+        var k2 = keys.GetElementAt(index2).Value;
+        var k3 = keys.GetElementAt(index3).Value;
         return k1 + k2 + k3;
+    }
+    public static long SolvePart2(string filename, IPrinter printer)
+    {
+        var keys = ParseInput(filename, true);
+        return Solver(printer, keys, 10);
     }
 }
 
@@ -70,7 +87,7 @@ public class DoublyLinkedList
     private Node? _head;
     private Node? _tail;
 
-    public void AddLast(int value, int originalPosition)
+    public void AddLast(long value, int originalPosition)
     {
         var newNode = new Node(value, originalPosition) { Previous = _tail };
 
@@ -87,9 +104,8 @@ public class DoublyLinkedList
         Count++;
     }
 
-    public void Move(int fromIndex, int toIndex)
+    public void Move(long fromIndex, long toIndex)
     {
-        toIndex %= Count;
 
         if (fromIndex < 0 || fromIndex >= Count)
         {
@@ -103,7 +119,7 @@ public class DoublyLinkedList
 
         // Find the node to move
         var current = _head;
-        for (int i = 0; i < fromIndex; i++)
+        for (long i = 0; i < fromIndex; i++)
         {
             current = current!.Next;
         }
@@ -143,7 +159,7 @@ public class DoublyLinkedList
         else
         {
             var target = _head;
-            for (int i = 0; i < toIndex; i++)
+            for (long i = 0; i < toIndex; i++)
             {
                 target = target!.Next;
             }
@@ -168,7 +184,8 @@ public class DoublyLinkedList
             }
             current = current!.Next;
         }
-        throw new ArgumentOutOfRangeException($"Index {index} was out of range");
+        return current;
+        //throw new ArgumentOutOfRangeException($"Index {index} was out of range");
     }
 
     public Node GetElementAt(int index)
@@ -184,9 +201,9 @@ public class DoublyLinkedList
     public int GetPosition(Node n)
     {
         var current = _head;
-        for(int i = 0; i < Count; i++)
+        for (int i = 0; i < Count; i++)
         {
-            if(current!.Id == n.Id)
+            if (current!.Id == n.Id)
             {
                 return i;
             }
@@ -197,10 +214,25 @@ public class DoublyLinkedList
 
     public IEnumerable<Node> GetAll()
     {
+        var current = _head;
         for (int i = 0; i < Count; i++)
         {
             yield return GetElementAt(i);
         }
+    }
+
+    public int GetIndexOfValue(long value)
+    {
+        var current = _head; ;
+        for (int i = 0; i < Count; i++)
+        {
+            if (current.Value == value)
+            {
+                return i;
+            }
+            current = current.Next;
+        }
+        throw new ArgumentException($"Value not found {value}");
     }
 
     public string Print() =>
@@ -211,7 +243,7 @@ public class DoublyLinkedList
 
 public class Node
 {
-    public Node(int value, int originalPosition)
+    public Node(long value, int originalPosition)
     {
         Value = value;
         OriginalPosition = originalPosition;
@@ -220,6 +252,6 @@ public class Node
     public Guid Id { get; }
     public Node? Next { get; set; }
     public Node? Previous { get; set; }
-    public int Value { get; }
+    public long Value { get; }
     public int OriginalPosition { get; }
 }
