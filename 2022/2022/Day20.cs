@@ -67,6 +67,7 @@ public static class Day20
         //printer.Flush();
         //printer.Flush();
         var index = keys.GetIndexOfValue(0);
+
         var index1 = ((1000 + index + 1) % keys.Count - 1);
         var index2 = ((2000 + index + 1) % keys.Count - 1);
         var index3 = ((3000 + index + 1) % keys.Count - 1);
