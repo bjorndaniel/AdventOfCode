@@ -55,25 +55,25 @@ public static class Day17
             {
                 current = null;
             }
-            if (totalRocks % 100 == 0)
-            {
-                if (totalRocks == 100)
-                {
-                    key.Add($"{chamber.Flatten(true)}{current}{nextMove}");
-                }
-                else if (key.Any(_ => _ == $"{chamber.Flatten()}{current}{nextMove}"))
-                {
-                    var rocksBeforeRepeat = totalRocks;
-                    var timesToRepeat = nrOfRocks / rocksBeforeRepeat;
-                    var height = chamber.Height * timesToRepeat;
-                    return height;
-                }
-                else
-                {
-                    key.Add($"{chamber.Flatten()}{current}{nextMove}");
-                }
+            //if (totalRocks % 100 == 0)
+            //{
+            //    if (totalRocks == 100)
+            //    {
+            //        key.Add($"{chamber.Flatten(true)}{current}{nextMove}");
+            //    }
+            //    else if (key.Any(_ => _ == $"{chamber.Flatten()}{current}{nextMove}"))
+            //    {
+            //        var rocksBeforeRepeat = totalRocks;
+            //        var timesToRepeat = nrOfRocks / rocksBeforeRepeat;
+            //        var height = chamber.Height * timesToRepeat;
+            //        return height;
+            //    }
+            //    else
+            //    {
+            //        key.Add($"{chamber.Flatten()}{current}{nextMove}");
+            //    }
 
-            }
+            //}
             //chamber.Print(printer);
         }
         return (long)chamber.Height;

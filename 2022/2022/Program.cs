@@ -168,20 +168,40 @@ watch.Restart();
 var day17Part1 = Day17.SolvePart1(day17File, 2022, new Printer());
 watch.Stop();
 Console.WriteLine($"Day17 part 1: {day17Part1} in {watch.ElapsedMilliseconds}ms");
-watch.Restart();
-var day17Part2 = Day17.SolvePart1(day17File, 1000000000000, new Printer());
-watch.Stop();
-Console.WriteLine($"Day17 part 2: {day17Part2} in {watch.ElapsedMilliseconds}ms");
+//watch.Restart();
+//var day17Part2 = Day17.SolvePart1(day17File, 1000000000000, new Printer());
+//watch.Stop();
+//Console.WriteLine($"Day17 part 2: {day17Part2} in {watch.ElapsedMilliseconds}ms");
 
 var day18File = $"{Helpers.DirectoryPath}Day18.txt";
 watch.Restart();
 var day18Part1 = Day18.SolvePart1(day18File);
 watch.Stop();
 Console.WriteLine($"Day18 part 1: {day18Part1.result} in {watch.ElapsedMilliseconds}ms");
+//watch.Restart();
+//var day18Part2 = Day18.SolvePart2(day18File);
+//watch.Stop();
+//Console.WriteLine($"Day15 part 2: {day18Part2} in {watch.ElapsedMilliseconds}ms");
+
+//var day19File = $"{Helpers.DirectoryPath}day19.txt";
+//watch.Restart();
+//var day19Part1 = day19.SolvePart1(day19File);
+//watch.Stop();
+//Console.WriteLine($"day19 part 1: {day19Part1.result} in {watch.ElapsedMilliseconds}ms");
+//watch.Restart();
+//var day19Part2 = day19.SolvePart2(day19File);
+//watch.Stop();
+//Console.WriteLine($"Day15 part 2: {day19Part2} in {watch.ElapsedMilliseconds}ms");
+
+var day20File = $"{Helpers.DirectoryPath}Day20.txt";
 watch.Restart();
-var day18Part2 = Day18.SolvePart2(day18File);
+var day20Part1 = Day20.SolvePart1(day20File, new Printer());
 watch.Stop();
-Console.WriteLine($"Day15 part 2: {day18Part2} in {watch.ElapsedMilliseconds}ms");
+Console.WriteLine($"Day20 part 1: {day20Part1} in {watch.ElapsedMilliseconds}ms");
+//watch.Restart();
+//var day20Part2 = day20.SolvePart2(day20File);
+//watch.Stop();
+//Console.WriteLine($"Day15 part 2: {day20Part2} in {watch.ElapsedMilliseconds}ms");
 
 totalTime.Stop();
 Console.WriteLine($"AoC 2022 total running time: {totalTime.Elapsed.TotalMilliseconds}ms");
