@@ -227,7 +227,7 @@ public class DoublyLinkedList
         var current = _head; ;
         for (int i = 0; i < Count; i++)
         {
-            if (current.Value == value)
+            if (current!.Value == value)
             {
                 return i;
             }
