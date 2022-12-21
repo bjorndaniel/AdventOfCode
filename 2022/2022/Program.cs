@@ -203,6 +203,16 @@ var day20Part2 = Day20.SolvePart2(day20File, new Printer());
 watch.Stop();
 Console.WriteLine($"Day20 part 2: {day20Part2} in {watch.ElapsedMilliseconds}ms");
 
+var day21File = $"{Helpers.DirectoryPath}Day21.txt";
+watch.Restart();
+var day21Part1 = Day21.SolvePart1(day21File);
+watch.Stop();
+Console.WriteLine($"Day21 part 1: {day21Part1} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day21Part2 = Day21.SolvePart2(day21File, new Printer());
+watch.Stop();
+Console.WriteLine($"Day21 part 2: {day21Part2} in {watch.ElapsedMilliseconds}ms");
+
 totalTime.Stop();
 Console.WriteLine($"AoC 2022 total running time: {totalTime.Elapsed.TotalMilliseconds}ms");
 

@@ -56,10 +56,10 @@ public static class Day20
                 //printer.Flush();
                 //printer.Flush();
             }
-            printer
-            .Print(keys.Print());
-            printer.Flush();
-            printer.Flush();
+            //printer
+            //.Print(keys.Print());
+            //printer.Flush();
+            //printer.Flush();
         }
 
         //printer
@@ -185,7 +185,7 @@ public class DoublyLinkedList
             }
             current = current!.Next;
         }
-        return current;
+        return current!;
         //throw new ArgumentOutOfRangeException($"Index {index} was out of range");
     }
 
