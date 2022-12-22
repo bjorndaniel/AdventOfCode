@@ -55,6 +55,7 @@ public static class Day21
     {
         var done = false;
         var monkeys = ParseInput(filename)!;
+        var counter = 0;
         while (!done)
         {
             foreach (var pair in monkeys.Where(_ => _.Value.Operator != Operator.None && _.Value.Name != "root"))
@@ -72,7 +73,33 @@ public static class Day21
                     monkeys[pair.Value.Right!].Value = right;
                 }
             }
-            done = true;
+            var newC = monkeys.Count(_ => _.Value.Operator != Operator.None);
+            if (newC == counter)
+            {
+                var root = monkeys["root"];
+                var (ls, l) = GetMonkeyValue2(monkeys[root.Left!], monkeys);
+                var (rs, r) = GetMonkeyValue2(monkeys[root.Right!], monkeys);
+                if (ls)
+                {
+                    monkeys[root.Left!].Value = l;
+                    monkeys[root.Left!].Operator = Operator.None;
+                }
+                if (rs)
+                {
+                    monkeys[root.Right!].Value = l;
+                    monkeys[root.Right!].Operator = Operator.None;
+                }
+                if(rs || ls)
+                {
+                    counter = monkeys.Count(_ => _.Value.Operator != Operator.None);
+                    continue;
+                }
+                done = true;
+            }
+            else
+            {
+                counter = newC;
+            }
         }
         return 0;
         //var monkeys = ParseInput(filename)!;
@@ -98,8 +125,6 @@ public static class Day21
         //return monkeys["humn"]!.Value!.Value!;
     }
 
-
-
     private static long GetMonkeyValue(ScreamMonkey monkey, Dictionary<string, ScreamMonkey> monkeys)
     {
         return monkey.Operator switch
@@ -118,6 +143,11 @@ public static class Day21
         {
             return (false, 0);
         }
+        if (monkey.Operator == Operator.None)
+        {
+            return (true, monkey.Value!.Value);
+        }
+
         var (ls, l) = GetMonkeyValue2(monkeys[monkey.Left!], monkeys);
         var (rs, r) = GetMonkeyValue2(monkeys[monkey.Right!], monkeys);
         if (ls && rs)
