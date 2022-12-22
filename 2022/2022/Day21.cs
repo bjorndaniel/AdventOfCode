@@ -57,7 +57,7 @@ public static class Day21
         var monkeys = ParseInput(filename)!;
         while (!done)
         {
-            foreach (var pair in monkeys.Where(_ => _.Value.Operator != Operator.None))
+            foreach (var pair in monkeys.Where(_ => _.Value.Operator != Operator.None && _.Value.Name != "root"))
             {
                 var (ls, left) = GetMonkeyValue2(monkeys[pair.Value.Left!], monkeys);
                 var (rs, right) = GetMonkeyValue2(monkeys[pair.Value.Right!], monkeys);
