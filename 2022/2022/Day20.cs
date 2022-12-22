@@ -76,6 +76,7 @@ public static class Day20
         var k3 = keys.GetElementAt(index3).Value;
         return k1 + k2 + k3;
     }
+
     public static long SolvePart2(string filename, IPrinter printer)
     {
         var keys = ParseInput(filename, true);
