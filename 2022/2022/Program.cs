@@ -223,7 +223,7 @@ void PrintDay10(char?[,] chars)
         var sb = new StringBuilder();
         for (int col = 0; col < chars.GetLength(1); col++)
         {
-            sb.Append(chars[row, col] ?? '.');
+            sb.Append(chars[row, col] ?? ' ');
         }
         Console.WriteLine(sb.ToString());
     }

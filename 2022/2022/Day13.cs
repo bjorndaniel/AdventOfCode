@@ -1,4 +1,5 @@
-﻿namespace AoC2022;
+﻿
+namespace AoC2022;
 public static class Day13
 {
 
@@ -13,8 +14,8 @@ public static class Day13
                 continue;
             }
 
-            var left = lines[i][1..^1];
-            var right = lines[i + 1][1..^1];
+            var left = lines[i][0..];
+            var right = lines[i + 1][0..];
             i++;
             result.Add(new Pair(left, right));
         }
@@ -53,6 +54,58 @@ public static class Day13
     }
 
     public static bool ComparePair(Pair pair)
+    {
+        var (left, right) = pair.GetJsonElement();
+        if(IsEmptyArray(left) && !IsEmptyArray(right))
+        {
+            return true;
+        }
+        if (!IsEmptyArray(left) && IsEmptyArray(right))
+        {
+            return false;
+        }
+        if (left.ValueKind == JsonValueKind.Number && right.ValueKind == JsonValueKind.Number)
+        {
+            if(left.GetInt32() < right.GetInt32())
+            {
+                return true;
+            }
+            if(left.GetInt32() > right.GetInt32())
+            {
+                return false;
+            }
+            return ComparePair(pair.RemoveFirst());
+        }
+        if (left.ValueKind == JsonValueKind.Number && right.ValueKind == JsonValueKind.Array)
+        {
+            pair.Left = $"[{pair.Left}]";
+            return ComparePair(pair);
+        }
+        if (left.ValueKind == JsonValueKind.Array && right.ValueKind == JsonValueKind.Number)
+        {
+            pair.Left = $"[{pair.Right}]";
+            return ComparePair(pair);
+        }
+        if(left.ValueKind == JsonValueKind.Array && right.ValueKind == JsonValueKind.Array)
+        {
+            var x = left.EnumerateArray().First();
+            var y = right.EnumerateArray().First();
+            if (x.GetInt32() < y.GetInt32())
+            {
+                return true;
+            }
+            if (x.GetInt32() > y.GetInt32())
+            {
+                return false;
+            }
+            return ComparePair(pair.RemoveFirst());
+        }
+        return false;
+        static bool IsEmptyArray(JsonElement element) =>
+            element.ValueKind == JsonValueKind.Array && element.GetArrayLength() == 0;
+    }
+
+    public static bool ComparePairOLD(Pair pair)
     {
         var left = pair.Left;
         var right = pair.Right;
@@ -326,10 +379,31 @@ public class Part
     }
 }
 
-public record Pair(string Left, string Right)
+public class Pair
 {
+    public string Left { get; set; }
+    public string Right { get; set; }
+
+    public    Pair(string left, string right)
+    {
+        Left = left;
+        Right = right;
+    }
+        
+
     public Pair ReOrder() =>
         new Pair(Right, Left);
+
+    public (JsonElement left, JsonElement right) GetJsonElement() =>
+        ((JsonElement)JsonSerializer.Deserialize<object>(Left)!, (JsonElement)JsonSerializer.Deserialize<object>(Right)!) ;
+
+    public Pair RemoveFirst()
+    {
+        var (left, right) = GetJsonElement();
+        var newl = left.EnumerateArray();
+        var newR = right.EnumerateArray();
+        return this;
+    }
 }
 
 public class Packet
@@ -351,4 +425,5 @@ public class Packet
     {
         return base.GetHashCode();
     }
+
 }

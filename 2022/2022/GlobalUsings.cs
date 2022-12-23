@@ -6,3 +6,4 @@ global using System.Numerics;
 global using static AoC2022.Day17;
 global using System.Collections.Concurrent;
 global using System.Linq;
+global using System.Text.Json;

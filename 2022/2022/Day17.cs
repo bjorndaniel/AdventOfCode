@@ -17,17 +17,15 @@ public static class Day17
         var rockCount = 0;
         Rock? current = null;
         var totalRocks = 1;
+        var compareRows = new Dictionary<string, int>();
+        var currentRow = new StringBuilder();
+
         var watch = new Stopwatch();
         watch.Start();
         while (totalRocks < nrOfRocks)
         {
             if (current == null)
             {
-                if (totalRocks % 10000 == 0)
-                {
-                    printer.Print($"Total rocks: {totalRocks} Elapsed:{watch.Elapsed.TotalSeconds}");
-                }
-
                 current = GetRock(rockCount);
                 rockCount++;
                 totalRocks++;
@@ -39,7 +37,6 @@ public static class Day17
                 chamber.Rocks.Add(current);
                 var removeBelow = chamber.CurrentBottom - 100;
                 chamber.Rocks = chamber.Rocks.Where(_ => _.BottomLeft.Y >= removeBelow).ToList();
-                //chamber.Print(printer);
                 continue;
             }
             var nextMove = input.ElementAt(moveCount);
@@ -47,34 +44,34 @@ public static class Day17
             if (moveCount >= input.Count())
             {
                 moveCount = 0;
-
             }
             chamber.TryMove(nextMove, current);
-            var couldDrop = chamber.TryDrop(current);
+            var couldDrop = chamber.TryDrop(current, currentRow);
             if (!couldDrop)
             {
+                //chamber.Flatten(current, currentRow, nextMove);
                 current = null;
-            }
-            //if (totalRocks % 100 == 0)
-            //{
-            //    if (totalRocks == 100)
-            //    {
-            //        key.Add($"{chamber.Flatten(true)}{current}{nextMove}");
-            //    }
-            //    else if (key.Any(_ => _ == $"{chamber.Flatten()}{current}{nextMove}"))
-            //    {
-            //        var rocksBeforeRepeat = totalRocks;
-            //        var timesToRepeat = nrOfRocks / rocksBeforeRepeat;
-            //        var height = chamber.Height * timesToRepeat;
-            //        return height;
-            //    }
-            //    else
-            //    {
-            //        key.Add($"{chamber.Flatten()}{current}{nextMove}");
-            //    }
 
-            //}
-            //chamber.Print(printer);
+                //if (totalRocks % 100 == 0 && totalRocks > 1500)
+                //{
+                //    if (compareRows.ContainsKey(currentRow.ToString()))
+                //    {
+                //        printer.Print(currentRow.ToString());
+                //        printer.Flush();
+                //        var cycleHeight = compareRows[currentRow.ToString()];
+                //        var cycleLength = totalRocks - cycleHeight;
+                //        var fullCycles = totalRocks / cycleLength;
+
+                //        var height = (nrOfRocks / fullCycles) * (chamber.Height - cycleHeight);
+                //        return height;
+                //    }
+                //    else
+                //    {
+                //        compareRows.Add(currentRow.ToString(), chamber.Height);
+                //        currentRow = new StringBuilder();
+                //    }
+                //}
+            }
         }
         return (long)chamber.Height;
         static Rock GetRock(int count) =>
@@ -121,36 +118,52 @@ public class Chamber
     public Point GetNextDrop() =>
         new(3, CurrentBottom == 0 ? 4 : CurrentBottom + 4);
 
-    public string Flatten(bool start = false)
+    public void Flatten(Rock current, StringBuilder sb, Day17.Direction move)
     {
-        var sb = new StringBuilder();
-        for (int row = Height; row >= (start ? 0 : 100); row--)
+        for (int i = current.Points.Min(_ => _.Y); i < current.Points.Max(_ => _.Y) + 1; i++)
         {
-            for (int col = 0; col < 9; col++)
+            for (int j = 1; j < Width + 1; j++)
             {
-                if (col == 0 || col == 8)
-                {
-                    //printer.Print("|");
-                    continue;
-                }
-                else if (row == 0)
-                {
-                    //printer.Print("-");
-                }
-                else if (Rocks.Any(_ => _.Points.Any(_ => _.X == col && _.Y == row)))
+                if (Rocks.Any(_ => _.Points.Any(_ => _.X == j && _.Y == i)))
                 {
                     sb.Append("#");
                 }
                 else
                 {
                     sb.Append(".");
-                    //printer.Print(".");
                 }
             }
-            //printer.Flush();
         }
-        return sb.ToString();
+        sb.Append(move);
     }
+    //var sb = new StringBuilder();
+    //for (int row = Height; row >= (start ? 0 : 100); row--)
+    //{
+    //    for (int col = 0; col < 9; col++)
+    //    {
+    //        if (col == 0 || col == 8)
+    //        {
+    //            //printer.Print("|");
+    //            continue;
+    //        }
+    //        else if (row == 0)
+    //        {
+    //            //printer.Print("-");
+    //        }
+    //        else if (Rocks.Any(_ => _.Points.Any(_ => _.X == col && _.Y == row)))
+    //        {
+    //            sb.Append("#");
+    //        }
+    //        else
+    //        {
+    //            sb.Append(".");
+    //            //printer.Print(".");
+    //        }
+    //    }
+    //    //printer.Flush();
+    //}
+    //return sb.ToString();
+    //}
 
     public void Print(IPrinter printer)
     {
@@ -200,7 +213,7 @@ public class Chamber
         current.Move(nextMove);
     }
 
-    public bool TryDrop(Rock current)
+    public bool TryDrop(Rock current, StringBuilder sb)
     {
         var other = Rocks.Except(new List<Rock> { current }).SelectMany(_ => _.Points);
         var positonsNeeded = current.PositionsNeeded(Day17.Direction.Down);
@@ -213,23 +226,24 @@ public class Chamber
             return false;
         }
         current.Drop();
+
         return true;
     }
 }
 
 public class Rock
 {
-    private readonly RockFormation _formation;
-
     public Rock(RockFormation formation)
     {
-        _formation = formation;
+        Formation = formation;
     }
+
+    public Guid Id { get; } = Guid.NewGuid();
 
     public Point BottomLeft { get; set; }
 
     public List<Point> Points =>
-        _formation switch
+        Formation switch
         {
             RockFormation.HLine => new List<Point>
             {
@@ -268,8 +282,10 @@ public class Rock
                 new Point(BottomLeft.X, BottomLeft.Y + 1),
                 new Point(BottomLeft.X + 1, BottomLeft.Y + 1)
             },
-            _ => throw new Exception($"Unexpected formation {_formation}")
+            _ => throw new Exception($"Unexpected formation {Formation}")
         };
+
+    public RockFormation Formation { get; }
 
     public void Move(Day17.Direction nextMove)
     {

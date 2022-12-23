@@ -53,7 +53,7 @@ public static class Day21
 
     public static long SolvePart2(string filename, IPrinter printer)
     {
-        var done = false;
+        var done = true;
         var monkeys = ParseInput(filename)!;
         var counter = 0;
         while (!done)
