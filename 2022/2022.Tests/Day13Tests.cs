@@ -21,9 +21,9 @@ public class Day13Tests
 
     [Theory]
     [InlineData("[1,1,3,1,1]", "[1,1,5,1,1]", true)]
-    //[InlineData("[1,1,5,1,1]", "[1,1,3,1,1]", false)]
+    [InlineData("[1,1,5,1,1]", "[1,1,3,1,1]", false)]
 
-    //[InlineData("[[1],[2,3,4]]", "[[1],4]]", true)]
+    [InlineData("[[1],[2,3,4]]", "[[1],4]", true)]
     //[InlineData("[[1],4]", "[[1],[2,3,4]]", false)]
 
     //[InlineData("[9]", "[[8,7,6]]", false)]

@@ -55,54 +55,53 @@ public static class Day21
         var done = true;
         var monkeys = ParseInput(filename)!;
         var counter = 0;
-        while (!done)
-        {
-            foreach (var pair in monkeys.Where(_ => _.Value.Operator != Operator.None && _.Value.Name != "root"))
-            {
-                var (ls, left) = GetMonkeyValue2(monkeys[pair.Value.Left!], monkeys);
-                var (rs, right) = GetMonkeyValue2(monkeys[pair.Value.Right!], monkeys);
-                if (ls)
-                {
-                    monkeys[pair.Value.Left!].Operator = Operator.None;
-                    monkeys[pair.Value.Left!].Value = left;
-                }
-                if (rs)
-                {
-                    monkeys[pair.Value.Right!].Operator = Operator.None;
-                    monkeys[pair.Value.Right!].Value = right;
-                }
-            }
-            var newC = monkeys.Count(_ => _.Value.Operator != Operator.None);
-            if (newC == counter)
-            {
-                var root = monkeys["root"];
-                var (ls, l) = GetMonkeyValue2(monkeys[root.Left!], monkeys);
-                var (rs, r) = GetMonkeyValue2(monkeys[root.Right!], monkeys);
-                if (ls)
-                {
-                    monkeys[root.Left!].Value = l;
-                    monkeys[root.Left!].Operator = Operator.None;
-                }
-                if (rs)
-                {
-                    monkeys[root.Right!].Value = l;
-                    monkeys[root.Right!].Operator = Operator.None;
-                }
-                if(rs || ls)
-                {
-                    counter = monkeys.Count(_ => _.Value.Operator != Operator.None);
-                    continue;
-                }
-                done = true;
-            }
-            else
-            {
-                counter = newC;
-            }
-        }
+        //while (!done)
+        //{
+        //    foreach (var pair in monkeys.Where(_ => _.Value.Operator != Operator.None && _.Value.Name != "root"))
+        //    {
+        //        var (ls, left) = GetMonkeyValue2(monkeys[pair.Value.Left!], monkeys);
+        //        var (rs, right) = GetMonkeyValue2(monkeys[pair.Value.Right!], monkeys);
+        //        if (ls)
+        //        {
+        //            monkeys[pair.Value.Left!].Operator = Operator.None;
+        //            monkeys[pair.Value.Left!].Value = left;
+        //        }
+        //        if (rs)
+        //        {
+        //            monkeys[pair.Value.Right!].Operator = Operator.None;
+        //            monkeys[pair.Value.Right!].Value = right;
+        //        }
+        //    }
+        //    var newC = monkeys.Count(_ => _.Value.Operator != Operator.None);
+        //    if (newC == counter)
+        //    {
+        //        var root = monkeys["root"];
+        //        var (ls, l) = GetMonkeyValue2(monkeys[root.Left!], monkeys);
+        //        var (rs, r) = GetMonkeyValue2(monkeys[root.Right!], monkeys);
+        //        if (ls)
+        //        {
+        //            monkeys[root.Left!].Value = l;
+        //            monkeys[root.Left!].Operator = Operator.None;
+        //        }
+        //        if (rs)
+        //        {
+        //            monkeys[root.Right!].Value = l;
+        //            monkeys[root.Right!].Operator = Operator.None;
+        //        }
+        //        if (rs || ls)
+        //        {
+        //            counter = monkeys.Count(_ => _.Value.Operator != Operator.None);
+        //            continue;
+        //        }
+        //        done = true;
+        //    }
+        //    else
+        //    {
+        //        counter = newC;
+        //    }
+        //}
         return 0;
     }
-
 
     private static long GetMonkeyValue(ScreamMonkey monkey, Dictionary<string, ScreamMonkey> monkeys)
     {
@@ -115,8 +114,6 @@ public static class Day21
             _ => monkey.Value!.Value
         };
     }
-
-
 }
 
 public class ScreamMonkey
