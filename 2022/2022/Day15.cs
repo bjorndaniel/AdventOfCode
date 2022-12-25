@@ -31,22 +31,14 @@ public static class Day15
         var ranges = new List<(long low, long high)>();
         for (long i = lower; i < upper; i++)
         {
-            foreach (var s in sensors)
+            Parallel.ForEach(sensors, s =>
             {
                 var (success, range) = s.GetRange(i, lower, upper);
                 if (success)
                 {
                     ranges.Add(range);
                 }
-            }
-            //Parallel.ForEach(sensors, s =>
-            //{
-            //    var (success, range) = s.GetRange(i, lower, upper);
-            //    if (success)
-            //    {
-            //        ranges.Add(range);
-            //    }
-            //});
+            });
             if (!ranges.Any())
             {
                 continue;
@@ -59,10 +51,6 @@ public static class Day15
                 {
                     newRange.high = Math.Max(newRange.high, r.high);
                     newRange.low = Math.Min(newRange.low, r.low);
-                    if (newRange.low == lower && newRange.high == upper)
-                    {
-                        break;
-                    }
                     continue;
                 }
 
@@ -162,7 +150,7 @@ public static class Day15
         {
             return true;
         }
-        else if (Math.Abs(r1.high - r2.low) == 1)
+        else if (r1.high - r2.low == 1)
         {
             return true;
         }
@@ -259,25 +247,23 @@ public record Sensor(PointL Position, Beacon Beacon)
         var l = Position.X - distance + offset;
         var h = Position.X + distance - offset;
         var (low, high) = (Position.X - distance + offset, Position.X + distance - offset);
-        var nlow = Math.Min(low, high);
-        var nhigh = Math.Max(low, high);
-        if (!Day15.Overlap((nlow, nhigh), (lowerBound, upperBound)))
+        if (!Day15.Overlap((low, high), (lowerBound, upperBound)))
         {
             return (false, (0, 0));
         }
-        if (nlow < lowerBound)
+        if (low < lowerBound)
         {
-            nlow = lowerBound;
+            low = lowerBound;
         }
-        if (nhigh > upperBound)
+        if (high > upperBound)
         {
-            nhigh = upperBound;
+            high = upperBound;
         }
-        if (nhigh < nlow)
+        if (high < low)
         {
-            nlow = nhigh;
+            low = high;
         }
-        return (true, (nlow, nhigh));
+        return (true, (low, high));
     }
 
     //public (bool covers, PointL? p) GetBorder(Sensor tester, long upper)
