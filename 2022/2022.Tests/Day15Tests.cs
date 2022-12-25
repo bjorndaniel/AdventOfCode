@@ -33,26 +33,27 @@ public class Day15Tests
     [Fact]
     public void Can_solve_part1_for_test()
     {
-        {
-            //Given
-            var filename = $"{Helpers.DirectoryPathTests}Day15-test.txt";
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day15-test.txt";
 
-            //When
-            var result = Day15.SolvePart1(filename, 10);
+        //When
+        var result = Day15.SolvePart1(filename, 10);
 
-            //Then
-            Assert.True(26 == result, $"Expected 26, got {result}");
-        }
+        //Then
+        Assert.True(26 == result, $"Expected 26, got {result}");
     }
 
     [Fact]
     public void Can_solve_part2_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPathTests}Day15-test.txt";
+        //var filename = $"{Helpers.DirectoryPathTests}Day15-test.txt";
+        var filename = $"C:/OneDrive/Code/AdventOfCodeInputs/2022/Puzzles/Day15.txt";
+
 
         //When
-        var result = Day15.SolvePart2(filename, 0, 20);
+        //var result = Day15.SolvePart2(filename, 0, 20);
+        var result = Day15.SolvePart2(filename, 0, 4000000);
 
         //Then
         Assert.True(56000011 == result, $"Expected 56000011, got {result}");
@@ -86,7 +87,7 @@ public class Day15Tests
     [InlineData(8, 0, 0, true, -10, 0)]
     [InlineData(7, -1, 12, true, -10, 12)]
     [InlineData(16, 0, 0, false, -20, -10)]
-    [InlineData(5, 0, 0, false, 16, 20)]
+    [InlineData(5, 0, 0, false, 17, 20)]
     public void Test_ranges(int row, int expectedLow, int expectedHigh, bool expected, int lower, int upper)
     {
         //Given

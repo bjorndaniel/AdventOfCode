@@ -148,10 +148,10 @@ watch.Restart();
 var day15Part1 = Day15.SolvePart1(day15File, 2000000);
 watch.Stop();
 Console.WriteLine($"Day15 part 1: {day15Part1} in {watch.ElapsedMilliseconds}ms");
-//watch.Restart();
-//var day15Part2 = Day15.SolvePart2(day15File, 0, 4000000);
-//watch.Stop();
-//Console.WriteLine($"Day15 part 2: {day15Part2} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day15Part2 = Day15.SolvePart2(day15File, 0, 4000000);
+watch.Stop();
+Console.WriteLine($"Day15 part 2: {day15Part2} in {watch.ElapsedMilliseconds}ms");
 
 //var Day16File = $"{Helpers.DirectoryPath}Day16.txt";
 //watch.Restart();
