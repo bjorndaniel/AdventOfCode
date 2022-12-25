@@ -20,37 +20,37 @@ public class Day13Tests
     }
 
     [Theory]
-    [InlineData("[1,1,3,1,1]", "[1,1,5,1,1]", true)]
-    [InlineData("[1,1,5,1,1]", "[1,1,3,1,1]", false)]
+    [InlineData("[1,1,3,1,1]", "[1,1,5,1,1]", CompareResult.True)]
+    [InlineData("[1,1,5,1,1]", "[1,1,3,1,1]", CompareResult.False)]
 
-    [InlineData("[[1],[2,3,4]]", "[[1],4]", true)]
-    //[InlineData("[[1],4]", "[[1],[2,3,4]]", false)]
+    [InlineData("[[1],[2,3,4]]", "[[1],4]", CompareResult.True)]
+    [InlineData("[[1],4]", "[[1],[2,3,4]]", CompareResult.False)]
 
-    //[InlineData("[9]", "[[8,7,6]]", false)]
-    //[InlineData("[[8,7,6]]", "[9]", true)]
+    [InlineData("[9]", "[[8,7,6]]", CompareResult.False)]
+    [InlineData("[[8,7,6]]", "[9]", CompareResult.True)]
 
-    //[InlineData("[[4,4],4,4]", "[[4,4],4,4,4]", true)]
-    //[InlineData("[[4,4],4,4,4]", "[[4,4],4,4]", false)]
+    [InlineData("[[4,4],4,4]", "[[4,4],4,4,4]", CompareResult.True)]
+    [InlineData("[[4,4],4,4,4]", "[[4,4],4,4]", CompareResult.False)]
 
-    //[InlineData("[7,7,7,7]", "[7,7,7]", false)]
-    //[InlineData("[7,7,7]", "[7,7,7,7]", true)]
+    [InlineData("[7,7,7,7]", "[7,7,7]", CompareResult.False)]
+    [InlineData("[7,7,7]", "[7,7,7,7]", CompareResult.True)]
 
-    //[InlineData("[]", "[3]", true)]
-    //[InlineData("[3]", "[]", false)]
+    [InlineData("[]", "[3]", CompareResult.True)]
+    [InlineData("[3]", "[]", CompareResult.False)]
 
-    //[InlineData("[[[]]]", "[[]]", false)]
-    //[InlineData("[[]]", "[[[]]]", true)]
+    [InlineData("[[[]]]", "[[]]", CompareResult.False)]
+    [InlineData("[[]]", "[[[]]]", CompareResult.True)]
 
-    //[InlineData("[1,[2,[3,[4,[5,6,7]]]],8,9]", "[1,[2,[3,[4,[5,6,0]]]],8,9]", false)]
-    //[InlineData("[1,[2,[3,[4,[5,6,0]]]],8,9]", "[1,[2,[3,[4,[5,6,7]]]],8,9]", true)]
-    //[InlineData("[[1],[2,3,4]]", "[1,1,3,1,1]", false)]
-    //[InlineData("[[1],[2,3,4]]", "[1,1,5,1,1]", false)]
-    //[InlineData("[[]]", "[[1],[2,3,4]]", true)]
-    //[InlineData("[1,1,5,1,1]", "[[1],4]", true)]
-    //[InlineData("[1,[2,[3,[4,[5,6,7]]]],8,9]", "[[1],[2,3,4]]", false)]
-    //[InlineData("[1,[2,[3,[4,[5,6,7]]]],8,9]", "[[1],4]", true)]
-    //[InlineData("[[]]", "[]", false)]
-    public void Can_compare_pair(string left, string right, bool expected)
+    [InlineData("[1,[2,[3,[4,[5,6,7]]]],8,9]", "[1,[2,[3,[4,[5,6,0]]]],8,9]", CompareResult.False)]
+    [InlineData("[1,[2,[3,[4,[5,6,0]]]],8,9]", "[1,[2,[3,[4,[5,6,7]]]],8,9]", CompareResult.True)]
+    [InlineData("[[1],[2,3,4]]", "[1,1,3,1,1]", CompareResult.False)]
+    [InlineData("[[1],[2,3,4]]", "[1,1,5,1,1]", CompareResult.False)]
+    [InlineData("[[]]", "[[1],[2,3,4]]", CompareResult.True)]
+    [InlineData("[1,1,5,1,1]", "[[1],4]", CompareResult.True)]
+    [InlineData("[1,[2,[3,[4,[5,6,7]]]],8,9]", "[[1],[2,3,4]]", CompareResult.False)]
+    [InlineData("[1,[2,[3,[4,[5,6,7]]]],8,9]", "[[1],4]", CompareResult.True)]
+    [InlineData("[[]]", "[]", CompareResult.False)]
+    public void Can_compare_pair(string left, string right, CompareResult expected)
     {
         //Given
         var pair = new Pair(left, right);
