@@ -178,10 +178,10 @@ watch.Restart();
 var day18Part1 = Day18.SolvePart1(day18File);
 watch.Stop();
 Console.WriteLine($"Day18 part 1: {day18Part1.result} in {watch.ElapsedMilliseconds}ms");
-//watch.Restart();
-//var day18Part2 = Day18.SolvePart2(day18File);
-//watch.Stop();
-//Console.WriteLine($"Day15 part 2: {day18Part2} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day18Part2 = Day18.SolvePart2(day18File);
+watch.Stop();
+Console.WriteLine($"Day18 part 2: {day18Part2} in {watch.ElapsedMilliseconds}ms");
 
 //var day19File = $"{Helpers.DirectoryPath}day19.txt";
 //watch.Restart();

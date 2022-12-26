@@ -40,49 +40,52 @@ public static class Day18
     {
         var emptyCubes = new List<Cube>();
         var (result, cubes) = SolvePart1(filename);
-        foreach (var cube in cubes)
+        var bounds = GetBounds(cubes);
+        var filled = FloodFill(bounds.min, cubes, bounds);
+        var many = cubes.SelectMany(GetSurrounding).ToList();
+        var x = many.Count(_ => filled.Contains(_));
+        return x;
+        IEnumerable<Cube> FloodFill(Cube cube, List<Cube> cubes, (Cube min, Cube max) bounds)
         {
-            var surroundingCubes = GetSurrounding(cube);
-            foreach (var s in surroundingCubes)
+            var queue = new Queue<Cube>();
+            queue.Enqueue(cube);
+            var result = new List<Cube>();
+            result.Add(cube);
+            while (queue.Any())
             {
-                if (cubes.Contains(s) || emptyCubes.Contains(s))
+                var c = queue.Dequeue();
+                foreach (var surround in GetSurrounding(c))
                 {
-                    continue;
-                }
-                emptyCubes.Add(s);
-            }
-        }
-        var airCubes = new List<Cube>();
-        foreach (var c in emptyCubes)
-        {
-            foreach (var c1 in cubes.Where(_ => !c.Equals(_)))
-            {
-                // Check if c and c1 are adjacent
-                if (c.X == c1.X && c.Y == c1.Y && (c.Z == c1.Z - 1 || c.Z == c1.Z + 1))
-                {
-                    // c and c1 are adjacent in the Z direction
-                    // Remove the side of c that is adjacent to c1
-                    c.FreeSides.Remove(c.Z < c1.Z ? Cube.Side.Back : Cube.Side.Front);
-                }
-                else if (c.X == c1.X && (c.Y == c1.Y - 1 || c.Y == c1.Y + 1) && c.Z == c1.Z)
-                {
-                    // c and c1 are adjacent in the Y direction
-                    // Remove the side of c that is adjacent to c1
-                    c.FreeSides.Remove(c.Y < c1.Y ? Cube.Side.Top : Cube.Side.Bottom);
-                }
-                else if ((c.X == c1.X - 1 || c.X == c1.X + 1) && c.Y == c1.Y && c.Z == c1.Z)
-                {
-                    // c and c1 are adjacent in the X direction
-                    // Remove the side of c that is adjacent to c1
-                    c.FreeSides.Remove(c.X < c1.X ? Cube.Side.Right : Cube.Side.Left);
-                }
-                if (!airCubes.Contains(c) && c.FreeSides.Count() == 0)
-                {
-                    airCubes.Add(c);
+                    if (!result.Contains(surround) && !cubes.Contains(surround) && InBounds(bounds, surround))
+                    {
+                        result.Add(surround);
+                        queue.Enqueue(surround);
+                    }
                 }
             }
+            return result;
         }
-        return cubes.Select(_ => _.FreeSides.Count()).Sum() - airCubes.Count() * 6;
+
+        static (Cube min, Cube max) GetBounds(IEnumerable<Cube> cubes)
+        {
+            var minX = cubes.Select(p => p.X).Min() - 1;
+            var maxX = cubes.Select(p => p.X).Max() + 1;
+
+            var minY = cubes.Select(p => p.Y).Min() - 1;
+            var maxY = cubes.Select(p => p.Y).Max() + 1;
+
+            var minZ = cubes.Select(p => p.Z).Min() - 1;
+            var maxZ = cubes.Select(p => p.Z).Max() + 1;
+
+            return (new Cube(minX, minY, minZ), new Cube(maxX, maxY, maxZ));
+        }
+
+
+        static bool InBounds((Cube min, Cube max) surrounding, Cube cube) =>
+            surrounding.min.Y <= cube.X && cube.X <= surrounding.max.X &&
+            surrounding.min.Y <= cube.Y && cube.Y <= surrounding.max.Y &&
+            surrounding.min.Z <= cube.Z && cube.Z <= surrounding.max.Z;
+
         static List<Cube> GetSurrounding(Cube c)
         {
             return new List<Cube>
@@ -153,3 +156,5 @@ public class Cube
         base.GetHashCode();
 
 }
+
+

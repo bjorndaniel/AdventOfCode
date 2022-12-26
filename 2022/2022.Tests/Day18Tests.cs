@@ -32,6 +32,7 @@ public class Day18Tests
     {
         //Given
         var filename = $"{Helpers.DirectoryPathTests}Day18-test.txt";
+        //var filename = "C:/OneDrive/Code/AdventOfCodeInputs/2022/Puzzles/Day18.txt";
 
         //When
         var result = Day18.SolvePart2(filename);
