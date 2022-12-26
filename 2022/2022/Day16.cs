@@ -34,12 +34,49 @@ public static class Day16
         }
     }
 
-    public static int SolvePart1(string filename)
+    public static int SolvePart1(string filename, IPrinter printer)
     {
         var valves = ParseInput(filename);
-        var result = 0;
+        var (mp, p) = GetMaxPressure(valves.First(_ => _.Name == "AA"), 30, 0, 0, new HashSet<Valve>());
+        printer.Print(p.Select(_ => _.Name).Aggregate((a, b) => a + " -> " + b));
+        printer.Flush();
+        return mp;
+    }
+    public static (int max, List<Valve> path) GetMaxPressure(Valve start, int minutes, int currentTime, int currentPressure, HashSet<Valve> visited)
+    {
+        // Check if the current time exceeds the number of minutes allowed for traversing the valves
+        if (currentTime >= minutes)
+        {
+            return (currentPressure, visited.ToList());
+        }
 
-        return result;
+        // Initialize variables to store the maximum pressure and path
+        int maxPressure = currentPressure;
+        List<Valve> maxPath = visited.ToList();
+        // Visit the adjacent valves of the current valve
+        foreach (var adjacent in start.Adjacent.OrderByDescending(v => v.FlowRate).ToList())
+        {
+            if (!visited.Contains(adjacent))
+            {
+                var pressureReleased = (minutes - currentTime - 2) * adjacent.FlowRate;
+                // Add the pressure released by the adjacent valve to the current pressure
+                int newPressure = currentPressure + pressureReleased;
+                visited.Add(adjacent);
+                // Recursively call the GetMaxPressure method to find the maximum pressure and path for the remaining minutes
+                (int pressure, List<Valve> path) = GetMaxPressure(adjacent, minutes, currentTime + 2, newPressure, visited);
+                // Update the maximum pressure and path if the pressure achieved by the recursive call is higher
+                if (pressure >= maxPressure)
+                {
+                    maxPressure = pressure;
+                    maxPath = path;
+                    // Remove the adjacent valve from the set of visited valves
+                }
+                visited.Remove(adjacent);
+            }
+        }
+
+        // Return the maximum pressure and path
+        return (maxPressure, maxPath);
     }
 }
 
@@ -55,4 +92,9 @@ public class Valve
     public string Name { get; }
     public int FlowRate { get; }
     public List<Valve> Adjacent { get; set; }
+    public override bool Equals(object obj)
+    {
+        var other = (Valve)obj;
+        return other?.Name == Name;
+    }
 }

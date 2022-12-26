@@ -60,7 +60,7 @@ public static class Day15
                     continue;
                 }
 
-                return (r.low - 1) * (long)4000000 + i;
+                return (r.low == r.high ? r.low : (r.low - 1)) * (long)4000000 + i;
             }
             ranges = new BlockingCollection<(long low, long high)>();
         }

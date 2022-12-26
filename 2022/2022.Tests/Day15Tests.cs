@@ -47,14 +47,11 @@ public class Day15Tests
     public void Can_solve_part2_for_test()
     {
         //Given
-        //var filename = $"{Helpers.DirectoryPathTests}Day15-test.txt";
-        var filename = $"C:/OneDrive/Code/AdventOfCodeInputs/2022/Puzzles/Day15.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day15-test.txt";
 
 
         //When
-        //14513780000019
-        //var result = Day15.SolvePart2(filename, 0, 20);
-        var result = Day15.SolvePart2(filename, 0, 4000000);
+        var result = Day15.SolvePart2(filename, 0, 20);
 
         //Then
         Assert.True(56000011 == result, $"Expected 56000011, got {result}");

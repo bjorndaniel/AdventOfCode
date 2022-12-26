@@ -15,13 +15,11 @@ public static class Day17
         var input = ParseInput(filename);
         var moveCount = 0;
         var rockCount = 0;
+        //var testCount = 0;
         Rock? current = null;
         var totalRocks = 1;
-        var compareRows = new Dictionary<string, int>();
-        var currentRow = new StringBuilder();
-
-        var watch = new Stopwatch();
-        watch.Start();
+        var lines = new Dictionary<string, (int rocks, int height)>();
+        //var rocks = new Dictionary<(RockFormation type, int x, Direction direction, int moveCount), (Rock rock, int height)>();
         while (totalRocks < nrOfRocks)
         {
             if (current == null)
@@ -46,31 +44,77 @@ public static class Day17
                 moveCount = 0;
             }
             chamber.TryMove(nextMove, current);
-            var couldDrop = chamber.TryDrop(current, currentRow);
+            var couldDrop = chamber.TryDrop(current);
             if (!couldDrop)
             {
-                //chamber.Flatten(current, currentRow, nextMove);
-                current = null;
-
-                //if (totalRocks % 100 == 0 && totalRocks > 1500)
+                //if (rocks.ContainsKey((current.Formation, current.BottomLeft.X, nextMove, moveCount)))
                 //{
-                //    if (compareRows.ContainsKey(currentRow.ToString()))
-                //    {
-                //        printer.Print(currentRow.ToString());
-                //        printer.Flush();
-                //        var cycleHeight = compareRows[currentRow.ToString()];
-                //        var cycleLength = totalRocks - cycleHeight;
-                //        var fullCycles = totalRocks / cycleLength;
 
-                //        var height = (nrOfRocks / fullCycles) * (chamber.Height - cycleHeight);
-                //        return height;
-                //    }
-                //    else
+                //    var (rock, height) = rocks[(current.Formation, current.BottomLeft.X, nextMove, moveCount)];
+                //    if (rock.Formation == RockFormation.VLine)
                 //    {
-                //        compareRows.Add(currentRow.ToString(), chamber.Height);
-                //        currentRow = new StringBuilder();
+                //        printer.Print($"{rock.Formation} x:{rock.BottomLeft.X} y:{rock.BottomLeft.Y}");
+                //        printer.Flush();
+                //        printer.Print($"{rock.Formation} x:{current.BottomLeft.X} y:{current.BottomLeft.Y}");
+                //        printer.Flush();
+                //        printer.Print(height.ToString());
+                //        printer.Flush();
+                //        printer.Print("///////");
+                //        printer.Flush();
+                //        testCount++;
                 //    }
+
+
+                //    if (testCount == 4)
+                //    {
+                //        _ = "";
+                //        var cycleHeight = current.BottomLeft.Y - rock.BottomLeft.Y;
+                //        var cycleOffset = chamber.Height - height;
+                //        var fullRounds = nrOfRocks / cycleHeight;
+                //        var heightDifference = chamber.Height - height;
+                //        return (nrOfRocks / totalRocks) * (cycleHeight + (height - rock.Height));
+
+                //    }
+
+
+                //    //rocks[(current.Formation, current.BottomLeft.X, nextMove, moveCount)] = current;
+
+
+                //    ////var oldHeight = rock.BottomLeft.Y;
+                //    //////chamber.Print(printer);P
+                //    //var offset = rock.Points.Min(_ => _.Y);
+                //    //var cycleHeight = current.Points.Min(_ => _.Y) - offset;
+                //    //var cycleLength = chamber.Height - cycleHeight;
+                //    //var fullCycles = chamber.Height / cycleLength;
+                //    //var height = (nrOfRocks / fullCycles) * (cycleHeight + offset);
+                //    ////return height;
+                //    //if (testCount > 6 && rock.Formation == RockFormation.VLine)
+                //    //{
+                //    //    _ = "";
+                //    //}
                 //}
+                //else
+                //{
+                //    rocks.Add((current.Formation, current.Points.Min(_ => _.X), nextMove, moveCount), (current, chamber.Height));
+                //}
+                if (totalRocks % 100 == 0)
+                {
+                    var line = $"{current.Formation}{nextMove}{current.BottomLeft.X}";
+                    if (lines.ContainsKey(line))
+                    {
+                        var (count, height) = lines[line];
+                        var diff = chamber.Height - height;
+                        var totalRounds = nrOfRocks / (totalRocks - count);
+                        var added = totalRounds * diff;
+                        return added + (height - diff);
+                        _ = "";
+                    }
+                    else
+                    {
+                        lines.Add(line, (totalRocks, chamber.Height));
+                    }
+                }
+                current = null;
             }
         }
         return (long)chamber.Height;
@@ -136,34 +180,6 @@ public class Chamber
         }
         sb.Append(move);
     }
-    //var sb = new StringBuilder();
-    //for (int row = Height; row >= (start ? 0 : 100); row--)
-    //{
-    //    for (int col = 0; col < 9; col++)
-    //    {
-    //        if (col == 0 || col == 8)
-    //        {
-    //            //printer.Print("|");
-    //            continue;
-    //        }
-    //        else if (row == 0)
-    //        {
-    //            //printer.Print("-");
-    //        }
-    //        else if (Rocks.Any(_ => _.Points.Any(_ => _.X == col && _.Y == row)))
-    //        {
-    //            sb.Append("#");
-    //        }
-    //        else
-    //        {
-    //            sb.Append(".");
-    //            //printer.Print(".");
-    //        }
-    //    }
-    //    //printer.Flush();
-    //}
-    //return sb.ToString();
-    //}
 
     public void Print(IPrinter printer)
     {
@@ -213,7 +229,7 @@ public class Chamber
         current.Move(nextMove);
     }
 
-    public bool TryDrop(Rock current, StringBuilder sb)
+    public bool TryDrop(Rock current)
     {
         var other = Rocks.Except(new List<Rock> { current }).SelectMany(_ => _.Points);
         var positonsNeeded = current.PositionsNeeded(Day17.Direction.Down);
@@ -284,6 +300,9 @@ public class Rock
             },
             _ => throw new Exception($"Unexpected formation {Formation}")
         };
+
+    public int Height =>
+        Points.Max(_ => _.Y) - Points.Min(_ => _.Y);
 
     public RockFormation Formation { get; }
 

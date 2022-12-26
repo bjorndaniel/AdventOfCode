@@ -39,18 +39,18 @@ public class Day17Tests
         //result.Print(printer);
     }
 
-    //[Fact]
-    //public void Can_solve_part2_for_test()
-    //{
-    //    //Given
-    //    var filename = $"{Helpers.DirectoryPathTests}Day17-test.txt";
-    //    var printer = new TestPrinter(_output);
+    [Fact]
+    public void Can_solve_part2_for_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day17-test.txt";
+        var printer = new TestPrinter(_output);
 
-    //    //When
-    //    var result = Day17.SolvePart1(filename, 1000000000000, printer);
+        //When
+        var result = Day17.SolvePart1(filename, 1000000000000, printer);
 
-    //    //Then
-    //    Assert.True(1514285714288 == result, $"Expected 1514285714288, got {result}");
-    //    //result.Print(printer);
-    //}
+        //Then
+        Assert.True(1514285714288 == result, $"Expected 1514285714288, got {result}");
+        //result.Print(printer);
+    }
 }

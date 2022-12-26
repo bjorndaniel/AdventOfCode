@@ -1,6 +1,13 @@
 ﻿namespace AoC2022.Tests;
 public class Day16Tests
 {
+    private readonly ITestOutputHelper _output;
+
+    public Day16Tests(ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
     [Fact]
     public void Can_parse_input()
     {
@@ -25,7 +32,7 @@ public class Day16Tests
         var filename = $"{Helpers.DirectoryPathTests}Day16-test.txt";
 
         //When
-        var result = Day16.SolvePart1(filename);
+        var result = Day16.SolvePart1(filename, new TestPrinter(_output));
 
         //Then
         Assert.Equal(1651, result);
