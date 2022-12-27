@@ -52,6 +52,9 @@ public class Day25Tests
     [InlineData(7, "12")]
     [InlineData(8, "2=")]
     [InlineData(1747, "1=-0-2")]
+    [InlineData(906, "12111")]
+    [InlineData(1257, "20012")]
+    [InlineData(314159265, "1121-1110-1=0")]
     public void Can_parse_decimal_to_SNAFU(int decimalValue, string expected)
     {
         //Given
@@ -61,5 +64,18 @@ public class Day25Tests
 
         //Then
         Assert.True(expected == result.Value, $"Expected {expected}, got {result.Value}");
+    }
+
+    [Fact]
+    public void Can_solve_part1_for_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day25-test.txt";
+
+        //When
+        var result = Day25.SolvePart1(filename);
+
+        //Then
+        Assert.True("2=-1=0" == result, $"Expected 2=-1=0, got {result}");
     }
 }

@@ -4,10 +4,22 @@ public static class Day25
     public static IEnumerable<SNAFU> ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
+        var length = lines.Max(_ => _.Length);
         foreach (var l in lines)
         {
-            yield return new SNAFU(l);
+            yield return new SNAFU(l.PadLeft(length, '0'));
         }
+    }
+
+    public static string SolvePart1(string filename)
+    {
+        var snafus = ParseInput(filename);
+        var sum = 0L;
+        foreach (var snafu in snafus)
+        {
+            sum += snafu.ToDecimal();
+        }
+        return SNAFU.FromDecimal(sum).Value;
     }
 }
 
@@ -44,32 +56,31 @@ public record SNAFU(string Value)
             }
 
         }
-        return (int)result;
+        return result;
     }
 
     public static SNAFU FromDecimal(long decimalValue)
     {
-        var length = decimalValue / 5;
-        var mod = (int)(decimalValue % 5);
-        if (length < 1)
+        var result = "";
+        var n = decimalValue;
+        while (n != 0)
         {
-            if (decimalValue < 3)
-            {
-                return new SNAFU(decimalValue.ToString());
-            }
-            switch (decimalValue)
-            {
-                case 3:
-                    return new SNAFU("1=");
-                case 4:
-                    return new SNAFU("1-");
-                default:
-                    return new SNAFU("10");
-            }
+            var rem = n % 5;
+            var dig = Converter[rem];
+            result += dig;
+            n = (n + 2) / 5;
         }
-        var result = Multipliers[mod - 1].ToString();
-        return new SNAFU("result");
+        return new SNAFU(result.Reverse().Select(_ => _.ToString()).Aggregate((a, b) => $"{a}{b}"));
     }
+
+    private static Dictionary<long, char> Converter = new Dictionary<long, char>
+    {
+        { 3, '='},
+        {4, '-' },
+        {0, '0' },
+        {1 , '1' },
+        {2, '2' }
+    };
 
     private static List<long> Multipliers = new List<long>
     {
@@ -87,6 +98,12 @@ public record SNAFU(string Value)
         48828125,
         244140625,
         1220703125,
-        6103515625
+        6103515625,
+        30517578125,
+        152587890625,
+        762939453125,
+        3814697265625,
+        19073486328125,
+        95367431640625
     };
 }
