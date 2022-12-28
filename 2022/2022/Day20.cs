@@ -34,6 +34,8 @@ public static class Day20
             for (int i = 0; i < keys.Count; i++)
             {
                 var k = keys.GetOriginalElementAt(i);
+                //printer.Print($"Mix {mix} - {k.Value} - {k.Next?.Value} - {k.Previous?.Value}");
+                //printer.Flush();
                 var current = keys.GetPosition(k);
                 var mod = keys.Count - 1;
                 if (k.Value == 0)
@@ -55,11 +57,15 @@ public static class Day20
                 //    .Print(keys.Print());
                 //printer.Flush();
                 //printer.Flush();
+                var head = keys.GetElementAt(0);
+                if(head.Next!.Previous!.Id != head.Id)
+                {
+                    head.Next.Previous = head;
+                }
             }
-            //printer
-            //.Print(keys.Print());
-            //printer.Flush();
-            //printer.Flush();
+            printer
+            .Print(keys.Print());
+            printer.Flush();
         }
 
         //printer
