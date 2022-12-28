@@ -18,11 +18,11 @@ public class Day20Tests
         var result = Day20.ParseInput(filename);
 
         //Then
-        Assert.True(7 == result.Count, $"Expected 7, got {result.Count}");
+        Assert.True(7 == result.Count(), $"Expected 7, got {result.Count()}");
         Assert.True(
             "1, 2, -3, 3, -2, 0, 4" ==
-            result.Print(),
-            $"Expected 1,2,-3,3,-2,0,4, got {result.Print()}"
+            result.Select(_ => _.Value.ToString()).Aggregate((a, b) => $"{a}, {b}"),
+            $"Expected 1,2,-3,3,-2,0,4, got {result.Select(_ => _.Value.ToString()).Aggregate((a, b) => $"{a}, {b}")}"
         );
     }
 

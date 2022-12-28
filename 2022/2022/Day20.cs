@@ -1,14 +1,14 @@
 ﻿namespace AoC2022;
 public static class Day20
 {
-    public static DoublyLinkedList ParseInput(string filename, bool part2 = false)
+    public static IEnumerable<Node> ParseInput(string filename, bool part2 = false)
     {
         var lines = File.ReadAllLines(filename);
-        var list = new DoublyLinkedList();
+        var list = new List<Node>();
         var counter = 0;
         foreach (var l in lines)
         {
-            list.AddLast(long.Parse(l) * (part2 ? 811589153 : 1), counter);
+            list.Add(new Node(long.Parse(l) * (part2 ? 811589153 : 1), counter));
             counter++;
         }
         return list;
@@ -20,233 +20,55 @@ public static class Day20
         //printer.Print(keys.Print());
         //printer.Flush();
         //printer.Flush();
-        return Solver(printer, keys);
+        return Solver(printer, keys.ToList());
     }
 
-    private static long Solver(IPrinter printer, DoublyLinkedList keys, int nrOfRounds = 1)
+    private static long Solver(IPrinter printer, List<Node> keys, int nrOfRounds = 1)
     {
-        //    printer
-        //.Print(keys.Print());
-        //    printer.Flush();
-        //    printer.Flush();
         for (int mix = 0; mix < nrOfRounds; mix++)
         {
-            for (int i = 0; i < keys.Count; i++)
+            for (int i = 0; i < keys.Count(); i++)
             {
-                var k = keys.GetOriginalElementAt(i);
-                //printer.Print($"Mix {mix} - {k.Value} - {k.Next?.Value} - {k.Previous?.Value}");
-                //printer.Flush();
-                var current = keys.GetPosition(k);
-                var mod = keys.Count - 1;
+                var k = keys.First(_ => _.OriginalPosition == i);
+                var current = k.CurrentPosition;//keys.GetPosition(k);
+                var mod = keys.Count() - 1;
                 if (k.Value == 0)
                 {
                     continue;
                 }
                 var value = k.Value + current;
-                value = (value % mod + mod) % mod;
-                if (value == 0)
+                value = value % mod;
+                if (value < 0)
                 {
-                    value = keys.Count - 1;
+                    value = keys.Count() + value - 1;
                 }
-                //if (value >= keys.Count)
-                //{
-                //    value = 0;
-                //}
-                keys.Move(current, value);
-                //printer
-                //    .Print(keys.Print());
-                //printer.Flush();
-                //printer.Flush();
-                var head = keys.GetElementAt(0);
-                if(head.Next!.Previous!.Id != head.Id)
+                keys.Remove(k);
+                keys.Insert((int)value, k);
+                for (int m = 0; m < keys.Count(); m++)
                 {
-                    head.Next.Previous = head;
+                    keys[m].CurrentPosition = m;
                 }
             }
-            printer
-            .Print(keys.Print());
-            printer.Flush();
+            //printer
+            //.Print(keys.Select(_ => _.Value.ToString()).Aggregate((a, b) => $"{a}, {b}"));
+            //printer.Flush();
         }
+        var index = keys.First(_ => _.Value == 0).CurrentPosition;
 
-        //printer
-        //    .Print(keys.Print());
-        //printer.Flush();
-        //printer.Flush();
-        var index = keys.GetIndexOfValue(0);
-
-        var index1 = ((1000 + index + 1) % keys.Count - 1);
-        var index2 = ((2000 + index + 1) % keys.Count - 1);
-        var index3 = ((3000 + index + 1) % keys.Count - 1);
-        var k1 = keys.GetElementAt(index1).Value;
-        var k2 = keys.GetElementAt(index2).Value;
-        var k3 = keys.GetElementAt(index3).Value;
+        var index1 = ((1000 + index + 1) % keys.Count() - 1);
+        var index2 = ((2000 + index + 1) % keys.Count() - 1);
+        var index3 = ((3000 + index + 1) % keys.Count() - 1);
+        var k1 = keys.ElementAt(index1).Value;
+        var k2 = keys.ElementAt(index2).Value;
+        var k3 = keys.ElementAt(index3).Value;
         return k1 + k2 + k3;
     }
 
     public static long SolvePart2(string filename, IPrinter printer)
     {
         var keys = ParseInput(filename, true);
-        return Solver(printer, keys, 10);
+        return Solver(printer, keys.ToList(), 10);
     }
-}
-
-public class DoublyLinkedList
-{
-    private Node? _head;
-    private Node? _tail;
-
-    public void AddLast(long value, int originalPosition)
-    {
-        var newNode = new Node(value, originalPosition) { Previous = _tail };
-
-        if (_tail is null)
-        {
-            _head = newNode;
-        }
-        else
-        {
-            _tail.Next = newNode;
-        }
-
-        _tail = newNode;
-        Count++;
-    }
-
-    public void Move(long fromIndex, long toIndex)
-    {
-
-        if (fromIndex < 0 || fromIndex >= Count)
-        {
-            throw new ArgumentOutOfRangeException($"From: {fromIndex}");
-        }
-
-        if (toIndex < 0 || toIndex >= Count)
-        {
-            throw new ArgumentOutOfRangeException($"To: {toIndex}");
-        }
-
-        // Find the node to move
-        var current = _head;
-        for (long i = 0; i < fromIndex; i++)
-        {
-            current = current!.Next;
-        }
-
-        // Remove the node from its current position
-        if (current!.Previous is null)
-        {
-            _head = current.Next;
-        }
-        else
-        {
-            current.Previous.Next = current.Next;
-        }
-
-        if (current.Next is null)
-        {
-            _tail = current.Previous!;
-        }
-        else
-        {
-            current.Next.Previous = current.Previous!;
-        }
-
-        // Insert the node into its new position
-        if (toIndex == 0)
-        {
-            current.Next = _head!;
-            _head!.Previous = current;
-            _head = current;
-        }
-        else if (toIndex == Count - 1) // Special case for moving to the last position
-        {
-            _tail!.Next = current;
-            current.Previous = _tail;
-            _tail = current;
-        }
-        else
-        {
-            var target = _head;
-            for (long i = 0; i < toIndex; i++)
-            {
-                target = target!.Next;
-            }
-
-            current.Next = target!;
-            current.Previous = target!.Previous;
-            target!.Previous!.Next = current;
-            target.Previous = current;
-        }
-    }
-
-    public int Count { get; set; }
-
-    public Node GetOriginalElementAt(int index)
-    {
-        var current = _head;
-        for (int i = 0; i < Count; i++)
-        {
-            if (current!.OriginalPosition == index)
-            {
-                return current;
-            }
-            current = current!.Next;
-        }
-        return current!;
-        //throw new ArgumentOutOfRangeException($"Index {index} was out of range");
-    }
-
-    public Node GetElementAt(int index)
-    {
-        var current = _head;
-        for (int i = 0; i < index; i++)
-        {
-            current = current!.Next;
-        }
-        return current!;
-    }
-
-    public int GetPosition(Node n)
-    {
-        var current = _head;
-        for (int i = 0; i < Count; i++)
-        {
-            if (current!.Id == n.Id)
-            {
-                return i;
-            }
-            current = current.Next;
-        }
-        throw new ArgumentOutOfRangeException($"Could not find node {n.Id}");
-    }
-
-    public IEnumerable<Node> GetAll()
-    {
-        var current = _head;
-        for (int i = 0; i < Count; i++)
-        {
-            yield return GetElementAt(i);
-        }
-    }
-
-    public int GetIndexOfValue(long value)
-    {
-        var current = _head; ;
-        for (int i = 0; i < Count; i++)
-        {
-            if (current!.Value == value)
-            {
-                return i;
-            }
-            current = current.Next;
-        }
-        throw new ArgumentException($"Value not found {value}");
-    }
-
-    public string Print() =>
-        GetAll()
-        .Select(_ => _.Value.ToString())
-        .Aggregate((a, b) => $"{a}, {b}");
 }
 
 public class Node
@@ -255,6 +77,7 @@ public class Node
     {
         Value = value;
         OriginalPosition = originalPosition;
+        CurrentPosition = originalPosition;
         Id = Guid.NewGuid();
     }
     public Guid Id { get; }
@@ -262,4 +85,5 @@ public class Node
     public Node? Previous { get; set; }
     public long Value { get; }
     public int OriginalPosition { get; }
+    public int CurrentPosition { get; set; }
 }
