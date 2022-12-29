@@ -1,4 +1,6 @@
-﻿namespace AoC2022;
+﻿using System.Runtime.Intrinsics.Arm;
+
+namespace AoC2022;
 public static class Day21
 {
     public static Dictionary<string, ScreamMonkey> ParseInput(string filename)
@@ -52,9 +54,33 @@ public static class Day21
 
     public static long SolvePart2(string filename, IPrinter printer)
     {
-        var done = true;
         var monkeys = ParseInput(filename)!;
-        var counter = 0;
+        printer.Print(monkeys.Values.Where(_ => _.Operator == Operator.None).Count().ToString());
+        printer.Flush();
+        var count = 0;
+        while(count < monkeys.Values.Where(_ => _.Operator == Operator.None).Count())
+        {
+            foreach (var m in monkeys.Values.Where(_ => _.Name != "root"))
+            {
+                var (val, dep, val1, dep1) = GetMonkeyValue2(m, monkeys);
+                //if (!dep)
+                //{
+                //    m.Value = val;
+                //    m.Operator = Operator.None;
+                //}
+                //if (!dep1)
+                //{
+
+                //}
+            }
+            count = monkeys.Values.Where(_ => _.Operator == Operator.None).Count();
+        }
+        
+        printer.Print(monkeys.Values.Where(_ => _.Operator == Operator.None).Count().ToString());
+        printer.Flush();
+        
+        return 0;
+
         //while (!done)
         //{
         //    foreach (var pair in monkeys.Where(_ => _.Value.Operator != Operator.None && _.Value.Name != "root"))
@@ -100,7 +126,53 @@ public static class Day21
         //        counter = newC;
         //    }
         //}
-        return 0;
+    }
+
+    private static (long value, bool dependant) GetMonkeyValue2(ScreamMonkey monkey, ref Dictionary<string, ScreamMonkey> monkeys)
+    {
+        if(monkey.Operator  == Operator.None)
+        {
+            return (monkey.Value!.Value, false);
+        }
+        
+        var left = monkey.Left;
+        var right = monkey.Right;
+        //if (left == "humn" || right == "humn")
+        //{
+        //    return (0, true);
+        //}
+        var (val, dep) = left == "humn" ? (0, true) : GetMonkeyValue2(monkeys[left!], ref monkeys);
+        var (val2, dep2) = right == "humn" ? (0,true) : GetMonkeyValue2(monkeys[right!], ref monkeys);
+        if(dep && !dep2)
+        {
+            monkeys[right].Value = val2;
+            monkeys[right].Operator = Operator.None;
+        }
+        if(!dep && dep2)
+        {
+            monkeys[left].Value = val2;
+            monkeys[left].Operator = Operator.None;
+        }
+        //if (dep || dep2)
+        //{
+        //    (val, dep, val2, dep2);
+        //}
+        return (monkey.Operator switch
+        {
+            Operator.Add => val + val2,
+            Operator.Subtract => val - val2,
+            Operator.Divide => val / val2,
+            Operator.Multiply => val * val2,
+            _ => 0,
+        }, false);
+        //return monkey.Operator switch
+        //{
+        //    Operator.Add => GetMonkeyValue(monkeys[monkey.Left!], monkeys) + GetMonkeyValue(monkeys[monkey.Right!], monkeys),
+        //    Operator.Multiply => GetMonkeyValue(monkeys[monkey.Left!], monkeys) * GetMonkeyValue(monkeys[monkey.Right!], monkeys),
+        //    Operator.Subtract => GetMonkeyValue(monkeys[monkey.Left!], monkeys) - GetMonkeyValue(monkeys[monkey.Right!], monkeys),
+        //    Operator.Divide => GetMonkeyValue(monkeys[monkey.Left!], monkeys) / GetMonkeyValue(monkeys[monkey.Right!], monkeys),
+        //    _ => monkey.Value!.Value
+        //};
     }
 
     private static long GetMonkeyValue(ScreamMonkey monkey, Dictionary<string, ScreamMonkey> monkeys)
@@ -114,6 +186,7 @@ public static class Day21
             _ => monkey.Value!.Value
         };
     }
+    
 }
 
 public class ScreamMonkey
