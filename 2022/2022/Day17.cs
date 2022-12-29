@@ -205,9 +205,9 @@ public class Chamber
                     printer.Print(".");
                 }
             }
-            printer.Flush();
+            //printer.Flush();
         }
-        printer.Flush();
+        //printer.Flush();
     }
 
     public void TryMove(Day17.Direction nextMove, Rock current)

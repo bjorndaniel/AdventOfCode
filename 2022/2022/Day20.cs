@@ -58,14 +58,14 @@ public static class Day20
                 //printer.Flush();
                 //printer.Flush();
                 var head = keys.GetElementAt(0);
-                if(head.Next!.Previous!.Id != head.Id)
+                if (head.Next!.Previous!.Id != head.Id)
                 {
                     head.Next.Previous = head;
                 }
             }
-            printer
-            .Print(keys.Print());
-            printer.Flush();
+            //printer
+            //.Print(keys.Print());
+            //printer.Flush();
         }
 
         //printer

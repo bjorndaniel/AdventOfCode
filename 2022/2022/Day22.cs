@@ -74,6 +74,7 @@ public static class Day22
             return moves;
         }
     }
+
     public static (int result, List<BoardRow> matrix) SolvePart1(string filename, IPrinter printer)
     {
         var (matrix, moves) = ParseInput(filename);
@@ -88,22 +89,27 @@ public static class Day22
                 currentRow.Squares[index].Value = GetMarker(currentDirection);
                 var end = 0;
                 var nrToMove = 0;
-                switch (currentDirection)
-                {
-                    case TileDirection.Right:
-                        nrToMove = (index + move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open);
-                        end = ((index + 1 + move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open));
-                        break;
-                    case TileDirection.Down:
-                        break;
-                    case TileDirection.Left:
-                        nrToMove = (index - move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open);
-                        end = ((index - 1 - move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open));
-                        break;
+                //switch (currentDirection)
+                //{
+                //    case TileDirection.Right:
+                //        nrToMove = (index + move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open);
+                //        end = ((index + 1 + move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open));
+                //        break;
+                //    case TileDirection.Left:
+                //        nrToMove = (index - move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open);
+                //        end = ((index - 1 - move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open));
+                //        break;
+                //    case TileDirection.Down:
+                //        var start = matrix.IndexOf(currentRow);
+                //        var end = start + move.Length;
+                //        break;
+                //    case TileDirection.Up:
 
-                }
-                end += index + 1;
-                index = end;
+                //        break;
+
+                //}
+                //end += index + 1;
+                //index = end;
             }
             else
             {
@@ -111,7 +117,7 @@ public static class Day22
                 currentRow.Squares[index].Value = GetMarker(currentDirection);
 
             }
-            Day22.Print(matrix, printer);
+            //Day22.Print(matrix, printer);
         }
 
         var result = 0;
