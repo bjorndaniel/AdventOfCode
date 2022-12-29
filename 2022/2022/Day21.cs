@@ -1,6 +1,4 @@
-﻿using System.Runtime.Intrinsics.Arm;
-
-namespace AoC2022;
+﻿namespace AoC2022;
 public static class Day21
 {
     public static Dictionary<string, ScreamMonkey> ParseInput(string filename)
@@ -46,136 +44,28 @@ public static class Day21
             };
     }
 
-    public static long SolvePart1(string filename)
+    public static double SolvePart1(string filename)
     {
         var monkeys = ParseInput(filename);
         return GetMonkeyValue(monkeys["root"], monkeys);
     }
 
-    public static long SolvePart2(string filename, IPrinter printer)
+    public static double SolvePart2(string filename, IPrinter printer)
     {
         var monkeys = ParseInput(filename)!;
-        printer.Print(monkeys.Values.Where(_ => _.Operator == Operator.None).Count().ToString());
-        printer.Flush();
-        var count = 0;
-        while(count < monkeys.Values.Where(_ => _.Operator == Operator.None).Count())
+        var value = 0L;
+        var low = 0L;
+        var high = 1000000000000L;
+        var humn = monkeys.First(_ => _.Value.Name == "humn");
+        while (true)
         {
-            foreach (var m in monkeys.Values.Where(_ => _.Name != "root"))
-            {
-                var (val, dep, val1, dep1) = GetMonkeyValue2(m, monkeys);
-                //if (!dep)
-                //{
-                //    m.Value = val;
-                //    m.Operator = Operator.None;
-                //}
-                //if (!dep1)
-                //{
-
-                //}
-            }
-            count = monkeys.Values.Where(_ => _.Operator == Operator.None).Count();
+            var mid = Math.Floor((low + high) / 2.0);
+            humn.Value.Value = mid;
+            var result = GetMonkeyValue(monkeys["root"], monkeys);
         }
-        
-        printer.Print(monkeys.Values.Where(_ => _.Operator == Operator.None).Count().ToString());
-        printer.Flush();
-        
-        return 0;
-
-        //while (!done)
-        //{
-        //    foreach (var pair in monkeys.Where(_ => _.Value.Operator != Operator.None && _.Value.Name != "root"))
-        //    {
-        //        var (ls, left) = GetMonkeyValue2(monkeys[pair.Value.Left!], monkeys);
-        //        var (rs, right) = GetMonkeyValue2(monkeys[pair.Value.Right!], monkeys);
-        //        if (ls)
-        //        {
-        //            monkeys[pair.Value.Left!].Operator = Operator.None;
-        //            monkeys[pair.Value.Left!].Value = left;
-        //        }
-        //        if (rs)
-        //        {
-        //            monkeys[pair.Value.Right!].Operator = Operator.None;
-        //            monkeys[pair.Value.Right!].Value = right;
-        //        }
-        //    }
-        //    var newC = monkeys.Count(_ => _.Value.Operator != Operator.None);
-        //    if (newC == counter)
-        //    {
-        //        var root = monkeys["root"];
-        //        var (ls, l) = GetMonkeyValue2(monkeys[root.Left!], monkeys);
-        //        var (rs, r) = GetMonkeyValue2(monkeys[root.Right!], monkeys);
-        //        if (ls)
-        //        {
-        //            monkeys[root.Left!].Value = l;
-        //            monkeys[root.Left!].Operator = Operator.None;
-        //        }
-        //        if (rs)
-        //        {
-        //            monkeys[root.Right!].Value = l;
-        //            monkeys[root.Right!].Operator = Operator.None;
-        //        }
-        //        if (rs || ls)
-        //        {
-        //            counter = monkeys.Count(_ => _.Value.Operator != Operator.None);
-        //            continue;
-        //        }
-        //        done = true;
-        //    }
-        //    else
-        //    {
-        //        counter = newC;
-        //    }
-        //}
+        return value;
     }
-
-    private static (long value, bool dependant) GetMonkeyValue2(ScreamMonkey monkey, ref Dictionary<string, ScreamMonkey> monkeys)
-    {
-        if(monkey.Operator  == Operator.None)
-        {
-            return (monkey.Value!.Value, false);
-        }
-        
-        var left = monkey.Left;
-        var right = monkey.Right;
-        //if (left == "humn" || right == "humn")
-        //{
-        //    return (0, true);
-        //}
-        var (val, dep) = left == "humn" ? (0, true) : GetMonkeyValue2(monkeys[left!], ref monkeys);
-        var (val2, dep2) = right == "humn" ? (0,true) : GetMonkeyValue2(monkeys[right!], ref monkeys);
-        if(dep && !dep2)
-        {
-            monkeys[right].Value = val2;
-            monkeys[right].Operator = Operator.None;
-        }
-        if(!dep && dep2)
-        {
-            monkeys[left].Value = val2;
-            monkeys[left].Operator = Operator.None;
-        }
-        //if (dep || dep2)
-        //{
-        //    (val, dep, val2, dep2);
-        //}
-        return (monkey.Operator switch
-        {
-            Operator.Add => val + val2,
-            Operator.Subtract => val - val2,
-            Operator.Divide => val / val2,
-            Operator.Multiply => val * val2,
-            _ => 0,
-        }, false);
-        //return monkey.Operator switch
-        //{
-        //    Operator.Add => GetMonkeyValue(monkeys[monkey.Left!], monkeys) + GetMonkeyValue(monkeys[monkey.Right!], monkeys),
-        //    Operator.Multiply => GetMonkeyValue(monkeys[monkey.Left!], monkeys) * GetMonkeyValue(monkeys[monkey.Right!], monkeys),
-        //    Operator.Subtract => GetMonkeyValue(monkeys[monkey.Left!], monkeys) - GetMonkeyValue(monkeys[monkey.Right!], monkeys),
-        //    Operator.Divide => GetMonkeyValue(monkeys[monkey.Left!], monkeys) / GetMonkeyValue(monkeys[monkey.Right!], monkeys),
-        //    _ => monkey.Value!.Value
-        //};
-    }
-
-    private static long GetMonkeyValue(ScreamMonkey monkey, Dictionary<string, ScreamMonkey> monkeys)
+    private static double GetMonkeyValue(ScreamMonkey monkey, Dictionary<string, ScreamMonkey> monkeys)
     {
         return monkey.Operator switch
         {
@@ -186,12 +76,43 @@ public static class Day21
             _ => monkey.Value!.Value
         };
     }
-    
+
+    private static (double value, bool success) GetMonkeyValue2(ScreamMonkey monkey, ref Dictionary<string, ScreamMonkey> monkeys)
+    {
+        if (monkey.Left == "humn" || monkey.Right == "humn")
+        {
+            return (0, false);
+        }
+        if (monkey.Operator == Operator.None)
+        {
+            return (monkey.Value!.Value, true);
+        }
+        var (l, lS) = GetMonkeyValue2(monkeys[monkey.Left!], ref monkeys);
+        var (r, rS) = GetMonkeyValue2(monkeys[monkey.Right!], ref monkeys);
+        if (lS && rS)
+        {
+            var value = monkey.Operator switch
+            {
+                Operator.Add => l + r,
+                Operator.Multiply => l * r,
+                Operator.Subtract => l - r,
+                Operator.Divide => l / r,
+                _ => monkey.Value!.Value
+            };
+            monkey.Left = null; ;
+            monkey.Right = null;
+            monkey.Value = value;
+            return (value, true);
+        }
+        return (0, false);
+
+    }
+
 }
 
 public class ScreamMonkey
 {
-    public ScreamMonkey(string name, long? value, string? left, string? right, Operator op)
+    public ScreamMonkey(string name, double? value, string? left, string? right, Operator op)
     {
         Name = name;
         Value = value;
@@ -201,9 +122,9 @@ public class ScreamMonkey
     }
 
     public string Name { get; }
-    public long? Value { get; set; }
-    public string? Left { get; }
-    public string? Right { get; }
+    public double? Value { get; set; }
+    public string? Left { get; set; }
+    public string? Right { get; set; }
     public Operator Operator { get; set; }
 }
 
