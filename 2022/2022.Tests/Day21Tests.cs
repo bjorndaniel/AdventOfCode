@@ -49,6 +49,7 @@ public class Day21Tests
         //Given
         var filename = $"{Helpers.DirectoryPathTests}Day21-test.txt";
 
+
         //When
         var result = Day21.SolvePart2(filename, new TestPrinter(_output));
 

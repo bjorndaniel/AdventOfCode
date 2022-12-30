@@ -50,18 +50,34 @@ public static class Day21
         return GetMonkeyValue(monkeys["root"], monkeys);
     }
 
+
+    /// <summary>
+    /// Binary search
+    /// </summary>
+    /// <param name="filename"></param>
+    /// <param name="printer"></param>
+    /// <returns></returns>
     public static long SolvePart2(string filename, IPrinter printer)
     {
         var monkeys = ParseInput(filename)!;
 
         var low = 0D;
-        var high = 10000000000D;
+        var high = 5900000000000D;
+        var orgHigh = 5900000000000D;
         var humn = monkeys.First(_ => _.Value.Name == "humn");
         var root = monkeys.First(_ => _.Value.Name == "root");
         root.Value.Operator = Operator.Equals;
         while (true)
         {
             var mid = Math.Floor((low + high) / 2);
+            if (mid == humn.Value.Value)
+            {
+                if (low <= Math.Floor((low + orgHigh) / 2))
+                {
+                    low = Math.Floor((low + orgHigh) / 2);
+                    mid = Math.Floor((low + orgHigh) / 2);
+                }
+            }
             humn.Value.Value = mid;
             var resultL = GetMonkeyValue(monkeys[root.Value.Left!], monkeys);
             var resultR = GetMonkeyValue(monkeys[root.Value.Right!], monkeys);
