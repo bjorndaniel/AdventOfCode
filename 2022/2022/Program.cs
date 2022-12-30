@@ -165,13 +165,13 @@ Console.WriteLine($"Day14 part 2: {day14Part2.result} in {watch.ElapsedMilliseco
 
 var day17File = $"{Helpers.DirectoryPath}Day17.txt";
 watch.Restart();
-var day17Part1 = Day17.SolvePart1(day17File, 2022, new Printer());
+var day17Part1 = Day17.Solve(day17File, 2022, new Printer());
 watch.Stop();
 Console.WriteLine($"Day17 part 1: {day17Part1} in {watch.ElapsedMilliseconds}ms");
-//watch.Restart();
-//var day17Part2 = Day17.SolvePart1(day17File, 1000000000000, new Printer());
-//watch.Stop();
-//Console.WriteLine($"Day17 part 2: {day17Part2} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day17Part2 = Day17.Solve(day17File, 1000000000001, new Printer());
+watch.Stop();
+Console.WriteLine($"Day17 part 2: {day17Part2} in {watch.ElapsedMilliseconds}ms");
 
 var day18File = $"{Helpers.DirectoryPath}Day18.txt";
 watch.Restart();

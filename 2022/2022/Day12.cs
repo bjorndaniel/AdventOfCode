@@ -6,8 +6,8 @@ public static class Day12
 
     public static (char[,], Point start, Point end) ParseInput(string filename)
     {
-        Point start = new Point(-1, -1);
-        Point end = new Point(-1, -1);
+        var start = new Point(-1, -1);
+        var end = new Point(-1, -1);
         var lines = File.ReadAllLines(filename);
         var result = new char[lines.Length, lines[0].Length];
         for (int row = 0; row < lines.Length; row++)

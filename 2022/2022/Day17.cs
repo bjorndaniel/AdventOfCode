@@ -1,4 +1,5 @@
 ﻿namespace AoC2022;
+
 public static class Day17
 {
     public static IEnumerable<Direction> ParseInput(string filename)
@@ -8,18 +9,17 @@ public static class Day17
         return lines.First().Select(_ => _ == '>' ? Direction.Right : Direction.Left);
     }
 
-    public static long SolvePart1(string filename, long nrOfRocks, IPrinter printer)
+    public static long Solve(string filename, long nrOfRocks, IPrinter printer)
     {
-        var key = new List<string>();
         var chamber = new Chamber();
         var input = ParseInput(filename);
         var moveCount = 0;
         var rockCount = 0;
-        //var testCount = 0;
         Rock? current = null;
         var totalRocks = 1;
-        var lines = new Dictionary<string, (int rocks, int height)>();
-        //var rocks = new Dictionary<(RockFormation type, int x, Direction direction, int moveCount), (Rock rock, int height)>();
+
+        var cycles = new Dictionary<(RockFormation formation, int moveIndex, int xPos), (long rocks, long height)>();
+
         while (totalRocks < nrOfRocks)
         {
             if (current == null)
@@ -31,93 +31,48 @@ public static class Day17
                 {
                     rockCount = 0;
                 }
+
                 current.BottomLeft = chamber.GetNextDrop();
                 chamber.Rocks.Add(current);
                 var removeBelow = chamber.CurrentBottom - 100;
                 chamber.Rocks = chamber.Rocks.Where(_ => _.BottomLeft.Y >= removeBelow).ToList();
                 continue;
             }
+
             var nextMove = input.ElementAt(moveCount);
             moveCount++;
             if (moveCount >= input.Count())
             {
                 moveCount = 0;
             }
+
             chamber.TryMove(nextMove, current);
             var couldDrop = chamber.TryDrop(current);
             if (!couldDrop)
             {
-                //if (rocks.ContainsKey((current.Formation, current.BottomLeft.X, nextMove, moveCount)))
-                //{
-
-                //    var (rock, height) = rocks[(current.Formation, current.BottomLeft.X, nextMove, moveCount)];
-                //    if (rock.Formation == RockFormation.VLine)
-                //    {
-                //        printer.Print($"{rock.Formation} x:{rock.BottomLeft.X} y:{rock.BottomLeft.Y}");
-                //        printer.Flush();
-                //        printer.Print($"{rock.Formation} x:{current.BottomLeft.X} y:{current.BottomLeft.Y}");
-                //        printer.Flush();
-                //        printer.Print(height.ToString());
-                //        printer.Flush();
-                //        printer.Print("///////");
-                //        printer.Flush();
-                //        testCount++;
-                //    }
-
-
-                //    if (testCount == 4)
-                //    {
-                //        _ = "";
-                //        var cycleHeight = current.BottomLeft.Y - rock.BottomLeft.Y;
-                //        var cycleOffset = chamber.Height - height;
-                //        var fullRounds = nrOfRocks / cycleHeight;
-                //        var heightDifference = chamber.Height - height;
-                //        return (nrOfRocks / totalRocks) * (cycleHeight + (height - rock.Height));
-
-                //    }
-
-
-                //    //rocks[(current.Formation, current.BottomLeft.X, nextMove, moveCount)] = current;
-
-
-                //    ////var oldHeight = rock.BottomLeft.Y;
-                //    //////chamber.Print(printer);P
-                //    //var offset = rock.Points.Min(_ => _.Y);
-                //    //var cycleHeight = current.Points.Min(_ => _.Y) - offset;
-                //    //var cycleLength = chamber.Height - cycleHeight;
-                //    //var fullCycles = chamber.Height / cycleLength;
-                //    //var height = (nrOfRocks / fullCycles) * (cycleHeight + offset);
-                //    ////return height;
-                //    //if (testCount > 6 && rock.Formation == RockFormation.VLine)
-                //    //{
-                //    //    _ = "";
-                //    //}
-                //}
-                //else
-                //{
-                //    rocks.Add((current.Formation, current.Points.Min(_ => _.X), nextMove, moveCount), (current, chamber.Height));
-                //}
-                if (totalRocks % 100 == 0)
+                if (cycles.ContainsKey((current.Formation, moveCount, current.BottomLeft.X)))
                 {
-                    var line = $"{current.Formation}{nextMove}{current.BottomLeft.X}";
-                    if (lines.ContainsKey(line))
+                    var (p, h) = cycles[(current.Formation, moveCount, current.BottomLeft.X)];
+                    var period = totalRocks - p;
+                    if (totalRocks % period == nrOfRocks % period)
                     {
-                        var (count, height) = lines[line];
-                        var diff = chamber.Height - height;
-                        var totalRounds = nrOfRocks / (totalRocks - count);
-                        var added = totalRounds * diff;
-                        return added + (height - diff);
-                        _ = "";
+                        var next = GetRock(rockCount);
+                        var height = chamber.Height - h;
+                        var remain = nrOfRocks - totalRocks + 1;
+                        var c = (remain / period) + 1;
+                        return h + (height * c);
                     }
-                    else
-                    {
-                        lines.Add(line, (totalRocks, chamber.Height));
-                    }
+                }
+                else
+                {
+                    cycles.Add((current.Formation, moveCount, current.BottomLeft.X), (totalRocks, chamber.Height));
                 }
                 current = null;
             }
         }
+
         return (long)chamber.Height;
+
         static Rock GetRock(int count) =>
             count switch
             {
@@ -127,7 +82,9 @@ public static class Day17
                 3 => new Rock(RockFormation.VLine),
                 4 => new Rock(RockFormation.Square),
                 _ => throw new Exception($"Unexpected rock count {count}")
-            }; ;
+            };
+
+        ;
     }
 
     public enum Direction
@@ -157,7 +114,7 @@ public class Chamber
     public List<Rock> Rocks { get; set; } = new();
 
     public int CurrentBottom =>
-       !Rocks.Any() ? 0 : Rocks.Max(_ => _.Points.Max(p => p.Y));
+        !Rocks.Any() ? 0 : Rocks.Max(_ => _.Points.Max(p => p.Y));
 
     public Point GetNextDrop() =>
         new(3, CurrentBottom == 0 ? 4 : CurrentBottom + 4);
@@ -178,6 +135,7 @@ public class Chamber
                 }
             }
         }
+
         sb.Append(move);
     }
 
@@ -205,9 +163,11 @@ public class Chamber
                     printer.Print(".");
                 }
             }
-            //printer.Flush();
+
+            printer.Flush();
         }
-        //printer.Flush();
+
+        printer.Flush();
     }
 
     public void TryMove(Day17.Direction nextMove, Rock current)
@@ -218,14 +178,17 @@ public class Chamber
         {
             return;
         }
+
         if (positionsNeeded.Any(_ => _.X < 1 || _.X > 7))
         {
             return;
         }
+
         if (positionsNeeded.Intersect(other).Any())
         {
             return;
         }
+
         current.Move(nextMove);
     }
 
@@ -237,10 +200,12 @@ public class Chamber
         {
             return false;
         }
+
         if (positonsNeeded.Intersect(other).Any())
         {
             return false;
         }
+
         current.Drop();
 
         return true;
@@ -271,8 +236,8 @@ public class Rock
             RockFormation.Plus => new List<Point>
             {
                 new Point(BottomLeft.X + 1, BottomLeft.Y),
-                new Point(BottomLeft.X , BottomLeft.Y + 1),
-                new Point(BottomLeft.X  + 1, BottomLeft.Y + 1),
+                new Point(BottomLeft.X, BottomLeft.Y + 1),
+                new Point(BottomLeft.X + 1, BottomLeft.Y + 1),
                 new Point(BottomLeft.X + 2, BottomLeft.Y + 1),
                 new Point(BottomLeft.X + 1, BottomLeft.Y + 2)
             },
@@ -326,5 +291,4 @@ public class Rock
             Day17.Direction.Down => Points.Select(_ => new Point(_.X, _.Y - 1)).ToList(),
             _ => throw new ArgumentException("Unexpected direction"),
         };
-
 }

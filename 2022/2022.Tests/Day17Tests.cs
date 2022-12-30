@@ -32,7 +32,7 @@ public class Day17Tests
         var printer = new TestPrinter(_output);
 
         //When
-        var result = Day17.SolvePart1(filename, 2022, printer);
+        var result = Day17.Solve(filename, 2023, printer);
 
         //Then
         Assert.True(3068 == result, $"Expected 3068, got {result}");
@@ -47,7 +47,7 @@ public class Day17Tests
         var printer = new TestPrinter(_output);
 
         //When
-        var result = Day17.SolvePart1(filename, 1000000000000, printer);
+        var result = Day17.Solve(filename, 1000000000001, printer);
 
         //Then
         Assert.True(1514285714288 == result, $"Expected 1514285714288, got {result}");
