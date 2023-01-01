@@ -1,7 +1,7 @@
 ﻿namespace AoC2022;
 public static class Day22
 {
-    public static (List<BoardRow> rows, IEnumerable<Move> moves) ParseInput(string filename)
+    public static (BoardSquare[,] board, IEnumerable<Move> moves) ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
         var matrixHeight = 0;
@@ -14,36 +14,57 @@ public static class Day22
             }
             matrixHeight++;
         }
-        return (ParseRows(lines, matrixWidth), ParseMoves(lines[matrixHeight + 1]));
+        return (ParseRows(lines, matrixWidth, matrixHeight), ParseMoves(lines[matrixHeight + 1]));
 
-        static List<BoardRow> ParseRows(string[] lines, int matrixWidth)
+        static BoardSquare[,] ParseRows(string[] lines, int matrixWidth, int matrixHeight)
         {
-            var rows = new List<BoardRow>();
-            foreach (var l in lines)
+            var matrix = new BoardSquare[matrixHeight, matrixWidth];
+            for (var row = 0; row < matrixHeight; row++)
             {
-                if (string.IsNullOrEmpty(l))
+                for (var col = 0; col < matrixWidth; col++)
                 {
-                    break;
-                }
-                var row = new BoardRow();
-                for (int col = 0; col < matrixWidth; col++)
-                {
-                    if (l.Length <= col)
+                    var l = lines[row];
+                    if (lines[row].Length <= col)
                     {
-                        row.Squares.Add(new BoardSquare { Type = BoardType.Void, Value = null });
+                        matrix[row, col] = new BoardSquare { Type = BoardType.Void, Value = null };
                     }
                     else if (l[col] != ' ')
                     {
-                        row.Squares.Add(new BoardSquare { Type = l[col] == '#' ? BoardType.Wall : BoardType.Open, Value = l[col] });
+                        matrix[row, col] = new BoardSquare { Type = l[col] == '#' ? BoardType.Wall : BoardType.Open, Value = l[col] };
                     }
                     else
                     {
-                        row.Squares.Add(new BoardSquare { Type = BoardType.Void, Value = null });
+                        matrix[row, col] = new BoardSquare { Type = BoardType.Void, Value = null };
                     }
                 }
-                rows.Add(row);
             }
-            return rows;
+            return matrix;
+            //var rows = new List<BoardRow>();
+            //foreach (var l in lines)
+            //{
+            //    if (string.IsNullOrEmpty(l))
+            //    {
+            //        break;
+            //    }
+            //    var row = new BoardRow();
+            //    for (int col = 0; col < matrixWidth; col++)
+            //    {
+            //        if (l.Length <= col)
+            //        {
+            //            row.Squares.Add(new BoardSquare { Type = BoardType.Void, Value = null });
+            //        }
+            //        else if (l[col] != ' ')
+            //        {
+            //            row.Squares.Add(new BoardSquare { Type = l[col] == '#' ? BoardType.Wall : BoardType.Open, Value = l[col] });
+            //        }
+            //        else
+            //        {
+            //            row.Squares.Add(new BoardSquare { Type = BoardType.Void, Value = null });
+            //        }
+            //    }
+            //    rows.Add(row);
+            //}
+            //return rows;
         }
         static List<Move> ParseMoves(string moveString)
         {
@@ -75,54 +96,101 @@ public static class Day22
         }
     }
 
-    public static (int result, List<BoardRow> matrix) SolvePart1(string filename, IPrinter printer)
+    public static (int result, BoardSquare[,] matrix) SolvePart1(string filename, IPrinter printer)
     {
         var (matrix, moves) = ParseInput(filename);
-        var start = matrix.First().Squares.First(s => s.Type == BoardType.Open);
-        var index = matrix.First().Squares.IndexOf(start);
-        var currentRow = matrix.First();
+        var startX = FindStart(matrix);
+        var (x, y) = (startX, 0);
         var currentDirection = TileDirection.Right;
         foreach (var move in moves)
         {
             if (move.Length.HasValue)
             {
-                currentRow.Squares[index].Value = GetMarker(currentDirection);
-                var end = 0;
-                var nrToMove = 0;
-                //switch (currentDirection)
-                //{
-                //    case TileDirection.Right:
-                //        nrToMove = (index + move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open);
-                //        end = ((index + 1 + move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open));
-                //        break;
-                //    case TileDirection.Left:
-                //        nrToMove = (index - move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open);
-                //        end = ((index - 1 - move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open));
-                //        break;
-                //    case TileDirection.Down:
-                //        var start = matrix.IndexOf(currentRow);
-                //        var end = start + move.Length;
-                //        break;
-                //    case TileDirection.Up:
+                matrix[y, x].Value = GetMarker(currentDirection);
+                printer.PrintMatrix(matrix);
+                printer.Flush();
+                switch (currentDirection)
+                {
+                    case TileDirection.Up:
 
-                //        break;
+                        break;
+                    case TileDirection.Down:
 
-                //}
-                //end += index + 1;
-                //index = end;
+                        break;
+                    case TileDirection.Left:
+
+                        break;
+                    case TileDirection.Right:
+                        x = Move(matrix, (x, y), currentDirection, move.Length.Value);
+                        break;
+                }
             }
             else
             {
                 currentDirection = GetDirection(move.Direction!.Value, currentDirection);
-                currentRow.Squares[index].Value = GetMarker(currentDirection);
-
+                matrix[y, x].Value = GetMarker(currentDirection);
             }
-            //Day22.Print(matrix, printer);
+        }
+        return (0, new BoardSquare[0, 0]);
+        //var start = matri
+        //var index = matrix.First().Squares.IndexOf(start);
+        //var currentRow = matrix.First();
+        //var currentDirection = TileDirection.Right;
+        //foreach (var move in moves)
+        //{
+        //    if (move.Length.HasValue)
+        //    {
+        //        currentRow.Squares[index].Value = GetMarker(currentDirection);
+        //        var end = 0;
+        //        var nrToMove = 0;
+        //        //switch (currentDirection)
+        //        //{
+        //        //    case TileDirection.Right:
+        //        //        nrToMove = (index + move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open);
+        //        //        end = ((index + 1 + move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open));
+        //        //        break;
+        //        //    case TileDirection.Left:
+        //        //        nrToMove = (index - move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open);
+        //        //        end = ((index - 1 - move.Length.Value) % currentRow.Squares.Count(_ => _.Type == BoardType.Open));
+        //        //        break;
+        //        //    case TileDirection.Down:
+        //        //        var start = matrix.IndexOf(currentRow);
+        //        //        var end = start + move.Length;
+        //        //        break;
+        //        //    case TileDirection.Up:
+
+        //        //        break;
+
+        //        //}
+        //        //end += index + 1;
+        //        //index = end;
+        //    }
+        //    else
+        //    {
+        //        currentDirection = GetDirection(move.Direction!.Value, currentDirection);
+        //        currentRow.Squares[index].Value = GetMarker(currentDirection);
+
+        //    }
+        //    //Day22.Print(matrix, printer);
+        //}
+
+        //var result = 0;
+        //return (result, new List<BoardRow>());
+
+
+        static int FindStart(BoardSquare[,] matrix)
+        {
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                if (matrix[0, i].Type == BoardType.Open)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
-        var result = 0;
-        return (result, new List<BoardRow>());
-        char GetMarker(TileDirection current) =>
+        static char GetMarker(TileDirection current) =>
             current switch
             {
                 TileDirection.Up => '^',
@@ -131,7 +199,8 @@ public static class Day22
                 TileDirection.Right => '>',
                 _ => throw new NotImplementedException()
             };
-        TileDirection GetDirection(Turn turn, TileDirection current)
+
+        static TileDirection GetDirection(Turn turn, TileDirection current)
         {
             if (turn == Turn.Left)
             {
@@ -156,23 +225,33 @@ public static class Day22
                 };
             }
         }
-    }
 
-    private static void Print(List<BoardRow> matrix, IPrinter printer)
-    {
-        foreach (var row in matrix)
+        static int Move(BoardSquare[,] matrix, (int x, int y) start, TileDirection tileDirection, int steps)
         {
-            var sb = new StringBuilder();
-            foreach (var square in row.Squares)
+            var result = 0;
+            switch (tileDirection)
             {
-                sb.Append(square.Value);
+                case TileDirection.Up:
+                    break;
+                case TileDirection.Down:
+                    break;
+                case TileDirection.Left:
+                    break;
+                case TileDirection.Right:
+                    var row = Helpers.GetRow(matrix, start.y, start.x);
+                    var count = row.Where(_ => _.Type == BoardType.Open).Count();
+                    result = ((1 + steps) % count) + start.x;
+                    //for (int i = start.x; i < steps; i++)
+                    //{
+                    //    if (matrix[start.y, i].Type == BoardType.Open)
+                    //    {
+                    //        result++;
+                    //    }
+                    //}
+                    break;
             }
-            printer.Print(sb.ToString());
-            printer.Flush();
-            //_output.WriteLine(sb.ToString());
+            return result;
         }
-        printer.Print("");
-        printer.Flush();
     }
 }
 
@@ -199,14 +278,10 @@ public enum BoardType
     Void
 }
 
-public class BoardRow
-{
-    public List<BoardSquare> Squares { get; set; } = new List<BoardSquare>();
-}
-
 public class BoardSquare
 {
     public char? Value { get; set; }
     public BoardType Type { get; set; }
+    public override string ToString() => Value?.ToString() ?? " ";
 }
 

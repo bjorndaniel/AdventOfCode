@@ -25,4 +25,17 @@ public class Day24Tests
         printer.PrintMatrix(result);
         printer.Flush();
     }
+
+    [Fact]
+    public void Can_solve_part1_for_Test()
+    {
+        //Given 
+        var filename = $"{Helpers.DirectoryPathTests}Day24-test.txt";
+        
+        //When
+        var result = Day24.SolvePart1(filename, new TestPrinter(_output));
+        
+        //Then
+        Assert.True(18 == result, $"Expected 18, got {result}");
+    }
 }
