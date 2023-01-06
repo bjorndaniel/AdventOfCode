@@ -23,7 +23,18 @@ public class Day19Tests
         Assert.True(7 == result.First().GeodeRobotCost.Obsidian, $"Expected 7 obsidian, got {result.First().OreRobotCost.Obsidian}");
         Assert.True("Blueprint 2" == result.Last().Name, $"Expected Blueprint 2, got {result.Last().Name}");
         Assert.True(12 == result.Last().GeodeRobotCost.Obsidian, $"Expected 12 obsidian, got {result.Last().OreRobotCost.Obsidian}");
+    }
 
+    [Fact]
+    public void Can_solve_part1_for_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day19-test.txt";
 
+        //When
+        var result = Day19.SolvePart1(filename);
+
+        //Then
+        Assert.True(33 == result, $"Expected 2, got {result}");
     }
 }

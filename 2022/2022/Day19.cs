@@ -19,6 +19,11 @@ public static class Day19
             yield return new Blueprint(name, oreRobot, clayRobot, obsidianRobot, geodeRobot);
         }
     }
+    public static int SolvePart1(string filename)
+    {
+        var blueprints = ParseInput(filename);
+        return 0;
+    }
 }
 public class Blueprint
 {

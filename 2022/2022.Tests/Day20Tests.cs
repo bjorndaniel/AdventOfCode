@@ -29,26 +29,26 @@ public class Day20Tests
     [Fact]
     public void Can_solve_part1_for_test()
     {
-        //Given 
+        //Given
         var filename = $"{Helpers.DirectoryPathTests}Day20-test.txt";
 
         //When
         var result = Day20.SolvePart1(filename, new TestPrinter(_output));
 
-        //Then 
+        //Then
         Assert.True(3 == result, $"Expected 3, got {result}");
     }
 
     [Fact]
     public void Can_solve_part2_for_test()
     {
-        //Given 
+        //Given
         var filename = $"{Helpers.DirectoryPathTests}Day20-test.txt";
 
         //When
         var result = Day20.SolvePart2(filename, new TestPrinter(_output));
 
-        //Then 
+        //Then
         Assert.True(1623178306 == result, $"Expected 1623178306, got {result}");
     }
 }

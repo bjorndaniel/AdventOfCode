@@ -258,18 +258,19 @@ public static class Day22
                     var col = start.x;
                     for (int i = 0; i < steps; i++)
                     {
+                        var prev = col;
                         col++;
-                        if (matrix[start.y, col].Type == BoardType.Wall)
+                        if (col > matrix.GetLength(1))
                         {
-                            return col - 1;
+                            col = 0;
                         }
                         if (matrix[start.y, col].Type == BoardType.Void)
                         {
                             col = 0;
                         }
-                        if (col > matrix.GetLength(1))
+                        if (matrix[start.y, col].Type == BoardType.Wall)
                         {
-                            col = 0;
+                            return prev;
                         }
                     }
                     return col;

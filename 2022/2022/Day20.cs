@@ -29,6 +29,7 @@ public static class Day20
         //.Print(keys.Print());
         //    printer.Flush();
         //    printer.Flush();
+        var mod = keys.Count - 1;
         for (int mix = 0; mix < nrOfRounds; mix++)
         {
             for (int i = 0; i < keys.Count; i++)
@@ -37,7 +38,6 @@ public static class Day20
                 //printer.Print($"Mix {mix} - {k.Value} - {k.Next?.Value} - {k.Previous?.Value}");
                 //printer.Flush();
                 var current = keys.GetPosition(k);
-                var mod = keys.Count - 1;
                 if (k.Value == 0)
                 {
                     continue;
@@ -73,10 +73,9 @@ public static class Day20
         //printer.Flush();
         //printer.Flush();
         var index = keys.GetIndexOfValue(0);
-
-        var index1 = ((1000 + index + 1) % keys.Count - 1);
-        var index2 = ((2000 + index + 1) % keys.Count - 1);
-        var index3 = ((3000 + index + 1) % keys.Count - 1);
+        var index1 = ((1000 + index) % keys.Count);
+        var index2 = ((2000 + index) % keys.Count);
+        var index3 = ((3000 + index) % keys.Count);
         var k1 = keys.GetElementAt(index1).Value;
         var k2 = keys.GetElementAt(index2).Value;
         var k3 = keys.GetElementAt(index3).Value;
@@ -157,12 +156,14 @@ public class DoublyLinkedList
             current.Next = _head!;
             _head!.Previous = current;
             _head = current;
+            current.Previous = null;
         }
         else if (toIndex == Count - 1) // Special case for moving to the last position
         {
             _tail!.Next = current;
             current.Previous = _tail;
             _tail = current;
+            current.Next = null;
         }
         else
         {
