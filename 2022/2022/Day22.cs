@@ -115,7 +115,7 @@ public static class Day22
 
                         break;
                     case TileDirection.Down:
-
+                        y = Move(matrix, (x, y), currentDirection, move.Length.Value);
                         break;
                     case TileDirection.Left:
 
@@ -234,21 +234,45 @@ public static class Day22
                 case TileDirection.Up:
                     break;
                 case TileDirection.Down:
-                    break;
+                    var row = start.y;
+                    for (int i = 0; i < steps; i++)
+                    {
+                        row++;
+                        if (row > matrix.GetLength(0))
+                        {
+                            row = 0;
+                        }
+                        if (matrix[row, start.x].Type == BoardType.Wall)
+                        {
+                            return row - 1;
+                        }
+                        if (matrix[row, start.x].Type == BoardType.Void)
+                        {
+                            continue;
+                        }
+                    }
+                    return row;
                 case TileDirection.Left:
                     break;
                 case TileDirection.Right:
-                    var row = Helpers.GetRow(matrix, start.y, start.x);
-                    var count = row.Where(_ => _.Type == BoardType.Open).Count();
-                    result = ((1 + steps) % count) + start.x;
-                    //for (int i = start.x; i < steps; i++)
-                    //{
-                    //    if (matrix[start.y, i].Type == BoardType.Open)
-                    //    {
-                    //        result++;
-                    //    }
-                    //}
-                    break;
+                    var col = start.x;
+                    for (int i = 0; i < steps; i++)
+                    {
+                        col++;
+                        if (matrix[start.y, col].Type == BoardType.Wall)
+                        {
+                            return col - 1;
+                        }
+                        if (matrix[start.y, col].Type == BoardType.Void)
+                        {
+                            col = 0;
+                        }
+                        if (col > matrix.GetLength(1))
+                        {
+                            col = 0;
+                        }
+                    }
+                    return col;
             }
             return result;
         }
