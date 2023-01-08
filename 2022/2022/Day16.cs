@@ -48,7 +48,9 @@ public static class Day16
     public static int SolvePart1(string filename, IPrinter printer)
     {
         var valves = ParseInput(filename);
+        //Find shortest distance between all valvies
         var distances = FloydWarshall(valves);
+        //Do dfs to find all possible paths and take max
         var result = DFS("AA", 30, new Path(Array.Empty<Valve>(), 0), new Dictionary<string, bool>(), distances, valves);
         return result.Max(_ => _.FlowRate);
     }
@@ -57,8 +59,10 @@ public static class Day16
     {
         var valves = ParseInput(filename);
         var distances = FloydWarshall(valves);
+        //Same as part one but with 26 minutes to get the Elephant running
         var result = DFS("AA", 26, new Path(Array.Empty<Valve>(), 0), new Dictionary<string, bool>(), distances, valves);
         var max = 0;
+        //Find two different paths and sum their max
         foreach (var p in result)
         {
             if (!p.Nodes.Any())
