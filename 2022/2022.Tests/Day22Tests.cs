@@ -36,7 +36,8 @@ public class Day22Tests
     public void Can_solve_part1_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPathTests}Day22-test.txt";
+        //var filename = $"{Helpers.DirectoryPathTests}Day22-test.txt";
+        var filename = $"{Helpers.DirectoryPath}Day22.txt";
 
         //When
         var (result, matrix) = Day22.SolvePart1(filename, new TestPrinter(_output));

@@ -158,10 +158,10 @@ watch.Restart();
 var day16Part1 = Day16.SolvePart1(day16File, new Printer());
 watch.Stop();
 Console.WriteLine($"Day16 part 1: {day16Part1} in {watch.ElapsedMilliseconds}ms");
-watch.Restart();
-var day16Part2 = Day16.SolvePart2(day16File, new Printer());
-watch.Stop();
-Console.WriteLine($"Day16 part 2: {day16Part2} in {watch.ElapsedMilliseconds}ms");
+//watch.Restart();
+//var day16Part2 = Day16.SolvePart2(day16File, new Printer());
+//watch.Stop();
+//Console.WriteLine($"Day16 part 2: {day16Part2} in {watch.ElapsedMilliseconds}ms");
 
 var day17File = $"{Helpers.DirectoryPath}Day17.txt";
 watch.Restart();
@@ -212,6 +212,16 @@ watch.Restart();
 var day21Part2 = Day21.SolvePart2(day21File, new Printer());
 watch.Stop();
 Console.WriteLine($"Day21 part 2: {day21Part2} in {watch.ElapsedMilliseconds}ms");
+
+var day22File = $"{Helpers.DirectoryPath}Day22.txt";
+watch.Restart();
+var day22Part1 = Day22.SolvePart1(day22File, new Printer());
+watch.Stop();
+Console.WriteLine($"Day22 part 1: {day22Part1} in {watch.ElapsedMilliseconds}ms");
+//watch.Restart();
+//var day21Part2 = Day21.SolvePart2(day21File, new Printer());
+//watch.Stop();
+//Console.WriteLine($"Day21 part 2: {day21Part2} in {watch.ElapsedMilliseconds}ms");
 
 var day25File = $"{Helpers.DirectoryPath}Day25.txt";
 watch.Restart();
