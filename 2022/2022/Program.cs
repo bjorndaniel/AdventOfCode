@@ -153,15 +153,15 @@ Console.WriteLine($"Day14 part 2: {day14Part2.result} in {watch.ElapsedMilliseco
 //watch.Stop();
 //Console.WriteLine($"Day15 part 2: {day15Part2} in {watch.ElapsedMilliseconds}ms");
 
-//var Day16File = $"{Helpers.DirectoryPath}Day16.txt";
-//watch.Restart();
-//var Day16Part1 = Day16.SolvePart1(Day16File, 2000000);
-//watch.Stop();
-//Console.WriteLine($"Day16 part 1: {Day16Part1} in {watch.ElapsedMilliseconds}ms");
-//watch.Restart();
-//var Day16Part2 = Day16.SolvePart2(Day16File, 0, 4000000);
-//watch.Stop();
-//Console.WriteLine($"Day16 part 2: {Day16Part2} in {watch.ElapsedMilliseconds}ms");
+var day16File = $"{Helpers.DirectoryPath}Day16.txt";
+watch.Restart();
+var day16Part1 = Day16.SolvePart1(day16File, new Printer());
+watch.Stop();
+Console.WriteLine($"Day16 part 1: {day16Part1} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day16Part2 = Day16.SolvePart2(day16File, new Printer());
+watch.Stop();
+Console.WriteLine($"Day16 part 2: {day16Part2} in {watch.ElapsedMilliseconds}ms");
 
 var day17File = $"{Helpers.DirectoryPath}Day17.txt";
 watch.Restart();

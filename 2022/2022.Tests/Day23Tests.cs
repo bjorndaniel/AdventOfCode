@@ -28,4 +28,17 @@ public class Day23Tests
         printer.Flush();
 
     }
+
+    [Fact]
+    public void Can_solve_part1_for_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day23-test.txt";
+
+        //When
+        var result = Day23.SolvePart1(filename, new TestPrinter(_output));
+
+        //Then
+        Assert.True(110 == result, $"Expected 110, got {result}");
+    }
 }

@@ -15,4 +15,9 @@ public static class Day23
         }
         return result;
     }
+    public static int SolvePart1(string filename, IPrinter printer)
+    {
+        var matrix = ParseInput(filename);
+        return 0;
+    }
 }

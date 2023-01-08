@@ -1,82 +1,144 @@
 ﻿namespace AoC2022;
 public static class Day16
 {
-    public static IEnumerable<Valve> ParseInput(string filename)
+    public static Dictionary<string, Valve> ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
-        var result = new List<Valve>();
+        var result = new Dictionary<string, Valve>();
         foreach (var l in lines)
         {
             var name = l
-                .Replace("Valve ", "")
+                .Replace("Valve ", string.Empty)
                 .Split(' ')[0];
             var flowRate = l[(l.IndexOf('=') + 1)..l.IndexOf(';')];
-            var valves = l[(l.IndexOf("valves ") + 7)..]
+            var valves = new List<string>();
+            if (l.Contains("lead to"))
+            {
+                valves = l[(l.IndexOf("valves ") + 7)..]
+                    .Split(',')
+                    .Select(_ => _.Trim()).ToList();
+            }
+            else
+            {
+                valves = l[(l.LastIndexOf("to valve ") + 9)..]
                 .Split(',')
-                .Select(_ => _.Trim());
+                .Select(_ => _.Trim()).ToList();
+
+            }
             var valve = new Valve(
                 name, int.Parse(flowRate),
                 valves.Select(_ => new Valve(_, 0, new List<Valve>())).ToList()
             );
-            result.Add(valve);
+            result.Add(valve.Name, valve);
             //Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
         }
         foreach (var v in result)
         {
-            var adjacent = v.Adjacent
+            var adjacent = v.Value.Adjacent
                 .Select(_ => _.Name)
                 .ToList();
             var correct = result
-                .Where(_ => adjacent.Contains(_.Name))
+                .Where(_ => adjacent.Contains(_.Key))
                 .ToList();
-            v.Adjacent = correct;
-            yield return v;
+            v.Value.Adjacent = correct.Select(_ => _.Value).ToList();
         }
+        return result;
     }
 
     public static int SolvePart1(string filename, IPrinter printer)
     {
         var valves = ParseInput(filename);
-        var (mp, p) = GetMaxPressure(valves.First(_ => _.Name == "AA"), 30, 0, 0, new HashSet<Valve>());
-        printer.Print(p.Select(_ => _.Name).Aggregate((a, b) => a + " -> " + b));
-        printer.Flush();
-        return mp;
+        var distances = FloydWarshall(valves);
+        var result = DFS("AA", 30, new Path(Array.Empty<Valve>(), 0), new Dictionary<string, bool>(), distances, valves);
+        return result.Max(_ => _.FlowRate);
     }
-    public static (int max, List<Valve> path) GetMaxPressure(Valve start, int minutes, int currentTime, int currentPressure, HashSet<Valve> visited)
-    {
-        // Check if the current time exceeds the number of minutes allowed for traversing the valves
-        if (currentTime >= minutes)
-        {
-            return (currentPressure, visited.ToList());
-        }
 
-        // Initialize variables to store the maximum pressure and path
-        int maxPressure = currentPressure;
-        List<Valve> maxPath = visited.ToList();
-        // Visit the adjacent valves of the current valve
-        foreach (var adjacent in start.Adjacent.OrderByDescending(v => v.FlowRate).ToList())
+    public static int SolvePart2(string filename, IPrinter printer)
+    {
+        var valves = ParseInput(filename);
+        var distances = FloydWarshall(valves);
+        var result = DFS("AA", 26, new Path(Array.Empty<Valve>(), 0), new Dictionary<string, bool>(), distances, valves);
+        var max = 0;
+        foreach (var p in result)
         {
-            if (!visited.Contains(adjacent))
+            if (!p.Nodes.Any())
             {
-                var pressureReleased = (minutes - currentTime - 2) * adjacent.FlowRate;
-                // Add the pressure released by the adjacent valve to the current pressure
-                int newPressure = currentPressure + pressureReleased;
-                visited.Add(adjacent);
-                // Recursively call the GetMaxPressure method to find the maximum pressure and path for the remaining minutes
-                (int pressure, List<Valve> path) = GetMaxPressure(adjacent, minutes, currentTime + 2, newPressure, visited);
-                // Update the maximum pressure and path if the pressure achieved by the recursive call is higher
-                if (pressure >= maxPressure)
+                continue;
+            }
+            var visit = p.Nodes.Select(_ => new KeyValuePair<string, bool>(_.Name, true));
+            foreach (var p1 in result)
+            {
+                var flow = p.FlowRate + p1.FlowRate;
+                if (flow > max && p1.Nodes.Any() && p1.Nodes.All(_ => !visit.Contains(new KeyValuePair<string, bool>(_.Name, true))))
                 {
-                    maxPressure = pressure;
-                    maxPath = path;
-                    // Remove the adjacent valve from the set of visited valves
+                    max = flow;
                 }
-                visited.Remove(adjacent);
+            }
+        }
+        return max;
+    }
+
+    static Dictionary<string, Dictionary<string, int>> FloydWarshall(Dictionary<string, Valve> valves)
+    {
+        var dist = new Dictionary<string, Dictionary<string, int>>();
+        foreach (var i in valves.Keys)
+        {
+            foreach (var j in valves.Keys)
+            {
+                if (!dist.ContainsKey(i))
+                {
+                    dist[i] = new Dictionary<string, int>();
+                }
+                if (i == j)
+                {
+                    dist[i][j] = 0;
+                }
+                else if (valves[i].Adjacent.Any(a => a.Name == j))
+                {
+                    dist[i][j] = 1;
+                }
+                else
+                {
+                    dist[i][j] = 999999;
+                }
             }
         }
 
-        // Return the maximum pressure and path
-        return (maxPressure, maxPath);
+        foreach (var k in valves.Keys)
+        {
+            foreach (var i in valves.Keys)
+            {
+                foreach (var j in valves.Keys)
+                {
+                    dist[i][j] = Math.Min(dist[i][j], dist[i][k] + dist[k][j]);
+                }
+            }
+        }
+
+        return dist;
+    }
+
+    static Path[] DFS(string current, int time, Path path,
+    Dictionary<string, bool> visited, Dictionary<string, Dictionary<string, int>> distances, Dictionary<string, Valve> valves)
+    {
+        var paths = new[] { path };
+        var nonZero = valves.Where(_ => _.Value.FlowRate > 0).Select(_ => _.Key);
+        foreach (var next in nonZero)
+        {
+            var newTime = time - distances[current][next] - 1;
+            if (visited.ContainsKey(next) || newTime <= 0)
+            {
+                continue;
+            }
+            var newMap = new Dictionary<string, bool>(visited)
+            {
+                { next, true }
+            };
+            var newPath = path.Copy();
+            newPath.AddToPath(newTime * valves[next].FlowRate, valves[next]);
+            paths = paths.Concat(DFS(next, newTime, newPath, newMap, distances, valves)).ToArray();
+        }
+        return paths;
     }
 }
 
@@ -88,13 +150,39 @@ public class Valve
         FlowRate = flowRate;
         Adjacent = adjacent;
     }
-
     public string Name { get; }
     public int FlowRate { get; }
     public List<Valve> Adjacent { get; set; }
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-        var other = (Valve)obj;
-        return other?.Name == Name;
+        if (obj == null)
+        {
+            return false;
+        }
+        return ((Valve)obj)?.Name == Name;
+    }
+    public override int GetHashCode() =>
+        base.GetHashCode();
+}
+
+public class Path
+{
+    public Path(Valve[] nodes, int flow)
+    {
+        Nodes = nodes;
+        FlowRate = flow;
+    }
+
+    public Valve[] Nodes { get; set; }
+
+    public int FlowRate { get; set; }
+
+    public Path Copy() =>
+        new Path(Nodes.ToArray(), FlowRate);
+
+    public void AddToPath(int flow, Valve node)
+    {
+        FlowRate += flow;
+        Nodes = Nodes.Append(node).ToArray();
     }
 }
