@@ -238,6 +238,10 @@ public static class Day22
                             var next = GetNextOpenRowDown(matrix, 0, start.x);
                             if (next == -1)
                             {
+                                if (row == 0)
+                                {
+                                    return matrix.GetLength(0) - 1;
+                                }
                                 return row - 1;
                             }
                             row = next;

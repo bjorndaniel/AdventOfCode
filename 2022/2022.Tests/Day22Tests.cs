@@ -32,12 +32,16 @@ public class Day22Tests
         Assert.True(Turn.Right == moves.ElementAt(1).Direction!.Value, $"Expected Right, got {moves.ElementAt(6).Direction}");
     }
 
-    [Fact]
-    public void Can_solve_part1_for_test()
+    [Theory]
+    [InlineData("Day22-test.txt", 6032)]
+    [InlineData("Day22-test2.txt", 1038)]
+    [InlineData("Day22-test3.txt", 1038)]
+    public void Can_solve_part1_for_test(string input, int expected)
     {
         //Given
         //var filename = $"{Helpers.DirectoryPathTests}Day22-test.txt";
-        var filename = $"{Helpers.DirectoryPath}Day22.txt";
+        var filename = $"{Helpers.DirectoryPathTests}{input}";
+        //var filename = $"{Helpers.DirectoryPath}Day22.txt";
 
         //When
         var (result, matrix) = Day22.SolvePart1(filename, new TestPrinter(_output));
@@ -46,7 +50,7 @@ public class Day22Tests
         var printer = new TestPrinter(_output);
         printer.PrintMatrix(matrix);
         printer.Flush();
-        Assert.True(6032 == result, $"Expected 6032, got {result}");
+        Assert.True(expected == result, $"Expected {expected}, got {result}");
 
     }
 
