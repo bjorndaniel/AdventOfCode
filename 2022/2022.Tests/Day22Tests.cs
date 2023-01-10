@@ -34,12 +34,12 @@ public class Day22Tests
 
     [Theory]
     [InlineData("Day22-test.txt", 6032)]
-    [InlineData("Day22-test2.txt", 1038)]
-    [InlineData("Day22-test3.txt", 1038)]
+    [InlineData("Day22-test1.txt", 1036)]
+    [InlineData("Day22-test2.txt", 3045)]
+    [InlineData("Day22-test3.txt", 1047)]
     public void Can_solve_part1_for_test(string input, int expected)
     {
         //Given
-        //var filename = $"{Helpers.DirectoryPathTests}Day22-test.txt";
         var filename = $"{Helpers.DirectoryPathTests}{input}";
         //var filename = $"{Helpers.DirectoryPath}Day22.txt";
 

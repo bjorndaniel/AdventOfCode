@@ -103,6 +103,9 @@ public static class Day22
         var (x, y) = (startX, 0);
         var currentDirection = TileDirection.Right;
         var moveCount = 0;
+        matrix[y, x].Value = GetMarker(currentDirection);
+        //printer.PrintMatrix(matrix);
+        //printer.Flush();
         foreach (var move in moves)
         {
             if (move.Length.HasValue)
@@ -133,6 +136,7 @@ public static class Day22
             }
             moveCount++;
         }
+
         y++;
         x++;
         return ((1000 * y) + (x * 4) + (int)currentDirection, matrix);
@@ -195,6 +199,7 @@ public static class Day22
                 case TileDirection.Up:
                     for (int i = steps; i > 0; i--)
                     {
+                        var prev = row;
                         row--;
                         if (row <= 0)
                         {
@@ -202,7 +207,7 @@ public static class Day22
                         }
                         if (matrix[row, start.x].Type == BoardType.Wall)
                         {
-                            return row + 1;
+                            return prev;
                         }
                         if (matrix[row, start.x].Type == BoardType.Void)
                         {
@@ -219,6 +224,7 @@ public static class Day22
                 case TileDirection.Down:
                     for (int i = 0; i < steps; i++)
                     {
+                        var prev = row;
                         row++;
                         if (row >= matrix.GetLength(0))
                         {
@@ -226,12 +232,7 @@ public static class Day22
                         }
                         if (matrix[row, start.x].Type == BoardType.Wall)
                         {
-                            var next = row - 1;
-                            if (next < 0)
-                            {
-                                return matrix.GetLength(0) - 1;
-                            }
-                            return next;
+                            return prev;
                         }
                         if (matrix[row, start.x].Type == BoardType.Void)
                         {
@@ -263,7 +264,7 @@ public static class Day22
                             var next = GetNextOpenRowLeft(matrix, start.y, matrix.GetLength(1) - 1);
                             if (next == -1)
                             {
-                                return col + 1;
+                                return col - 1;
                             }
                             col = next;
                             continue;
@@ -389,10 +390,10 @@ public record Move(int? Length, Turn? Direction);
 
 public enum TileDirection
 {
-    Right,
-    Left,
-    Up,
-    Down
+    Right = 0,
+    Down = 1,
+    Left = 2,
+    Up = 3,
 }
 
 public enum Turn
