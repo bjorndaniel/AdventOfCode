@@ -217,11 +217,11 @@ var day22File = $"{Helpers.DirectoryPath}Day22.txt";
 watch.Restart();
 var day22Part1 = Day22.SolvePart1(day22File, new Printer());
 watch.Stop();
-Console.WriteLine($"Day22 part 1: {day22Part1} in {watch.ElapsedMilliseconds}ms");
+Console.WriteLine($"Day22 part 1: {day22Part1.result} in {watch.ElapsedMilliseconds}ms");
 //watch.Restart();
-//var day21Part2 = Day21.SolvePart2(day21File, new Printer());
+//var day22Part2 = Day22.SolvePart2(day22File, new Printer());
 //watch.Stop();
-//Console.WriteLine($"Day21 part 2: {day21Part2} in {watch.ElapsedMilliseconds}ms");
+//Console.WriteLine($"Day22 part 2: {day22Part2} in {watch.ElapsedMilliseconds}ms");
 
 var day25File = $"{Helpers.DirectoryPath}Day25.txt";
 watch.Restart();

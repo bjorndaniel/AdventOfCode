@@ -39,33 +39,8 @@ public static class Day22
                 }
             }
             return matrix;
-            //var rows = new List<BoardRow>();
-            //foreach (var l in lines)
-            //{
-            //    if (string.IsNullOrEmpty(l))
-            //    {
-            //        break;
-            //    }
-            //    var row = new BoardRow();
-            //    for (int col = 0; col < matrixWidth; col++)
-            //    {
-            //        if (l.Length <= col)
-            //        {
-            //            row.Squares.Add(new BoardSquare { Type = BoardType.Void, Value = null });
-            //        }
-            //        else if (l[col] != ' ')
-            //        {
-            //            row.Squares.Add(new BoardSquare { Type = l[col] == '#' ? BoardType.Wall : BoardType.Open, Value = l[col] });
-            //        }
-            //        else
-            //        {
-            //            row.Squares.Add(new BoardSquare { Type = BoardType.Void, Value = null });
-            //        }
-            //    }
-            //    rows.Add(row);
-            //}
-            //return rows;
         }
+
         static List<Move> ParseMoves(string moveString)
         {
             var moves = new List<Move>();
@@ -99,20 +74,24 @@ public static class Day22
     public static (int result, BoardSquare[,] matrix) SolvePart1(string filename, IPrinter printer)
     {
         var (matrix, moves) = ParseInput(filename);
+        //printer.PrintMatrix(matrix);
+        //printer.Flush();
         var startX = FindStart(matrix);
         var (x, y) = (startX, 0);
         var currentDirection = TileDirection.Right;
         var moveCount = 0;
-        matrix[y, x].Value = GetMarker(currentDirection);
-        //printer.PrintMatrix(matrix);
-        //printer.Flush();
         foreach (var move in moves)
         {
+            if (matrix[y, x].Type == BoardType.Void)
+            {
+                throw new ArgumentException();
+            }
             if (move.Length.HasValue)
             {
-                matrix[y, x].Value = GetMarker(currentDirection);
-                //printer.PrintMatrix(matrix);
-                //printer.Flush();
+                if (matrix[y, x].Type == BoardType.Void || matrix[y, x].Type == BoardType.Wall)
+                {
+                    throw new ArgumentException();
+                }
                 switch (currentDirection)
                 {
                     case TileDirection.Up:
@@ -132,11 +111,15 @@ public static class Day22
             else
             {
                 currentDirection = GetDirection(move.Direction!.Value, currentDirection);
-                matrix[y, x].Value = GetMarker(currentDirection);
+                if (matrix[y, x].Type == BoardType.Void || matrix[y, x].Type == BoardType.Wall)
+                {
+                    throw new ArgumentException();
+                }
             }
             moveCount++;
         }
 
+        matrix[y, x].Value = GetMarker(currentDirection);
         y++;
         x++;
         return ((1000 * y) + (x * 4) + (int)currentDirection, matrix);
@@ -189,6 +172,7 @@ public static class Day22
             }
         }
 
+
         static int Move(BoardSquare[,] matrix, (int x, int y) start, TileDirection tileDirection, int steps)
         {
             var row = start.y;
@@ -201,7 +185,7 @@ public static class Day22
                     {
                         var prev = row;
                         row--;
-                        if (row <= 0)
+                        if (row < 0)
                         {
                             row = matrix.GetLength(0) - 1;
                         }
@@ -214,7 +198,11 @@ public static class Day22
                             var next = GetNextOpenRowUp(matrix, matrix.GetLength(0) - 1, start.x);
                             if (next == -1)
                             {
-                                return row - 1;
+                                if (row == matrix.GetLength(0) - 1)
+                                {
+                                    return 0;
+                                }
+                                return row + 1;
                             }
                             row = next;
                             continue;
@@ -255,7 +243,7 @@ public static class Day22
                     {
                         var prev = col;
                         col--;
-                        if (col <= 0)
+                        if (col < 0)
                         {
                             col = matrix.GetLength(1) - 1;
                         }
@@ -264,7 +252,11 @@ public static class Day22
                             var next = GetNextOpenRowLeft(matrix, start.y, matrix.GetLength(1) - 1);
                             if (next == -1)
                             {
-                                return col - 1;
+                                if (col == matrix.GetLength(1) - 1)
+                                {
+                                    return 0;
+                                }
+                                return col + 1;
                             }
                             col = next;
                             continue;
@@ -289,6 +281,10 @@ public static class Day22
                             var next = GetNextOpenRowRight(matrix, start.y, 0);
                             if (next == -1)
                             {
+                                if (col == 0)
+                                {
+                                    return matrix.GetLength(1) - 1;
+                                }
                                 return col - 1;
                             }
                             col = next;
@@ -383,7 +379,9 @@ public static class Day22
                 return -1;
             }
         }
+
     }
+
 }
 
 public record Move(int? Length, Turn? Direction);

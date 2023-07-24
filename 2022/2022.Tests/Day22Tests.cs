@@ -37,6 +37,21 @@ public class Day22Tests
     [InlineData("Day22-test1.txt", 1036)]
     [InlineData("Day22-test2.txt", 3045)]
     [InlineData("Day22-test3.txt", 1047)]
+    [InlineData("Day22-test4.txt", 12049)]
+    [InlineData("Day22-test5.txt", 11056)]
+    [InlineData("Day22-test6.txt", 4049)]
+    [InlineData("Day22-test7.txt", 2047)]
+    [InlineData("Day22-test8.txt", 8034)]
+    [InlineData("Day22-test9.txt", 2037)]
+    [InlineData("Day22-test10.txt", 5022)]
+    [InlineData("Day22-test11.txt", 4049)]
+    [InlineData("Day22-test12.txt", 1038)]
+    [InlineData("Day22-test13.txt", 1038)]
+    [InlineData("Day22-test14.txt", 1041)]
+    [InlineData("Day22-test15.txt", 1045)]
+    [InlineData("Day22-test16.txt", 1045)]
+    [InlineData("Day22-test17.txt", 1043)]
+    [InlineData("Day22-test18.txt", 1047)]
     public void Can_solve_part1_for_test(string input, int expected)
     {
         //Given
