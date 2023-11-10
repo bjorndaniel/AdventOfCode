@@ -143,25 +143,25 @@ var day14Part2 = Day14.SolvePart2(day14File);
 watch.Stop();
 Console.WriteLine($"Day14 part 2: {day14Part2.result} in {watch.ElapsedMilliseconds}ms");
 
-//var day15File = $"{Helpers.DirectoryPath}Day15.txt";
-//watch.Restart();
-//var day15Part1 = Day15.SolvePart1(day15File, 2000000);
-//watch.Stop();
-//Console.WriteLine($"Day15 part 1: {day15Part1} in {watch.ElapsedMilliseconds}ms");
-//watch.Restart();
-//var day15Part2 = Day15.SolvePart2(day15File, 0, 4000000);
-//watch.Stop();
-//Console.WriteLine($"Day15 part 2: {day15Part2} in {watch.ElapsedMilliseconds}ms");
+var day15File = $"{Helpers.DirectoryPath}Day15.txt";
+watch.Restart();
+var day15Part1 = Day15.SolvePart1(day15File, 2000000);
+watch.Stop();
+Console.WriteLine($"Day15 part 1: {day15Part1} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day15Part2 = Day15.SolvePart2(day15File, 0, 4000000);
+watch.Stop();
+Console.WriteLine($"Day15 part 2: {day15Part2} in {watch.ElapsedMilliseconds}ms");
 
 var day16File = $"{Helpers.DirectoryPath}Day16.txt";
 watch.Restart();
 var day16Part1 = Day16.SolvePart1(day16File, new Printer());
 watch.Stop();
 Console.WriteLine($"Day16 part 1: {day16Part1} in {watch.ElapsedMilliseconds}ms");
-//watch.Restart();
-//var day16Part2 = Day16.SolvePart2(day16File, new Printer());
-//watch.Stop();
-//Console.WriteLine($"Day16 part 2: {day16Part2} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day16Part2 = Day16.SolvePart2(day16File, new Printer());
+watch.Stop();
+Console.WriteLine($"Day16 part 2: {day16Part2} in {watch.ElapsedMilliseconds}ms");
 
 var day17File = $"{Helpers.DirectoryPath}Day17.txt";
 watch.Restart();
