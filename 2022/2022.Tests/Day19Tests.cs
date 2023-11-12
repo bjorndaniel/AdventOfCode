@@ -52,6 +52,7 @@ public class Day19Tests
     }
 
     [Fact]
+    [Trait("Category", "SkipWhenLiveUnitTesting")]
     public void Can_solve_part2_for_test()
     {
         //Given
