@@ -25,6 +25,9 @@ public static class Day23
         var elves = ParseInput(filename);
         for (int i = 0; i < 10; i++)
         {
+//            north is positive y south negative y west is negative x and east is positive x
+
+//check the elf according to this:If there is no Elf in the N, NE, or NW adjacent positions, the Elf proposes moving north one step.If there is no Elf in the S, SE, or SW adjacent positions, the Elf proposes moving south one step.If there is no Elf in the W, NW, or SW adjacent positions, the Elf proposes moving west one step.If there is no Elf in the E, NE, or SE adjacent positions, the Elf proposes moving east one step. if there is no elf with this position in the proposedonce add it there otherwise check proposedTwice and if there is an elf there do nothing
             var proposedOnce = new List<Elf>();
             var proposedTwice = new List<Elf>();
             for (int j = 0; j < elves.Count(); j++)
