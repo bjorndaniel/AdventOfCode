@@ -48,21 +48,18 @@ public static class Day19
 
     }
 
-    public static int SolvePart2(string filename)
+    public static long SolvePart2(string filename)
     {
         //var maxGeodes = 0;
-        var blueprints = ParseInput(filename);
-        var total = 0;
+        var blueprints = ParseInput(filename).Take(3);
+        var total = 1L;
         foreach (var blueprint in blueprints)
         {
             var amount = DFS(blueprint, new(), 32, new List<Robot> { blueprint.OreRobotCost }, new Dictionary<OreType, int> { { OreType.Ore, 0 }, { OreType.Clay, 0 }, { OreType.Obsidian, 0 }, { OreType.Geode, 0 } });
-            total += blueprint.Id * amount;
+            total *= amount;
 
         }
         return total;
-
-       
-
     }
 
     private static int DFS(Blueprint blueprint, Dictionary<string, int> state, int time, List<Robot> robots, Dictionary<OreType, int> resources)
@@ -71,10 +68,10 @@ public static class Day19
         {
             return resources.ContainsKey(OreType.Geode) ? resources[OreType.Geode] : 0;
         }
-
-        if (state.ContainsKey(GetKey(time, robots, resources)))
+        var key = GetKey(time, robots, resources);
+        if (state.ContainsKey(key))
         {
-            return state[GetKey(time, robots, resources)];
+            return state[key];
         }
 
         var maxGeodes = resources.ContainsKey(OreType.Geode) ? resources[OreType.Geode] + (robots.Count(_ => _.Type == OreType.Geode) * time) : 0;
@@ -134,7 +131,7 @@ public static class Day19
         }
 
 
-        state[GetKey(time, robots, resources)] = maxGeodes;
+        state[key] = maxGeodes;
         return maxGeodes;
 
         string GetKey(int time, List<Robot> robots, Dictionary<OreType, int> resources)

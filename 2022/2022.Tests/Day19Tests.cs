@@ -61,6 +61,6 @@ public class Day19Tests
         var result = Day19.SolvePart2(filename);
 
         //Then
-        Assert.True(62 == result, $"Expected 62, got {result}");
+        Assert.True(3472 == result, $"Expected 3472, got {result}");
     }
 }

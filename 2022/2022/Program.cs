@@ -187,11 +187,11 @@ var day19File = $"{Helpers.DirectoryPath}day19.txt";
 watch.Restart();
 var day19Part1 = Day19.SolvePart1(day19File);
 watch.Stop();
-Console.WriteLine($"day19 part 1: {day19Part1} in {watch.ElapsedMilliseconds}ms");
+Console.WriteLine($"Day19 part 1: {day19Part1} in {watch.ElapsedMilliseconds}ms");
 watch.Restart();
 var day19Part2 = Day19.SolvePart2(day19File);
 watch.Stop();
-Console.WriteLine($"Day15 part 2: {day19Part2} in {watch.ElapsedMilliseconds}ms");
+Console.WriteLine($"Day19 part 2: {day19Part2} in {watch.ElapsedMilliseconds}ms");
 
 var day20File = $"{Helpers.DirectoryPath}Day20.txt";
 watch.Restart();
