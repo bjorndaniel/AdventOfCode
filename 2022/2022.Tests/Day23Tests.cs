@@ -42,6 +42,19 @@ public class Day23Tests
     }
 
     [Fact]
+    public void Can_solve_part1_for_small_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day23-test-small.txt";
+
+        //When
+        var result = Day23.SolvePart1(filename, new TestPrinter(_output));
+
+        //Then
+        Assert.True(25 == result, $"Expected 25, got {result}");
+    }
+
+    [Fact]
     public void Can_solve_part1_for_test()
     {
         //Given
