@@ -223,6 +223,16 @@ Console.WriteLine($"Day22 part 1: {day22Part1.result} in {watch.ElapsedMilliseco
 //watch.Stop();
 //Console.WriteLine($"Day22 part 2: {day22Part2} in {watch.ElapsedMilliseconds}ms");
 
+var day23File = $"{Helpers.DirectoryPath}Day23.txt";
+watch.Restart();
+var day23Part1 = Day23.SolvePart1(day23File, new Printer());
+watch.Stop();
+Console.WriteLine($"Day23 part 1: {day23Part1} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day23Part2 = Day23.SolvePart2(day23File, new Printer());
+watch.Stop();
+Console.WriteLine($"Day23 part 2: {day23Part2} in {watch.ElapsedMilliseconds}ms");
+
 var day25File = $"{Helpers.DirectoryPath}Day25.txt";
 watch.Restart();
 var day25Part1 = Day25.SolvePart1(day25File);

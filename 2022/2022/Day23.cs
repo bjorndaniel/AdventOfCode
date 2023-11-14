@@ -24,8 +24,6 @@ public static class Day23
     public static int SolvePart1(string filename, IPrinter printer)
     {
         var elves = ParseInput(filename);
-        printer.PrintMatrix(CreateMatrix(elves));
-        printer.Flush();
         var directions = new List<ElfDirection> { ElfDirection.North, ElfDirection.South, ElfDirection.West, ElfDirection.East };
         for (int i = 0; i < 10; i++)
         {
@@ -34,12 +32,26 @@ public static class Day23
             for (int j = 0; j < elves.Count(); j++)
             {
                 var elf = elves[j];
+                var allDirections = GetAdjacentElves(elf, elves, ElfDirection.North)
+                    .Union(GetAdjacentElves(elf, elves, ElfDirection.South))
+                    .Union(GetAdjacentElves(elf, elves, ElfDirection.West))
+                    .Union(GetAdjacentElves(elf, elves, ElfDirection.East));
+                if(!allDirections.Any())
+                {
+                    continue;
+                }
                 foreach (var direction in directions)
                 {
                     var adjacent = GetAdjacentElves(elf, elves, direction);
                     if (!adjacent.Any())
                     {
-                        var proposed = new Elf(elf.X + (direction == ElfDirection.East ? 1 : direction == ElfDirection.West ? -1 : 0), elf.Y + (direction == ElfDirection.South ? 1 : direction == ElfDirection.North ? -1 : 0), elf.Id);
+                        var proposed = 
+                            new Elf
+                            (
+                                elf.X + (direction == ElfDirection.East ? 1 : direction == ElfDirection.West ? -1 : 0),
+                                elf.Y + (direction == ElfDirection.South ? 1 : direction == ElfDirection.North ? -1 : 0), 
+                                elf.Id
+                            );
                         var once = proposedOnce.FirstOrDefault(_ => _.Equals(proposed));
                         if (once != null)
                         {
@@ -57,13 +69,9 @@ public static class Day23
 
             }
             elves = MoveElves(elves, proposedOnce, proposedTwice);
-            printer.PrintMatrix(CreateMatrix(elves));
-            printer.Flush();
             var dir = directions.First();
             directions.RemoveAt(0);
             directions.Add(dir);
-            printer.Print(directions.First().ToString());
-            printer.Flush();
         }
         var maxX = elves.Max(_ => _.X);
         var minX = elves.Min(_ => _.X);
@@ -72,14 +80,81 @@ public static class Day23
         return ((maxX - minX) + 1) * ((maxY - minY) + 1) - elves.Count();
     }
 
-    public static List<Elf> MoveElves(List<Elf> elves, List<Elf> proposedOnce, List<Elf> proposedTwice)
+    public static int SolvePart2(string filename, IPrinter printer)
+    {
+        var elves = ParseInput(filename);
+        var directions = new List<ElfDirection> { ElfDirection.North, ElfDirection.South, ElfDirection.West, ElfDirection.East };
+        var canMove = true;
+        var rounds = 1;
+        while(canMove)
+        {
+            var proposedOnce = new List<Elf>();
+            var proposedTwice = new List<Elf>();
+            for (int j = 0; j < elves.Count(); j++)
+            {
+                var elf = elves[j];
+                var allDirections = GetAdjacentElves(elf, elves, ElfDirection.North)
+                    .Union(GetAdjacentElves(elf, elves, ElfDirection.South))
+                    .Union(GetAdjacentElves(elf, elves, ElfDirection.West))
+                    .Union(GetAdjacentElves(elf, elves, ElfDirection.East));
+                if (!allDirections.Any())
+                {
+                    continue;
+                }
+                foreach (var direction in directions)
+                {
+                    var adjacent = GetAdjacentElves(elf, elves, direction);
+                    if (!adjacent.Any())
+                    {
+                        var proposed =
+                            new Elf
+                            (
+                                elf.X + (direction == ElfDirection.East ? 1 : direction == ElfDirection.West ? -1 : 0),
+                                elf.Y + (direction == ElfDirection.South ? 1 : direction == ElfDirection.North ? -1 : 0),
+                                elf.Id
+                            );
+                        var once = proposedOnce.FirstOrDefault(_ => _.Equals(proposed));
+                        if (once != null)
+                        {
+                            proposedOnce.Remove(once);
+                            proposedTwice.Add(once);
+                            proposedTwice.Add(proposed);
+                        }
+                        else
+                        {
+                            proposedOnce.Add(proposed);
+                        }
+                        break;
+                    }
+                }
+            }
+            if(!proposedOnce.Any() && !proposedTwice.Any())
+            {
+                canMove = false;
+                return rounds;
+            }
+            rounds++;
+            elves = MoveElves(elves, proposedOnce, proposedTwice);
+            var dir = directions.First();
+            directions.RemoveAt(0);
+            directions.Add(dir);
+        }
+        var maxX = elves.Max(_ => _.X);
+        var minX = elves.Min(_ => _.X);
+        var minY = elves.Min(_ => _.Y);
+        var maxY = elves.Max(_ => _.Y);
+        return ((maxX - minX) + 1) * ((maxY - minY) + 1) - elves.Count();
+    }
+
+    private static List<Elf> MoveElves(List<Elf> elves, List<Elf> proposedOnce, List<Elf> proposedTwice)
     {
         var proposed = proposedOnce.Select(_ => _.Id);
         var remaining = elves.Where(_ => !proposed.Contains(_.Id)).ToList();
         proposedOnce.AddRange(remaining);
         return proposedOnce;
     }
-    public static char[,] CreateMatrix(List<Elf> elves)
+
+    private static char[,] CreateMatrix(List<Elf> elves)
     {
         int maxX = elves.Max(e => e.X);
         int maxY = elves.Max(e => e.Y);
@@ -87,7 +162,7 @@ public static class Day23
         int minY = elves.Min(e => e.Y);
         int adjMinX = Math.Abs(minX - 2);
         int adjMinY = Math.Abs(minY - 2);
-        char[,] matrix = new char[maxY + adjMinY + 3, maxX + adjMinX + 3];
+        char[,] matrix = new char[maxY + adjMinY + 4, maxX + adjMinX + 3];
 
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
@@ -102,7 +177,8 @@ public static class Day23
         }
         return matrix;
     }
-    public static List<Elf> GetAdjacentElves(Elf elf, List<Elf> elves, ElfDirection direction)
+
+    private static List<Elf> GetAdjacentElves(Elf elf, List<Elf> elves, ElfDirection direction)
     {
         var adjacentElves = new List<Elf>();
         switch (direction)
@@ -142,8 +218,6 @@ public static class Day23
         }
         return adjacentElves;
     }
-
-
 
     public class Elf
     {
