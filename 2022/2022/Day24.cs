@@ -19,11 +19,19 @@ public static class Day24
     public static int SolvePart1(string filename, IPrinter printer)
     {
         var map = ParseInput(filename);
+        var rows = map.GetLength(1) - 2;//Remove the walls
+        var cols = map.GetLength(0) - 2;//Remove the walls
+        var lcm = (int)BigInteger.Abs(BigInteger.Multiply(rows, cols) / BigInteger.GreatestCommonDivisor(rows, cols));
+        printer.Print($"LCM for map: {lcm}");
+        printer.Flush();
         var moves = 0;
         var (x, y) = (0, 1);
         map[x, y].AddOccupant('E');
         printer.PrintMatrix(map);
         printer.Flush();
+
+
+
         return moves;
     }
 }
