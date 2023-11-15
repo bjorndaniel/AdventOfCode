@@ -1,38 +1,119 @@
-﻿namespace AoC2022;
+﻿//Adapted from: https://github.com/hyper-neutrino/advent-of-code/tree/main
+namespace AoC2022;
 public static class Day24
 {
-    public static ValleyPoint[,] ParseInput(string filename)
+    public static (Dictionary<char, List<(int row, int col)>> blizzards, int row, int col) ParseInput(string filename)
     {
-        var lines = File.ReadAllLines(filename);
-        var result = new ValleyPoint[lines.Length, lines[0].Length];
-        for (int row = 0; row < lines.Length; row++)
+        var lines = File.ReadAllLines(filename).Skip(1).ToArray();
+        var result = new Dictionary<char, List<(int, int)>>();
+        var r = lines.Length - 1;
+        var c = lines[0].Length - 1;
+
+        for (var i = 0; i < r; i++)
         {
-            for (int col = 0; col < lines[row].Length; col++)
+            for (var j = 1; j < c; j++)
             {
-                result[row, col] = new();
-                result[row, col].Occupants.Add(lines[row][col]);
+                var item = lines[i][j];
+                if (item == '<' || item == '>' || item == '^' || item == 'v')
+                {
+                    if (result.ContainsKey(item))
+                    {
+                        result[item].Add((i, j - 1));
+                    }
+                    else
+                    {
+                        result.Add(item, new List<(int, int)> { (i, j - 1) });
+                    }
+                }
             }
         }
-        return result;
+        return (result, r, c - 1);
+
     }
 
     public static int SolvePart1(string filename, IPrinter printer)
     {
-        var map = ParseInput(filename);
-        var rows = map.GetLength(1) - 2;//Remove the walls
-        var cols = map.GetLength(0) - 2;//Remove the walls
-        var lcm = (int)BigInteger.Abs(BigInteger.Multiply(rows, cols) / BigInteger.GreatestCommonDivisor(rows, cols));
-        printer.Print($"LCM for map: {lcm}");
+        var (blizzards, rows, columns) = ParseInput(filename);
+
+        var queue = new Queue<(int, int, int)>();
+        queue.Enqueue((0, -1, 0));
+        var (targetRow, targetColumn) = (rows, columns - 1);
+        var lcm = LCM(rows, columns);
+        var seen = new HashSet<(int, int, int)>();
+        var movements = new List<(int dr, int dc)> { (0, 1), (0, -1), (-1, 0), (1, 0), (0, 0) };
+
+        printer.Print($"TargetRow {targetRow} TargetColumn {targetColumn}");
         printer.Flush();
-        var moves = 0;
-        var (x, y) = (0, 1);
-        map[x, y].AddOccupant('E');
-        printer.PrintMatrix(map);
+        printer.Print($"Rows {rows} Columns {columns}");
+        printer.Flush();
+        printer.Print($"LCM {lcm}");
         printer.Flush();
 
+        while (queue.Any())
+        {
+            var (time, cr, cc) = queue.Dequeue();
+            time += 1;
+            foreach (var (dr, dc) in new[] { (0, 1), (0, -1), (-1, 0), (1, 0), (0, 0) })
+            {
+                var nr = cr + dr;
+                var nc = cc + dc;
+                if ((nr, nc) == (targetRow, targetColumn))
+                {
+                    printer.Print($"At {nr} {nc}");
+                    printer.Flush();
+                    return time;
+                }
+                if ((nr < 0 || nc < 0 || nr >= rows || nc >= columns) && (nr, nc) != (-1, 0))
+                {
+                    continue;
+                }
 
+                var checks = new List<(char dir, int tr, int tc)> { ('<', 0, -1), ('>', 0, 1), ('^', -1, 0), ('v', 1, 0) };
+                var wasInBlizzard = false;
+                if ((nr, nc) != (-1, 0))
+                {
+                    foreach (var (dir, tr, tc) in checks)
+                    {
+                        var newr = (nr - tr * time) % rows;
+                        var newc = (nc - tc * time) % columns;
+                        var x = (newr < 0 ? (newr + (tr * time)) : newr, newc < 0 ? (newc + (tc * time)) : newc);
+                        if (blizzards.ContainsKey(dir) && blizzards[dir].Any(_ => _.row == x.Item1 && _.col == x.Item2))
+                        {
+                            wasInBlizzard = true;
+                            break;
+                        }
+                    }
+                }
+                if (!wasInBlizzard)
+                {
+                    var mod = time % lcm;
+                    var key = (nr, nc, mod < 0 ? mod + lcm : mod);
+                    if (seen.Contains(key))
+                    {
+                        continue;
+                    }
+                    seen.Add(key);
+                    queue.Enqueue((time, nr, nc));
+                }
+            }
+        }
+        return -1;
 
-        return moves;
+        int LCM(int a, int b)
+        {
+            return a * b / GCD(a, b);
+        }
+
+        int GCD(int a, int b)
+        {
+            while (b != 0)
+            {
+                var temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
     }
 }
 

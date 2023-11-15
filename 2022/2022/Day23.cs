@@ -1,4 +1,5 @@
-﻿namespace AoC2022;
+﻿//Adapted from: https://github.com/hyper-neutrino/advent-of-code/tree/main
+namespace AoC2022;
 public static class Day23
 {
     public static List<Elf> ParseInput(string filename)
