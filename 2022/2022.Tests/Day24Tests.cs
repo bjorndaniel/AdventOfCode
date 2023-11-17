@@ -69,4 +69,17 @@ public class Day24Tests
         //Then
         Assert.True(18 == result, $"Expected 18, got {result}");
     }
+
+    [Fact]
+    public void Can_solve_part2_for_Test()
+    {
+        //Given 
+        var filename = $"{Helpers.DirectoryPathTests}Day24-test.txt";
+
+        //When
+        var result = Day24.SolvePart2(filename, new TestPrinter(_output));
+
+        //Then
+        Assert.True(54 == result, $"Expected 54, got {result}");
+    }
 }

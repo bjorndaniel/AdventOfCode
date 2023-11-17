@@ -238,6 +238,10 @@ watch.Restart();
 var day24Part1 = Day24.SolvePart1(day24File, new Printer());
 watch.Stop();
 Console.WriteLine($"Day24 part 1: {day24Part1} in {watch.ElapsedMilliseconds}ms");
+watch.Restart();
+var day24Part2 = Day24.SolvePart2(day24File, new Printer());
+watch.Stop();
+Console.WriteLine($"Day24 part 2: {day24Part2} in {watch.ElapsedMilliseconds}ms");
 
 var day25File = $"{Helpers.DirectoryPath}Day25.txt";
 watch.Restart();
