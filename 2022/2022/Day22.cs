@@ -1,4 +1,6 @@
-﻿namespace AoC2022;
+﻿using System.Text.RegularExpressions;
+
+namespace AoC2022;
 public static class Day22
 {
     public static (BoardSquare[,] board, IEnumerable<Move> moves) ParseInput(string filename)
@@ -380,6 +382,201 @@ public static class Day22
             }
         }
 
+    }
+
+    //Adapted from https://github.com/hyper-neutrino/advent-of-code
+    public static int SolvePart2(string filename, IPrinter printer)
+    {
+        var lines = File.ReadAllLines(filename);
+        var done = false;
+        var sequence = "";
+        var grid = new List<string>();
+        foreach (string line in lines)
+        {
+            if (line == "")
+            {
+                done = true;
+            }
+            if (done)
+            {
+                sequence = line;
+            }
+            else
+            {
+                grid.Add(line);
+            }
+        }
+
+        var width = grid.Max(line => line.Length);
+        grid = grid.Select(line => line + new string(' ', width - line.Length)).ToList();
+
+        var r = 0;
+        var c = 0;
+        var dr = 0;
+        var dc = 1;
+
+        while (grid[r][c] != '.')
+        {
+            c++;
+        }
+        var sequencePattern = @"(\d+)([RL]?)";
+        foreach (Match match in Regex.Matches(sequence, sequencePattern))
+        {
+            var x = int.Parse(match.Groups[1].Value);
+            for (int i = 0; i < x; i++)
+            {
+                int cdr = dr;
+                int cdc = dc;
+                int nr = r + dr;
+                int nc = c + dc;
+                if (nr < 0 && IsNumberBetween(nc, 50, 100) && dr == -1)
+                {
+                    dr = 0;
+                    dc = 1;
+                    nr = nc + 100;
+                    nc = 0;
+                }
+                else if (nc < 0 && IsNumberBetween(nr, 150,200) && dc == -1)
+                {
+                    dr = 1;
+                    dc = 0;
+                    nc = nr - 100;
+                    nr = 0;
+                }
+                else if (nr < 0 && IsNumberBetween(nc, 100, 150) && dr == -1)
+                {
+                    nr = 199;
+                    nc = nc - 100;
+                }
+                else if (nr >= 200 && IsNumberBetween(nc, 0, 50) && dr == 1)
+                {
+                    nr = 0;
+                    nc = nc + 100;
+                }
+                else if (nc >= 150 && IsNumberBetween(nr, 0, 50) && dc == 1)
+                {
+                    dc = -1;
+                    nr = 149 - nr;
+                    nc = 99;
+                }
+                else if (nc == 100 && IsNumberBetween(nr, 100, 150) && dc == 1)
+                {
+                    dc = -1;
+                    nr = 149 - nr;
+                    nc = 149;
+                }
+                else if (nr == 50 && IsNumberBetween(nc, 100, 150) && dr == 1)
+                {
+                    dr = 0;
+                    dc = -1;
+                    nr = nc - 50;
+                    nc = 99;
+                }
+                else if (nc == 100 && IsNumberBetween(nr, 50, 100) && dc == 1)
+                {
+                    dr = -1;
+                    dc = 0;
+                    nc = nr + 50;
+                    nr = 49;
+                }
+                else if (nr == 150 && IsNumberBetween(nc, 50, 100) && dr == 1)
+                {
+                    dr = 0;
+                    dc = -1;
+                    nr = nc + 100;
+                    nc = 49;
+                }
+                else if (nc == 50 && IsNumberBetween(nr, 150, 200) && dc == 1)
+                {
+                    dr = -1;
+                    dc = 0;
+                    nc = nr - 100;
+                    nr = 149;
+                }
+                else if (nr == 99 && IsNumberBetween(nc, 0, 50) && dr == -1)
+                {
+                    dr = 0;
+                    dc = 1;
+                    nr = nc + 50;
+                    nc = 50;
+                }
+                else if (nc == 49 && IsNumberBetween(nr, 50, 100) && dc == -1)
+                {
+                    dr = 1;
+                    dc = 0;
+                    nc = nr - 50;
+                    nr = 100;
+                }
+                else if (nc == 49 && IsNumberBetween(nr, 0, 50) && dc == -1)
+                {
+                    dc = 1;
+                    nr = 149 - nr;
+                    nc = 0;
+                }
+                else if (nc < 0 && IsNumberBetween(nr, 100, 150) && dc == -1)
+                {
+                    dc = 1;
+                    nr = 149 - nr;
+                    nc = 50;
+                }
+                if (grid[nr][nc] == '#')
+                {
+                    dr = cdr;
+                    dc = cdc;
+                    break;
+                }
+                r = nr;
+                c = nc;
+            }
+            var y = match.Groups[2].Value;
+            if (y == "R")
+            {
+                int temp = dr;
+                dr = dc;
+                dc = -temp;
+            }
+            else if (y == "L")
+            {
+                int temp = dr;
+                dr = -dc;
+                dc = temp;
+            }
+        }
+
+        int k;
+        if (dr == 0)
+        {
+            if (dc == 1)
+            {
+                k = 0;
+            }
+            else
+            {
+                k = 2;
+            }
+        }
+        else
+        {
+            if (dr == 1)
+            {
+                k = 1;
+            }
+            else
+            {
+                k = 3;
+            }
+        }
+
+        
+        var result = (1000 * (r + 1)) + (4 * (c + 1)) + k;
+        printer.Print(result.ToString());
+        printer.Flush();
+
+        return result;
+        bool IsNumberBetween(int number, int lowerBound, int upperBound)
+        {
+            return number >= lowerBound && number < upperBound;
+        }
     }
 
 }

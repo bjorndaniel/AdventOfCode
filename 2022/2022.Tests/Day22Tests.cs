@@ -68,5 +68,4 @@ public class Day22Tests
         Assert.True(expected == result, $"Expected {expected}, got {result}");
 
     }
-
 }
