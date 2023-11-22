@@ -1,14 +1,14 @@
 ﻿namespace AoC2023;
 public static class Day1
 {
-    [Solveable("Day1.txt", "Day 1 part 1")]
+    [Solveable("2023/Puzzles/Day1.txt", "Day 1 part 1")]
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var lines = File.ReadAllLines(filename);
         return new SolutionResult($"A result for {filename}");
     }
 
-    [Solveable("Day1.txt", "Day 1 part 2")]
+    [Solveable("2023/Puzzles/Day1.txt", "Day 1 part 2")]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var lines = File.ReadAllLines(filename);
@@ -17,5 +17,4 @@ public static class Day1
         Thread.Sleep(1000);
         return new SolutionResult($"{lines.First()}");
     }
-
 }

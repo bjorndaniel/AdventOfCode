@@ -1,9 +1,7 @@
-﻿using System.Reflection;
-
-namespace AoC2023;
+﻿namespace AoC2023.Shared;
 public static class Helpers
 {
-    public static readonly string DirectoryPath = "C:/OneDrive/Code/AdventOfCodeInputs/2023/Puzzles/";
+    public static readonly string DirectoryPath = "C:/OneDrive/Code/AdventOfCodeInputs/";
     public static readonly string DirectoryPathTests = "./Puzzles/";
 
     public static T[] GetColumn<T>(T[,] matrix, int columnNumber, int startRow = 0)
@@ -25,7 +23,7 @@ public static class Helpers
         var solveableMethods = new List<(Func<string, IPrinter, SolutionResult> func, string filename, string name)>();
 
         var types = assembly.GetTypes();
-        foreach (var type in types.Where(_ => _.Namespace == "AoC2023"))
+        foreach (var type in types.Where(_ => _.Namespace?.Contains("AoC") ?? false))
         {
             var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod);
             foreach (var method in methods)
@@ -47,5 +45,30 @@ public static class Helpers
         }
 
         return solveableMethods;
+    }
+
+    public static void Runner(string message, params object[] args)
+    {
+        Console.WriteLine(message);
+        Console.WriteLine($"");
+        var watch = new Stopwatch();
+        var totalTime = new Stopwatch();
+        totalTime.Start();
+        var onlyRun = args.ToList();
+        var solveables = FindSolveableMethodsInAssembly(Assembly.GetCallingAssembly());
+        var printer = new Printer();
+        foreach (var solveable in solveables)
+        {
+            watch.Restart();
+            Console.WriteLine($"Running {solveable.name}");
+            var result = solveable.func($"{DirectoryPath}{solveable.filename}", printer);
+            watch.Stop();
+            Console.WriteLine($"Got {result.Result} in {watch.ElapsedMilliseconds} ms");
+            Console.WriteLine("");
+        }
+
+        totalTime.Stop();
+        Console.WriteLine($"AoC 2023 total running time: {totalTime.Elapsed.TotalMilliseconds}ms");
+
     }
 }
