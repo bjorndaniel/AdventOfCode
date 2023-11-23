@@ -59,6 +59,14 @@ public static class Helpers
         var printer = new Printer();
         foreach (var solveable in solveables)
         {
+            if (args.Any())
+            {
+                if(!args.Any(_ => solveable.filename.EndsWith(_?.ToString() ?? "")))
+                {
+                    continue;
+                }
+            }
+
             watch.Restart();
             Console.WriteLine($"Running {solveable.name}");
             var result = solveable.func($"{DirectoryPath}{solveable.filename}", printer);

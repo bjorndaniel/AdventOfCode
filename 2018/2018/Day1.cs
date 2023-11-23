@@ -61,5 +61,5 @@ public class Day1
 
     public record FreqChange(int change, bool isPositive);
 
-
 }
+
