@@ -2,12 +2,12 @@
 
 public class Day2Tests
 {
-    private readonly ITestOutputHelper _output;
+        private readonly ITestOutputHelper _output;
 
-    public Day2Tests(ITestOutputHelper output)
-    {
-        _output = output;
-    }
+        public Day2Tests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
 
     [Fact]
     public void Can_parse_input()
