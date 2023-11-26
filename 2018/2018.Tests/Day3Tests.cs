@@ -49,4 +49,17 @@ public class Day3Tests
         //Then
         Assert.True("4" == result.Result, $"Expected result to be 4 but was {result.Result}");
     }
+
+    [Fact]
+    public void Can_solve_part2_for_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day3-test.txt";
+
+        //When
+        var result = Day3.Part2(filename, new TestPrinter(_output));
+
+        //Then
+        Assert.True("3" == result.Result, $"Expected result to be 3 but was {result.Result}");
+    }
 }

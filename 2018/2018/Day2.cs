@@ -90,7 +90,5 @@ public class Day2
         
         return new SolutionResult(builder.ToString());
     }
-
-
 }
 

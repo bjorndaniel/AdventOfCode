@@ -25,13 +25,20 @@ public class Day3
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var claims = ParseInput(filename);
+        var (coords, _) = GetCoords(claims);
+        return new SolutionResult(coords.Count().ToString());
+    }
+
+    private static (Dictionary<(int, int), int> coords, int lonerId) GetCoords(List<Claim> claims)
+    {
         var coords = new Dictionary<(int, int), int>();
+        var overlappingIds = new HashSet<int>();
         foreach (var claim1 in claims)
         {
             foreach (var claim2 in claims)
             {
                 if (!claim1.Equals(claim2) && claim1.Overlaps(claim2))
-                    
+
                 {
                     for (int x = claim1.Left; x < claim1.Left + claim1.Width; x++)
                     {
@@ -40,6 +47,14 @@ public class Day3
                             if (claim2.Left <= x && x < claim2.Left + claim2.Width &&
                                 claim2.Top <= y && y < claim2.Top + claim2.Height)
                             {
+                                if (!overlappingIds.Contains(claim1.Id))
+                                {
+                                    overlappingIds.Add(claim1.Id);
+                                }
+                                if (!overlappingIds.Contains(claim2.Id))
+                                {
+                                    overlappingIds.Add(claim2.Id);
+                                }
                                 if (!coords.ContainsKey((x, y)))
                                 {
                                     coords.Add((x, y), 0);
@@ -50,13 +65,20 @@ public class Day3
                 }
             }
         }
-        return new SolutionResult(coords.Count().ToString());
+        var ids = claims.Where(_ => !overlappingIds.Contains(_.Id));
+        if (ids.Count() == 1)
+        {
+            return (coords, ids.First().Id);
+        }
+        return (coords, 0);
     }
 
     [Solveable("2018/Puzzles/Day3.txt", "Day3 part 2")]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
-        return new SolutionResult("");
+        var claims = ParseInput(filename);
+        var (_, loner) = GetCoords(claims);
+        return new SolutionResult(loner.ToString());
     }
 
 
