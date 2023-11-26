@@ -2,6 +2,7 @@
 public static class Helpers
 {
     public static readonly string DirectoryPath = "C:/OneDrive/Code/AdventOfCodeInputs/";
+
     public static readonly string DirectoryPathTests = "./Puzzles/";
 
     public static T[] GetColumn<T>(T[,] matrix, int columnNumber, int startRow = 0)
@@ -79,4 +80,7 @@ public static class Helpers
         Console.WriteLine($"AoC 2023 total running time: {totalTime.Elapsed.TotalMilliseconds}ms");
 
     }
+
+    public static int ManhattanDistance((int x, int y) a, (int x, int y) b) =>
+       Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
 }
