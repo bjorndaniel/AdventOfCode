@@ -42,13 +42,13 @@ public class Day7Tests
     public void Can_solve_part2_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPathTests}Day7-test2.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day7-test.txt";
 
         //When
         var result = Day7.Part2(filename, new TestPrinter(_output));
 
         //Then
-        Assert.True(false);
+        Assert.True("15" == result.Result, $"Expected 15 but was {result.Result}");
     }
 
 }
