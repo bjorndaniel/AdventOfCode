@@ -1,4 +1,4 @@
-﻿namespace AoC2023.Shared;
+﻿namespace AoC.Shared;
 public static class Helpers
 {
     public static readonly string DirectoryPath = "C:/OneDrive/Code/AdventOfCodeInputs/";
