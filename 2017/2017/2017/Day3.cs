@@ -17,6 +17,17 @@ public class Day3
         return new SolutionResult(distance.ToString());
     }
 
+    [Solveable("2017/Puzzles/Day3.txt", "Day 3 part 2")]
+    public static SolutionResult SolvePart2(string fileName, IPrinter printer)
+    {
+        var input = ParseInput(fileName);
+        var (x, y) = SpiralCoords(input);
+        //var distance = CalculateManhattanDistance(0, 0, x, y);
+
+
+        return new SolutionResult("");
+    }
+
     private static int CalculateManhattanDistance(int x1, int y1, int x2, int y2) =>
         Math.Abs(x1 - x2) + Math.Abs(y1 - y2);
 
@@ -26,14 +37,8 @@ public class Day3
         {
             return (0, 0); 
         }
-
-        // k is the layer of the spiral pattern that contains n
         var k = (int)Math.Ceiling((Math.Sqrt(n) - 1) / 2);
-
-        // t is the distance of n from the first element of layer k
         var t = n - (2 * k - 1) * (2 * k - 1);
-
-        // (x, y) are the coordinates of n
         int x, y;
         if (t <= 2 * k)
         {

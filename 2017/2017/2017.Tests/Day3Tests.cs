@@ -45,6 +45,19 @@ public class Day3Tests
         var result = Day3.SolvePart1(filename, new TestPrinter(_output));
 
         //Then
-        Assert.True("12" == result.Result, $"Expected: {12}, Actual: {result}"); 
+        Assert.True("3" == result.Result, $"Expected: 3, Actual: {result.Result}"); 
+    }
+
+    [Fact]
+    public void Can_solve_part2_for_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day3-test.txt";
+
+        //When
+        var result = Day3.SolvePart2(filename, new TestPrinter(_output));
+
+        //Then
+        Assert.True("8" == result.Result, $"Expected: 8, Actual: {result.Result}");
     }
 }

@@ -1,5 +1,5 @@
 <LUTConfig Version="1.0">
-  <Repository />
+  <Repository>..\..\</Repository>
   <ParallelBuilds>true</ParallelBuilds>
   <ParallelTestRuns>true</ParallelTestRuns>
   <TestCaseTimeout>180000</TestCaseTimeout>
