@@ -1,4 +1,4 @@
-﻿namespace AoC2023.Shared;
+﻿namespace AoC.Shared;
 public record SolutionResult(string Result) { }
 
 public interface IPrinter

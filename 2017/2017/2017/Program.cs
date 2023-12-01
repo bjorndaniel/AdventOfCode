@@ -1,0 +1,1 @@
+﻿Helpers.Runner("Running AoC 2017", args);
