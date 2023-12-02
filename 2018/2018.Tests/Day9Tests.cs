@@ -40,17 +40,4 @@ public class Day9Tests
         Assert.True(expected == result.Result, $"Expected {expected} but was {result.Result}");
     }
 
-    [Fact]
-    public void Can_solve_part2_for_test()
-    {
-        //Given
-        var filename = $"{Helpers.DirectoryPathTests}Day9-test2.txt";
-
-        //When
-        var result = Day9.Part2(filename, new TestPrinter(_output));
-
-        //Then
-        Assert.True(false);
-    }
-
 }

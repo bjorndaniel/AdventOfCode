@@ -13,11 +13,26 @@ public class Day9
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var game = ParseInput(filename);
+        var scores = RunGame(game);
+        return new SolutionResult(scores.Max().ToString());
+    }
+
+
+    [Solveable("2018/Puzzles/Day9.txt", "Day 9 part 2")]
+    public static SolutionResult Part2(string filename, IPrinter printer)
+    {
+        var game = ParseInput(filename);
+        var scores = RunGame(game, true);
+        return new SolutionResult(scores.Max().ToString());
+    }
+
+    private static long[] RunGame(Game game, bool part2 = false)
+    {
         var scores = new long[game.Players];
         var circle = new LinkedList<int>();
         var current = circle.AddFirst(0);
 
-        for (int marble = 1; marble <= game.MarbleScore; marble++)
+        for (int marble = 1; marble <= (part2 ? game.MarbleScore * 100 : game.MarbleScore); marble++)
         {
             if (marble % 23 == 0)
             {
@@ -36,14 +51,7 @@ public class Day9
                 current = circle.AddAfter(current!, marble);
             }
         }
-
-        return new SolutionResult(scores.Max().ToString());
-    }
-
-    [Solveable("2018/Puzzles/Day9.txt", "Day 9 part 2")]
-    public static SolutionResult Part2(string filename, IPrinter printer)
-    {
-        return new SolutionResult("");
+        return scores;
     }
 
     public record Game(int Players, int MarbleScore) { }
