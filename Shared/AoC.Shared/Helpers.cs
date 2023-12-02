@@ -19,9 +19,9 @@ public static class Helpers
                 .ToArray();
     }
 
-    public static List<(Func<string, IPrinter, SolutionResult> func, string filename, string name)> FindSolveableMethodsInAssembly(Assembly assembly)
+    public static List<(Func<string, IPrinter, SolutionResult> func, string filename, string name, int day)> FindSolveableMethodsInAssembly(Assembly assembly)
     {
-        var solveableMethods = new List<(Func<string, IPrinter, SolutionResult> func, string filename, string name)>();
+        var solveableMethods = new List<(Func<string, IPrinter, SolutionResult> func, string filename, string name, int day)>();
 
         var types = assembly.GetTypes();
         foreach (var type in types.Where(_ => _.Namespace?.Contains("AoC") ?? false))
@@ -38,14 +38,14 @@ public static class Helpers
                     if(method.IsStatic)
                     {
                         Func<string, IPrinter, SolutionResult> func = (Func<string, IPrinter, SolutionResult>)Delegate.CreateDelegate(typeof(Func<string, IPrinter, SolutionResult>), null, method);
-                        solveableMethods.Add((func, fileName, name)); 
+                        solveableMethods.Add((func, fileName, name, solveableAttribute.Day)); 
                     }
 
                 }
             }
         }
 
-        return solveableMethods;
+        return solveableMethods.OrderBy(_ => _.day).ToList();
     }
 
     public static void Runner(string message, params object[] args)

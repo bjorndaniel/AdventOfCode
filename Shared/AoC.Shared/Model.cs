@@ -90,12 +90,14 @@ public class TestPrinter : IPrinter
 
 public class Solveable : Attribute
 {
-    public Solveable(string filename, string name)
+    public Solveable(string filename, string name, int day = 0)
     {
         Filename = filename;
         Name = name;
+        Day = day;
     }
 
     public string Filename { get; private set; }
     public string Name { get; private set; }
+    public int Day { get; private set; }
 }
