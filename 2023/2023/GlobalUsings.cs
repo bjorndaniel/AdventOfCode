@@ -1,1 +1,1 @@
-global using AoC2023.Shared;
+global using AoC.Shared;
