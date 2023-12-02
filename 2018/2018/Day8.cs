@@ -1,6 +1,4 @@
-﻿using static AoC2018.Day8;
-
-namespace AoC2018;
+﻿namespace AoC2018;
 public class Day8
 {
     public static List<string> ParseInput(string filename)
