@@ -23,6 +23,7 @@
     </PackageReference>
   </ItemGroup>
 
+
   <ItemGroup>
     <ProjectReference Include="..\2023\2023.csproj" />
   </ItemGroup>
@@ -35,6 +36,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Puzzles\Day2-test.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Puzzles\Day3-test.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Puzzles\Day3-test2.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
