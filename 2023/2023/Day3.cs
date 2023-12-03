@@ -62,15 +62,13 @@ public class Day3
     {
         public List<Part> GetAdjacent()
         {
-            var non = new List<Part>();
             var adjacent = new List<Part>();
             foreach (var part in Parts)
             {
                 for (var i = 0; i < part.Width; i++)
                 {
                     var x = part.X + i;
-                    var y = part.Y;
-                    var symbol = Symbols.FirstOrDefault(symbol => Math.Abs(symbol.X - x) <= 1 && Math.Abs(symbol.Y - y) <= 1);
+                    var symbol = Symbols.FirstOrDefault(symbol => Math.Abs(symbol.X - x) <= 1 && Math.Abs(symbol.Y - part.Y) <= 1);
                     if (symbol != null)
                     {
                         adjacent.Add(part);
