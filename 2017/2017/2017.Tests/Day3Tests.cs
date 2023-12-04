@@ -58,6 +58,6 @@ public class Day3Tests
         var result = Day3.SolvePart2(filename, new TestPrinter(_output));
 
         //Then
-        Assert.True("8" == result.Result, $"Expected: 8, Actual: {result.Result}");
+        Assert.True("23" == result.Result, $"Expected: 23, Actual: {result.Result}");
     }
 }

@@ -12,8 +12,8 @@ public class Day3
     public static SolutionResult SolvePart1(string fileName, IPrinter printer)
     {
         var input = ParseInput(fileName);
-        var (x,y) = SpiralCoords(input);
-        var distance = CalculateManhattanDistance(0,0, x,y);
+        var (x, y) = SpiralCoords(input);
+        var distance = CalculateManhattanDistance(0, 0, x, y);
         return new SolutionResult(distance.ToString());
     }
 
@@ -21,11 +21,38 @@ public class Day3
     public static SolutionResult SolvePart2(string fileName, IPrinter printer)
     {
         var input = ParseInput(fileName);
-        var (x, y) = SpiralCoords(input);
-        //var distance = CalculateManhattanDistance(0, 0, x, y);
-
-
-        return new SolutionResult("");
+        //var (x, y) = SpiralCoords(input);
+        var current = 0;
+        var position = 2;
+        var valuePositions = new Dictionary<(int x, int y), int> { { (0, 0), 1 } };
+        while (current < input)
+        {
+            var lowerValueCoords = new List<(int x, int y)>();
+            var (x, y) = SpiralCoords(position);
+            var adjacentPositions = new List<(int x, int y)>
+            {
+                (x - 1, y - 1),
+                (x - 1, y),
+                (x - 1, y + 1),
+                (x, y - 1),
+                (x, y + 1),
+                (x + 1, y - 1),
+                (x + 1, y),
+                (x + 1, y + 1)
+            };
+            foreach(var adjacent in adjacentPositions)
+            {
+                lowerValueCoords.Add((adjacent.x, adjacent.y));
+            }
+            var sum = lowerValueCoords.Where(_ => valuePositions.ContainsKey((_.x, _.y))).Select(_ => valuePositions[(_.x, _.y)]).Sum();
+            if (!valuePositions.ContainsKey((x, y)))
+            {
+                valuePositions.Add((x, y), sum);
+            }
+            current = sum;
+            position++;
+        }
+        return new SolutionResult(current.ToString());
     }
 
     private static int CalculateManhattanDistance(int x1, int y1, int x2, int y2) =>
@@ -35,7 +62,7 @@ public class Day3
     {
         if (n == 1)
         {
-            return (0, 0); 
+            return (0, 0);
         }
         var k = (int)Math.Ceiling((Math.Sqrt(n) - 1) / 2);
         var t = n - (2 * k - 1) * (2 * k - 1);
