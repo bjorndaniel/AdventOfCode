@@ -90,39 +90,4 @@ public class Day3
 
         return (x, y);
     }
-
-    private static int CalculateSpiralValue(int x, int y, Dictionary<(int, int), int> grid)
-    {
-        int sum = 0;
-        for (int i = x - 1; i <= x + 1; i++)
-        {
-            for (int j = y - 1; j <= y + 1; j++)
-            {
-                if (grid.ContainsKey((i, j)))
-                {
-                    sum += grid[(i, j)];
-                }
-            }
-        }
-        return sum;
-    }
-
-    private static int GetSpiralValue(int n)
-    {
-        var grid = new Dictionary<(int, int), int> { [(0, 0)] = 1 };
-        int x = 0, y = 0, dx = 0, dy = -1;
-        for (int i = 2; i <= n; i++)
-        {
-            if (x == y || (x < 0 && x == -y) || (x > 0 && x == 1 - y))
-            {
-                var temp = dx;
-                dx = -dy;
-                dy = temp;
-            }
-            x += dx;
-            y += dy;
-            grid[(x, y)] = CalculateSpiralValue(x, y, grid);
-        }
-        return grid[(x, y)];
-    }
 }
