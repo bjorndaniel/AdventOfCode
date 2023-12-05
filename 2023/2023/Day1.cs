@@ -1,6 +1,4 @@
-﻿using AoC.Shared;
-
-namespace AoC2023;
+﻿namespace AoC2023;
 public class Day1
 {
     private static Dictionary<string, int> _numbers = new Dictionary<string, int>
