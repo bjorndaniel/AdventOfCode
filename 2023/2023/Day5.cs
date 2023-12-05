@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace AoC2023;
+﻿namespace AoC2023;
 public class Day5
 {
     public static Almanac ParseInput(string filename)
@@ -134,7 +132,7 @@ public class Day5
         }
 
         // Return the smallest starting value from the seed queue as the solution
-        return new SolutionResult(seedQueue.ToList().OrderBy(_ => _.start).First().start.ToString());
+        return new SolutionResult(seedQueue.Min(_ => _.start).ToString());
     }
 
     public record Almanac(List<long> Seeds, List<Map> Maps, List<(long start, long end)> SeedRanges) { }
