@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using static AoC2023.Day5;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AoC2023;
 public class Day5
@@ -80,27 +78,63 @@ public class Day5
         return new SolutionResult(sum.ToString());
     }
 
+    //This was finished with the help of this walk through: https://www.youtube.com/watch?v=NmxHw_bHhGM
     [Solveable("2023/Puzzles/Day5.txt", "Day 5 part 2")]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var almanac = ParseInput(filename);
         var sums = new BlockingCollection<long>();
         printer.Flush();
-        Parallel.ForEach(almanac.SeedRanges, new ParallelOptions { MaxDegreeOfParallelism = 100 }, (range) =>
+        var seedQueue = new Queue<(long start, long end)>();
+        almanac.SeedRanges.ForEach(_ => seedQueue.Enqueue(_));
+
+        // Iterate through each map in the almanac, ordered by type
+        foreach (var map in almanac.Maps.OrderBy(_ => _.Type))
         {
-            for (long i = range.start; i <= range.end; i++)
+            var newSeedQueue = new Queue<(long start, long end)>();
+            while (seedQueue.Any())
             {
-                var soil = almanac.Maps.First(_ => _.Type == MapType.SeedSoil).GetMapping(i);
-                var fert = almanac.Maps.First(_ => _.Type == MapType.SoilFertilizer).GetMapping(soil);
-                var water = almanac.Maps.First(_ => _.Type == MapType.FertilizerWater).GetMapping(fert);
-                var light = almanac.Maps.First(_ => _.Type == MapType.WaterLight).GetMapping(water);
-                var temp = almanac.Maps.First(_ => _.Type == MapType.LightTemperature).GetMapping(light);
-                var hum = almanac.Maps.First(_ => _.Type == MapType.TemperatureHumidity).GetMapping(temp);
-                var loc = almanac.Maps.First(_ => _.Type == MapType.HumidityLocation).GetMapping(hum);
-                sums.Add(loc);
+                var seedRange = seedQueue.Dequeue();
+                var hits = false;
+
+                // Iterate through each range in the current map
+                foreach (var range in map.Ranges)
+                {
+                    var start = long.Max(seedRange.start, range.source);
+                    var end = long.Min(seedRange.end, range.source + range.length);
+
+                    // Check if the range overlaps with the seed range
+                    if (start < end)
+                    {
+                        // Calculate the new seed range based on the mapping
+                        newSeedQueue.Enqueue((start - range.source + range.destination, end - range.source + range.destination));
+
+                        // Check if there are additional seed ranges to enqueue
+                        if (start > seedRange.start)
+                        {
+                            seedQueue.Enqueue((seedRange.start, start));
+                        }
+                        if (seedRange.end > end)
+                        {
+                            seedQueue.Enqueue((end, seedRange.end));
+                        }
+                        hits = true;
+                    }
+                }
+
+                // If no overlaps were found, enqueue the seed range as is
+                if (!hits)
+                {
+                    newSeedQueue.Enqueue(seedRange);
+                }
             }
-        });
-        return new SolutionResult(sums.Min().ToString());
+
+            // Update the seed queue with the new seed ranges
+            seedQueue = newSeedQueue;
+        }
+
+        // Return the smallest starting value from the seed queue as the solution
+        return new SolutionResult(seedQueue.ToList().OrderBy(_ => _.start).First().start.ToString());
     }
 
     public record Almanac(List<long> Seeds, List<Map> Maps, List<(long start, long end)> SeedRanges) { }
@@ -119,31 +153,6 @@ public class Day5
         public MapType Type { get; private set; }
 
         public ConcurrentDictionary<long, long> Mappings { get; private set; } = new();
-
-        public void CreateMappings()
-        {
-            Parallel.ForEach(Ranges, range =>
-            {
-                for (long i = range.source; i < (range.source + range.length); i++)
-                {
-                    if (!Mappings.ContainsKey(i))
-                    {
-                        Mappings.TryAdd(i, GetDestination(i));
-                    }
-                }
-            });
-        }
-
-        public long GetMapping(long source)
-        {
-            if (Mappings.ContainsKey(source))
-            {
-                return Mappings[source];
-            }
-            var res = (source, GetDestination(source));
-            Mappings.TryAdd(res.source, res.Item2);
-            return res.Item2;
-        }
 
         public long GetDestination(long source)
         {
