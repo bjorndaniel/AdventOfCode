@@ -21,8 +21,7 @@ public class Day6
         var maxWays = new List<int>();
         foreach (var race in races)
         {
-            int maxCombinations = GetCombinations(race);
-            maxWays.Add(maxCombinations);
+            maxWays.Add(GetCombinations(race));
         }
         return new SolutionResult(maxWays.Aggregate((a, b) => a * b).ToString());
     }
@@ -56,7 +55,6 @@ public class Day6
         }
         return maxCombinations;
     }
-
 
     public record Race(long Time, long Record) { }
 
