@@ -79,4 +79,30 @@ public static class Helpers
 
     public static int ManhattanDistance((int x, int y) a, (int x, int y) b) =>
        Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
+
+    public static long CalculateLCM(List<long> numbers)
+    {
+        var lcm = numbers[0];
+        for (var i = 1; i < numbers.Count; i++)
+        {
+            lcm = CalculateLCM(lcm, numbers[i]);
+        }
+        return lcm;
+    }
+
+    public static long CalculateLCM(long a, long b)
+    {
+        return (a * b) / CalculateGCD(a, b);
+    }
+
+    public static long CalculateGCD(long a, long b)
+    {
+        while (b != 0)
+        {
+            var temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
 }
