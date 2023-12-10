@@ -26,7 +26,6 @@ public class Day9
         return new SolutionResult(sum.ToString());
     }
 
-
     [Solveable("2023/Puzzles/Day9.txt", "Day 9 part 2")]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
