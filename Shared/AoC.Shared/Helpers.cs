@@ -31,10 +31,10 @@ public static class Helpers
                     var solveableAttribute = (Solveable)attributes[0];
                     var fileName = solveableAttribute.Filename;
                     var name = solveableAttribute.Name;
-                    if(method.IsStatic)
+                    if (method.IsStatic)
                     {
                         var func = (Func<string, IPrinter, SolutionResult>)Delegate.CreateDelegate(typeof(Func<string, IPrinter, SolutionResult>), null, method);
-                        solveableMethods.Add((func, fileName, name, solveableAttribute.Day)); 
+                        solveableMethods.Add((func, fileName, name, solveableAttribute.Day));
                     }
 
                 }
@@ -58,7 +58,7 @@ public static class Helpers
         {
             if (args.Any())
             {
-                if(!args.Any(_ => solveable.filename.EndsWith(_?.ToString() ?? "")))
+                if (!args.Any(_ => solveable.filename.EndsWith(_?.ToString() ?? "")))
                 {
                     continue;
                 }
@@ -79,6 +79,11 @@ public static class Helpers
 
     public static int ManhattanDistance((int x, int y) a, (int x, int y) b) =>
        Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
+
+    public static long ManhattanDistance((long x, long y) a, (long x, long y) b)
+    {
+        checked { return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y); }
+    }
 
     public static long CalculateLCM(List<long> numbers)
     {
@@ -105,21 +110,22 @@ public static class Helpers
         }
         return a;
     }
-    public static char[,] CreateMatrix(List<(int x, int y)> galaxies)
+
+    public static char[,] CreateMatrix(List<(int x, int y)> coords)
     {
-        var maxX = galaxies.Max(_ => _.x);
-        var maxY = galaxies.Max(_ => _.y);
+        var maxX = coords.Max(_ => _.x);
+        var maxY = coords.Max(_ => _.y);
         var matrix = new char[maxX + 1, maxY + 1];
-        for(int i = 0; i < maxX + 1; i++)
+        for (int i = 0; i < maxX + 1; i++)
         {
-            for(int j = 0; j < maxY + 1; j++)
+            for (int j = 0; j < maxY + 1; j++)
             {
                 matrix[i, j] = '.';
             }
-        }   
-        foreach (var galaxy in galaxies)
+        }
+        foreach (var coord in coords)
         {
-            matrix[galaxy.x, galaxy.y] = '#';
+            matrix[coord.x, coord.y] = '#';
         }
         return matrix;
     }
