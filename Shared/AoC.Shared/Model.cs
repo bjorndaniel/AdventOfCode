@@ -210,3 +210,71 @@ public class Solveable : Attribute
     public string Name { get; private set; }
     public int Day { get; private set; }
 }
+
+public class PriorityQueue<T> where T : IComparable<T>
+{
+    private List<T> _data = new();
+
+    public void Enqueue(T item)
+    {
+        _data.Add(item);
+        var currentIndex = _data.Count - 1;
+
+        while (currentIndex > 0)
+        {
+            var parentIndex = (currentIndex - 1) / 2;
+
+            if (_data[currentIndex].CompareTo(_data[parentIndex]) >= 0)
+            {
+                break;
+            }
+            var tmp = _data[currentIndex];
+            _data[currentIndex] = _data[parentIndex];
+            _data[parentIndex] = tmp;
+            currentIndex = parentIndex;
+        }
+    }
+
+    public T Dequeue()
+    {
+        int lastIndex = _data.Count - 1;
+        var frontItem = _data[0];
+        _data[0] = _data[lastIndex];
+        _data.RemoveAt(lastIndex);
+
+        --lastIndex;
+        var parentIndex = 0;
+
+        while (true)
+        {
+            var leftChildIndex = parentIndex * 2 + 1;
+            if (leftChildIndex > lastIndex)
+            {
+                break;
+            }
+
+            var rightChildIndex = leftChildIndex + 1;
+            if (rightChildIndex <= lastIndex && _data[rightChildIndex].CompareTo(_data[leftChildIndex]) < 0)
+            {
+                leftChildIndex = rightChildIndex;
+            }
+
+            if (_data[parentIndex].CompareTo(_data[leftChildIndex]) <= 0)
+            {
+                break; 
+            }
+
+            var tmp = _data[parentIndex];
+            _data[parentIndex] = _data[leftChildIndex];
+            _data[leftChildIndex] = tmp;
+            parentIndex = leftChildIndex;
+        }
+
+        return frontItem;
+    }
+
+    public int Count()
+    {
+        return _data.Count;
+    }
+}

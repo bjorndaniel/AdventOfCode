@@ -105,4 +105,23 @@ public static class Helpers
         }
         return a;
     }
+    public static char[,] CreateMatrix(List<(int x, int y)> galaxies)
+    {
+        var maxX = galaxies.Max(_ => _.x);
+        var maxY = galaxies.Max(_ => _.y);
+        var matrix = new char[maxX + 1, maxY + 1];
+        for(int i = 0; i < maxX + 1; i++)
+        {
+            for(int j = 0; j < maxY + 1; j++)
+            {
+                matrix[i, j] = '.';
+            }
+        }   
+        foreach (var galaxy in galaxies)
+        {
+            matrix[galaxy.x, galaxy.y] = '#';
+        }
+        return matrix;
+    }
+
 }
