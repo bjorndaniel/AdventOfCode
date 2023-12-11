@@ -127,15 +127,10 @@ public class Printer : IPrinter
 
 }
 
-public class TestPrinter : IPrinter
+public class TestPrinter(ITestOutputHelper output) : IPrinter
 {
-    private readonly ITestOutputHelper _output;
+    private readonly ITestOutputHelper _output = output;
     private readonly StringBuilder _sb = new();
-
-    public TestPrinter(ITestOutputHelper output)
-    {
-        _output = output;
-    }
 
     public void Print(string s)
     {
@@ -185,11 +180,11 @@ public class TestPrinter : IPrinter
             {
                 if (coords.Contains((j + minX, i + minY)))
                 {
-                    _sb.Append("#");
+                    _sb.Append('#');
                 }
                 else
                 {
-                    _sb.Append(".");
+                    _sb.Append('.');
                 }
             }
             _sb.AppendLine();
@@ -197,23 +192,16 @@ public class TestPrinter : IPrinter
     }
 }
 
-public class Solveable : Attribute
+public class Solveable(string filename, string name, int day = 0) : Attribute
 {
-    public Solveable(string filename, string name, int day = 0)
-    {
-        Filename = filename;
-        Name = name;
-        Day = day;
-    }
-
-    public string Filename { get; private set; }
-    public string Name { get; private set; }
-    public int Day { get; private set; }
+    public string Filename { get; private set; } = filename;
+    public string Name { get; private set; } = name;
+    public int Day { get; private set; } = day;
 }
 
 public class PriorityQueue<T> where T : IComparable<T>
 {
-    private List<T> _data = new();
+    private readonly List<T> _data = [];
 
     public void Enqueue(T item)
     {

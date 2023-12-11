@@ -1,12 +1,7 @@
 ﻿namespace AoC2023.Tests;
-public class Day3Tests
+public class Day3Tests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output;
-
-    public Day3Tests(ITestOutputHelper output)
-    {
-        _output = output;
-    }
+    private readonly ITestOutputHelper _output = output;
 
     [Fact]
     public void Can_parse_input()

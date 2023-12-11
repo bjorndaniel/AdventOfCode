@@ -137,18 +137,11 @@ public class Day5
 
     public record Almanac(List<long> Seeds, List<Map> Maps, List<(long start, long end)> SeedRanges) { }
 
-    public class Map
+    public class Map(List<(long destination, long source, long length)> ranges, MapType type)
     {
+        public List<(long destination, long source, long length)> Ranges { get; private set; } = ranges;
 
-        public Map(List<(long destination, long source, long length)> ranges, MapType type)
-        {
-            Ranges = ranges;
-            Type = type;
-        }
-
-        public List<(long destination, long source, long length)> Ranges { get; private set; }
-
-        public MapType Type { get; private set; }
+        public MapType Type { get; private set; } = type;
 
         public ConcurrentDictionary<long, long> Mappings { get; private set; } = new();
 

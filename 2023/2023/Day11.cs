@@ -1,62 +1,6 @@
 ﻿namespace AoC2023;
 public class Day11
 {
-    private static readonly int[] dx = { -1, 0, 1, 0 };
-    private static readonly int[] dy = { 0, 1, 0, -1 };
-
-    public static char[,] ParseInput(string filename)
-    {
-        var lines = File.ReadAllLines(filename);
-        var expandedLines = new List<string>();
-        foreach (var line in lines)
-        {
-            if (line.Contains("#"))
-            {
-                expandedLines.Add(line);
-            }
-            else
-            {
-                expandedLines.Add(new string(line));
-                expandedLines.Add(line);
-            }
-        }
-        var columnsToCopy = new List<int>();
-        for (int col = 0; col < expandedLines[0].Length; col++)
-        {
-            var allDots = true;
-            for (int row = 0; row < expandedLines.Count; row++)
-            {
-                if (expandedLines[row][col] != '.')
-                {
-                    allDots = false;
-                    break;
-                }
-            }
-            if (allDots)
-            {
-                columnsToCopy.Add(col);
-            }
-        }
-        var counter = 1;
-        foreach (var col in columnsToCopy)
-        {
-            for (int row = 0; row < expandedLines.Count; row++)
-            {
-                expandedLines[row] = expandedLines[row].Insert(col + counter, ".");
-            }
-            counter++;
-        }
-        var result = new char[expandedLines.First().Length, expandedLines.Count()];
-        for (int row = 0; row < expandedLines.Count(); row++)
-        {
-            for (int col = 0; col < expandedLines.First().Length; col++)
-            {
-                result[col, row] = expandedLines[row][col];
-            }
-        }
-        return result;
-    }
-
     [Solveable("2023/Puzzles/Day11.txt", "Day 11 part 1", 11)]
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
@@ -96,7 +40,7 @@ public class Day11
         var galaxies = new List<(long x, long y)>();
         for (int row = 0; row < lines.Length; row++)
         {
-            if (!lines[row].Contains("#"))
+            if (!lines[row].Contains('#'))
             {
                 expandRows.Add(row);
             }
@@ -137,12 +81,12 @@ public class Day11
         }
         for (int i = 0; i < galaxies.Count; i++)
         {
-            if (dictionary.ContainsKey(galaxies[i]))
+            if (dictionary.TryGetValue(galaxies[i], out long value))
             {
-                galaxies[i] = (galaxies[i].x, galaxies[i].y + dictionary[galaxies[i]]);
+                galaxies[i] = (galaxies[i].x, galaxies[i].y + value);
             }
         }
-        dictionary = new Dictionary<(long x, long), long>();
+        dictionary = [];
         foreach (var col in expandCols)
         {
             for (var i = 0; i < galaxies.Count; i++)
@@ -162,9 +106,9 @@ public class Day11
         }
         for (int i = 0; i < galaxies.Count; i++)
         {
-            if (dictionary.ContainsKey(galaxies[i]))
+            if (dictionary.TryGetValue(galaxies[i], out long value))
             {
-                galaxies[i] = (galaxies[i].x + dictionary[galaxies[i]], galaxies[i].y);
+                galaxies[i] = (galaxies[i].x + value, galaxies[i].y);
             }
         }
 

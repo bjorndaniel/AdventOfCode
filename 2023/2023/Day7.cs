@@ -84,21 +84,14 @@ public class Day7
         };
     }
 
-    public class Hand : IComparable
+    public class Hand(char[] cards, int bid, int rank, HandType type) : IComparable
     {
         private static readonly char[] _order = { 'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2' };
 
-        public Hand(char[] cards, int bid, int rank, HandType type)
-        {
-            Cards = cards;
-            Bid = bid;
-            Rank = rank;
-            Type = type;
-        }
-        public int Bid { get; set; }
-        public int Rank { get; set; }
-        public char[] Cards { get; set; }
-        public HandType Type { get; set; }
+        public int Bid { get; set; } = bid;
+        public int Rank { get; set; } = rank;
+        public char[] Cards { get; set; } = cards;
+        public HandType Type { get; set; } = type;
         public char[] Ordering { get; set; } = _order;
 
         public void UpdateType()

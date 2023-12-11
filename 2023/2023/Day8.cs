@@ -104,17 +104,11 @@ public class Day8
  
 
     public record Map(List<char> Instructions, List<Node> Nodes) { }
-    public class Node
+    public class Node(string name, Node left, Node right)
     {
-        public Node(string name, Node left, Node right)
-        {
-            Name = name;
-            Left = left;
-            Right = right;
-        }
-        public string Name { get; set; }
-        public Node Left { get; set; }
-        public Node Right { get; set; }
+        public string Name { get; set; } = name;
+        public Node Left { get; set; } = left;
+        public Node Right { get; set; } = right;
     }
 
 

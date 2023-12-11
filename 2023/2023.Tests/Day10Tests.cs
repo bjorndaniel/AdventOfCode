@@ -1,12 +1,7 @@
 ﻿namespace AoC2023.Tests;
-public class Day10Tests
+public class Day10Tests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output;
-
-    public Day10Tests(ITestOutputHelper output)
-    {
-        _output = output;
-    }
+    private readonly ITestOutputHelper _output = output;
 
     [Fact]
     public void Can_parse_input()
@@ -15,14 +10,14 @@ public class Day10Tests
         var filename = $"{Helpers.DirectoryPathTests}Day10-test.txt";
 
         //When
-        var result = Day10.ParseInput(filename);
+        var (pipes, start) = Day10.ParseInput(filename);
 
         //Then
-        Assert.True(5 == result.pipes.GetLength(0), $"Expected 5 but was {result.pipes.GetLength(0)}");
-        Assert.True(5 == result.pipes.GetLength(1), $"Expected 5 but was {result.pipes.GetLength(1)}");
-        Assert.True('7' == result.pipes[3, 0], $"Expected 7 but was {result.pipes[3, 0]}");
-        Assert.True('L' == result.pipes[0, 4], $"Expected L but was {result.pipes[0, 4]}");
-        Assert.True((0, 2) == result.start, $"Expected (0,2) but was {result.start}");
+        Assert.True(5 == pipes.GetLength(0), $"Expected 5 but was {pipes.GetLength(0)}");
+        Assert.True(5 == pipes.GetLength(1), $"Expected 5 but was {pipes.GetLength(1)}");
+        Assert.True('7' == pipes[3, 0], $"Expected 7 but was {pipes[3, 0]}");
+        Assert.True('L' == pipes[0, 4], $"Expected L but was {pipes[0, 4]}");
+        Assert.True((0, 2) == start, $"Expected (0,2) but was {start}");
     }
 
     [Fact]
@@ -48,7 +43,7 @@ public class Day10Tests
         var result = Day10.Part2(filename, new TestPrinter(_output));
 
         //Then
-        Assert.True("10" == result.Result, $"Exptected 10 but was {result.Result}");
+        Assert.True("10" == result.Result, $"Expected 10 but was {result.Result}");
     }
 
 }
