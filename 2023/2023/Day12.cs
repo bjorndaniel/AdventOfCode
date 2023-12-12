@@ -19,12 +19,17 @@ public class Day12
     {
         var records = ParseInput(filename);
         var sum = 0;
-        var x = HeapPermutation(records[0].Records.ToCharArray(), records[0].Records.Length, records[0].Records.Length);
-        foreach (var item in x)
-        {
-            printer.Print(item.ToString());
-            printer.Flush();
-        }   
+        //var x = HeapPermutation(records[0].Records.ToCharArray(), records[0].Records.Length, records[0].Records.Length);
+        var x = GeneratePermutations(records[0].Records);
+        var groups = x.Select(_ => _.Split(".").ToList().GroupBy(_ => _ == "#"));
+        _ = "";
+        //foreach (var item in x)
+        //{
+        //    var groups = item.Split(".", StringSplitOptions.RemoveEmptyEntries).ToList();
+
+        //    printer.Print(item.ToString());
+        //    printer.Flush();
+        //}   
 
         //foreach (var record in records)
         //{
@@ -42,7 +47,72 @@ public class Day12
         return new SolutionResult("");
     }
 
+    private static List<string> GeneratePermutations(string input)
+    {
+        var permutations = new List<string>();
+        GeneratePermutationsHelper(input, 0, "", permutations);
+        return permutations;
+    }
+
+    private static void GeneratePermutationsHelper(string input, int index, string current, List<string> permutations)
+    {
+        if (index == input.Length)
+        {
+            permutations.Add(current);
+            return;
+        }
+
+        if (input[index] == '?')
+        {
+            GeneratePermutationsHelper(input, index + 1, current + "#", permutations);
+            GeneratePermutationsHelper(input, index + 1, current + ".", permutations);
+        }
+        else
+        {
+            GeneratePermutationsHelper(input, index + 1, current + input[index], permutations);
+        }
+    }
+
     public record ConditionRecord(string Records, List<int> Groups) { }
+
+    public static List<string> GenerateAll(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return new List<string> { "" };
+        }
+
+        var result = new List<string>();
+        Permute(input, 0, input.Length - 1, result);
+        return result;
+    }
+
+    private static void Permute(string str, int l, int r, List<string> result)
+    {
+        if (l == r)
+        {
+            result.Add(str);
+        }
+        else
+        {
+            for (int i = l; i <= r; i++)
+            {
+                str = Swap(str, l, i);
+                Permute(str, l + 1, r, result);
+                str = Swap(str, l, i); // backtrack
+            }
+        }
+    }
+
+    private static string Swap(string str, int i, int j)
+    {
+        char temp;
+        char[] charArray = str.ToCharArray();
+        temp = charArray[i];
+        charArray[i] = charArray[j];
+        charArray[j] = temp;
+        return new string(charArray);
+    }
 
     private static char[] HeapPermutation(char[] a, int size, int n)
     {
@@ -63,6 +133,7 @@ public class Day12
                 a[0] = a[size - 1];
                 a[size - 1] = temp;
             }
+            
 
             // If size is even, swap ith and
             // (size-1)th i.e (last) element
