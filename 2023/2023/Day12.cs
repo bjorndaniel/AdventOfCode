@@ -1,8 +1,11 @@
 ﻿
+using System.Text.RegularExpressions;
+using static AoC2023.Day6;
+
 namespace AoC2023;
 public class Day12
 {
-    private static Dictionary<string, long> _cache = new Dictionary<string, long>();
+    private static Dictionary<string, BigInteger> _cache = new Dictionary<string, BigInteger>();
     public static List<ConditionRecord> ParseInput(string filename, bool isPart2 = false)
     {
         var lines = File.ReadAllLines(filename);
@@ -36,12 +39,12 @@ public class Day12
     [Solveable("2023/Puzzles/Day12.txt", "Day 12 part 1", 12)]
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
-        _cache = new Dictionary<string, long>();
+        _cache = new Dictionary<string, BigInteger>();
         var records = ParseInput(filename);
-        var sum = 0L;
+        BigInteger sum = 0;
         foreach (var record in records)
         {
-            var result = CountConfigs(record.Records, record.Groups);
+            var result = CountConfigs(record.Records, record.Groups.ToArray());
             sum += result;
         }
         return new SolutionResult(sum.ToString());
@@ -50,12 +53,12 @@ public class Day12
     [Solveable("2023/Puzzles/Day12.txt", "Day 12 part 2", 12)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
-        _cache = new Dictionary<string, long>();
+        _cache = new Dictionary<string, BigInteger>();
         var records = ParseInput(filename, true);
-        var sum = 0L;
+        BigInteger sum = 0;
         foreach (var record in records)
         {
-            var result = CountConfigs(record.Records, record.Groups);
+            var result = CountConfigs(record.Records, record.Groups.ToArray());
             sum += result;
         }
         return new SolutionResult(sum.ToString());
@@ -63,7 +66,7 @@ public class Day12
 
     public record ConditionRecord(string Records, List<int> Groups) { }
 
-    private static long CountConfigs(string records, List<int> groups)
+    private static BigInteger CountConfigs(string records, int[] groups)
     {
         if (records.Length == 0)
         {
@@ -79,9 +82,9 @@ public class Day12
             return _cache[key];
         }
 
-        var result = 0L;
+        BigInteger result = 0;
 
-        if (records[0] == '?' || records[0] == '.')
+        if (records[0] == '.' || records[0] == '?')
         {
             result += CountConfigs(records[1..], groups);
         }
