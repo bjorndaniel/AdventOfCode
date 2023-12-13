@@ -28,24 +28,6 @@ public class Day13Tests
     }
 
     [Fact]
-    public void Can_get_reflection()
-    {
-        //Given
-        var filename = $"{Helpers.DirectoryPathTests}Day13-test2.txt";
-
-        //When
-        var pattern = Day13.ParseInput(filename);
-        var result = Day13.GetReflection(pattern.First(), (-1, -1));
-        var result2 = Day13.GetReflection(pattern.First(), (result.col, result.row), true);
-
-        //Then
-        Assert.True(14 == result.sum, $"Expected 14 but was {result.sum}");
-        Assert.True(16 == result2.sum, $"Expected 16 but was {result2.sum}");
-        Assert.True(result.sum != result2.sum);
-        Assert.True(result2.sum == 16, $"Expected 16 but was {result2.sum}");
-    }
-
-    [Fact]
     public void Can_solve_part1_for_test()
     {
         //Given

@@ -60,30 +60,18 @@ public class Day13
         return new SolutionResult(sum.ToString());
     }
 
-
-    public static (int col, int row, int sum) GetReflection(char[,] pattern, (int originalCol, int originalRow) compare, bool isPart2 = false)
+    private static (int col, int row, int sum) GetReflection(char[,] pattern, (int originalCol, int originalRow) compare, bool isPart2 = false)
     {
-        var r = (-1, -1, -1);
-        var c = (-1, -1, -1);
-
         for (int row = 0; row < pattern.GetLength(1) - 1; row++)
         {
             var rowsEqual = Helpers.GetRow(pattern, row).Equals(Helpers.GetRow(pattern, row + 1));
             if (isPart2)
             {
-                if(row != compare.originalRow)
-                {
-                    rowsEqual = rowsEqual || CountDifferingPositions(Helpers.GetRow(pattern, row), Helpers.GetRow(pattern, row + 1)) == 1;
-                }
-                else
-                {
-                    rowsEqual = false;
-                }
+                rowsEqual = row != compare.originalRow && (rowsEqual || CountDifferingPositions(Helpers.GetRow(pattern, row), Helpers.GetRow(pattern, row + 1)) == 1);
             }
             if (rowsEqual)
             {
                 var match = true;
-
                 var below = row == 0 ? row : row - 1;
                 var above = row == 0 ? row + 1 : row + 2;
                 while (match && below >= 0 && above < pattern.GetLength(1))
@@ -103,8 +91,7 @@ public class Day13
                 }
                 if (match)
                 {
-                    r = (-1, row, (row + 1) * 100);
-                    break;
+                    return (-1, row, (row + 1) * 100);
                 }
             }
         }
@@ -114,14 +101,7 @@ public class Day13
             var colsEqual = Helpers.GetColumn(pattern, col).Equals(Helpers.GetColumn(pattern, col + 1));
             if (isPart2)
             {
-                if(col != compare.originalCol)
-                {
-                    colsEqual = colsEqual || CountDifferingPositions(Helpers.GetColumn(pattern, col), Helpers.GetColumn(pattern, col + 1)) == 1;
-                }
-                else
-                {
-                    colsEqual = false;
-                }
+                colsEqual = col != compare.originalCol && (colsEqual || CountDifferingPositions(Helpers.GetColumn(pattern, col), Helpers.GetColumn(pattern, col + 1)) == 1);
             }
             if (colsEqual)
             {
@@ -145,20 +125,13 @@ public class Day13
                 }
                 if (match)
                 {
-                    c = (col, -1, col + 1);
-                    break;
+                    return (col, -1, col + 1);
                 }
             }
         }
-
-
-        if (r.Item2 != -1)
-        {
-            return r;
-        }
-        return c;
-
+        return (-1, -1, -1);
     }
+
     private static int CountDifferingPositions(string str1, string str2)
     {
         if (str1.Length != str2.Length)
