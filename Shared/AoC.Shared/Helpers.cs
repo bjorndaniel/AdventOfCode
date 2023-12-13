@@ -130,4 +130,23 @@ public static class Helpers
         return matrix;
     }
 
+    public static string GetRow(char[,] matrix, int row)
+    {
+        var sb = new StringBuilder();
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            sb.Append(matrix[i, row]);
+        }
+        return sb.ToString();
+    }
+
+    public static string GetColumn(char[,] matrix, int column)
+    {
+        var sb = new StringBuilder();
+        for (int i = 0; i < matrix.GetLength(1); i++)
+        {
+            sb.Append(matrix[column, i]);
+        }
+        return sb.ToString();
+    }
 }
