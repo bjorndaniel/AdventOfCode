@@ -49,14 +49,12 @@ public class Day12
     [Solveable("2023/Puzzles/Day12.txt", "Day 12 part 2", 12)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
-        _cache = new ConcurrentDictionary<string, BigInteger>();
         var records = ParseInput(filename, true);
         BigInteger sum = 0;
         foreach (var record in records)
         {
+            _cache = new ConcurrentDictionary<string, BigInteger>();
             var result = CountConfigs(record.Records, record.Groups.ToArray());
-            //printer.Print(result.ToString());
-            //printer.Flush();
             sum += result;
         }
         return new SolutionResult(sum.ToString());
