@@ -9,6 +9,7 @@ public interface IPrinter
     void PrintMatrix<T>(T[,] matrix);
     void PrintMatrixXY<T>(T[,] matrix);
     void PrintMatrix(List<(int x, int y)> coords);
+    void PrintMatrix(List<(int x, int y, char mark)> coords);
 }
 
 public class DebugPrinter : IPrinter
@@ -49,6 +50,30 @@ public class DebugPrinter : IPrinter
                 else
                 {
                     Debug.Write(".");
+                }
+            }
+            Debug.WriteLine("");
+        }
+    }
+
+    public void PrintMatrix(List<(int x, int y, char mark)> coords)
+    {
+        var maxX = coords.Max(c => c.x);
+        var maxY = coords.Max(c => c.y);
+        var minX = coords.Min(c => c.x);
+        var minY = coords.Min(c => c.y);
+        for (int i = 0; i <= maxY - minY; i++)
+        {
+            for (int j = 0; j <= maxX - minX; j++)
+            {
+                var coord = coords.FirstOrDefault(_ => _.x == j + minX && _.y == i + minY);
+                if (coord != default)
+                {
+                    Debug.Write(coord.mark);
+                }
+                else
+                {
+                    Debug.Write('.');
                 }
             }
             Debug.WriteLine("");
@@ -107,6 +132,30 @@ public class Printer : IPrinter
                 else
                 {
                     Console.Write(".");
+                }
+            }
+            Console.WriteLine();
+        }
+    }
+
+    public void PrintMatrix(List<(int x, int y, char mark)> coords)
+    {
+        var maxX = coords.Max(c => c.x);
+        var maxY = coords.Max(c => c.y);
+        var minX = coords.Min(c => c.x);
+        var minY = coords.Min(c => c.y);
+        for (int i = 0; i <= maxY - minY; i++)
+        {
+            for (int j = 0; j <= maxX - minX; j++)
+            {
+                var coord = coords.FirstOrDefault(_ => _.x == j + minX && _.y == i + minY);
+                if (coord != default)
+                {
+                    Console.Write(coord.mark);
+                }
+                else
+                {
+                    Console.Write('.');
                 }
             }
             Console.WriteLine();
@@ -181,6 +230,30 @@ public class TestPrinter(ITestOutputHelper output) : IPrinter
                 if (coords.Contains((j + minX, i + minY)))
                 {
                     _sb.Append('#');
+                }
+                else
+                {
+                    _sb.Append('.');
+                }
+            }
+            _sb.AppendLine();
+        }
+    }
+
+    public void PrintMatrix(List<(int x, int y, char mark)> coords)
+    {
+        var maxX = coords.Max(c => c.x);
+        var maxY = coords.Max(c => c.y);
+        var minX = coords.Min(c => c.x);
+        var minY = coords.Min(c => c.y);
+        for (int i = 0; i <= maxY - minY; i++)
+        {
+            for (int j = 0; j <= maxX - minX; j++)
+            {
+                var coord = coords.FirstOrDefault(_ => _.x == j + minX && _.y == i + minY);
+                if (coord != default)
+                {
+                    _sb.Append(coord.mark);
                 }
                 else
                 {

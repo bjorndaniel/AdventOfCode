@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "2023.Tests", "2023.Tests\20
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AoC.Shared", "..\Shared\AoC.Shared\AoC.Shared.csproj", "{8E054F38-4A98-4CD5-B4A0-31991EB2B0CB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0A7A35D5-30A5-4D17-9F94-E92748F8283A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
