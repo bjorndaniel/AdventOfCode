@@ -265,11 +265,12 @@ public class TestPrinter(ITestOutputHelper output) : IPrinter
     }
 }
 
-public class Solveable(string filename, string name, int day = 0) : Attribute
+public class Solveable(string filename, string name, int day = 0, bool skip = false) : Attribute
 {
-    public string Filename { get; private set; } = filename;
-    public string Name { get; private set; } = name;
-    public int Day { get; private set; } = day;
+    public string Filename { get; } = filename;
+    public string Name { get;  } = name;
+    public int Day { get; } = day;
+    public bool Skip { get; } = skip;
 }
 
 public class PriorityQueue<T> where T : IComparable<T>

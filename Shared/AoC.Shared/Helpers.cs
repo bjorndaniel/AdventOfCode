@@ -15,9 +15,9 @@ public static class Helpers
                 .Select(x => matrix[rowNumber, x])
                 .ToArray();
 
-    public static List<(Func<string, IPrinter, SolutionResult> func, string filename, string name, int day)> FindSolveableMethodsInAssembly(Assembly assembly)
+    public static List<(Func<string, IPrinter, SolutionResult> func, string filename, string name, int day, bool skip)> FindSolveableMethodsInAssembly(Assembly assembly)
     {
-        var solveableMethods = new List<(Func<string, IPrinter, SolutionResult> func, string filename, string name, int day)>();
+        var solveableMethods = new List<(Func<string, IPrinter, SolutionResult> func, string filename, string name, int day, bool skip)>();
 
         var types = assembly.GetTypes();
         foreach (var type in types.Where(_ => _.Namespace?.Contains("AoC") ?? false))
@@ -34,7 +34,7 @@ public static class Helpers
                     if (method.IsStatic)
                     {
                         var func = (Func<string, IPrinter, SolutionResult>)Delegate.CreateDelegate(typeof(Func<string, IPrinter, SolutionResult>), null, method);
-                        solveableMethods.Add((func, fileName, name, solveableAttribute.Day));
+                        solveableMethods.Add((func, fileName, name, solveableAttribute.Day, solveableAttribute.Skip));
                     }
 
                 }
@@ -56,6 +56,11 @@ public static class Helpers
         var printer = new Printer();
         foreach (var solveable in solveables)
         {
+            if (solveable.skip)
+            {
+                continue;
+            }
+
             if (args.Any())
             {
                 if (!args.Any(_ => solveable.filename.EndsWith(_?.ToString() ?? "")))

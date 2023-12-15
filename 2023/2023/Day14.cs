@@ -30,20 +30,15 @@ public class Day14
         return new SolutionResult(platforms.Where(_ => _.Type == RockType.Round).Sum(_ => platforms.Max(_ => _.Y) + 1 - _.Y).ToString());
     }
 
-    [Solveable("2023/Puzzles/Day14.txt", "Day 14 part 2", 14)]
+    [Solveable("2023/Puzzles/Day14.txt", "Day 14 part 2", 14, true)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var timer = new Stopwatch();
         timer.Start();
         var cache = new Dictionary<string, int>();
         var platforms = ParseInput(filename);
-        for (int i = 1; i < 1000000001; i++)
+        for (int i = 1; i < 1001; i++)
         {
-            if(i%10000 == 0 || i == 1)
-            {
-                printer.Print($"Iteration {i} {timer.Elapsed.TotalSeconds}");
-                printer.Flush();
-            }
             TiltNorth(platforms);
             TiltWest(platforms);
             TiltSouth(platforms);
@@ -62,10 +57,10 @@ public class Day14
                 cache.Add(key, i);
             }
         }
-        throw new Exception("Should not have happened, but here we are");
+        return new SolutionResult(platforms.Where(_ => _.Type == RockType.Round).Sum(_ => platforms.Max(_ => _.Y) + 1 - _.Y).ToString());
     }
 
-    public class Platform(int x, int y, Day14.RockType type)
+    public class Platform(int x, int y, RockType type)
     {
         public int X { get; set; } = x;
         public int Y { get; set; } = y;
