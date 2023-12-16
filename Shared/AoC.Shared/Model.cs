@@ -290,9 +290,7 @@ public class PriorityQueue<T> where T : IComparable<T>
             {
                 break;
             }
-            var tmp = _data[currentIndex];
-            _data[currentIndex] = _data[parentIndex];
-            _data[parentIndex] = tmp;
+            (_data[parentIndex], _data[currentIndex]) = (_data[currentIndex], _data[parentIndex]);
             currentIndex = parentIndex;
         }
     }
@@ -326,9 +324,7 @@ public class PriorityQueue<T> where T : IComparable<T>
                 break; 
             }
 
-            var tmp = _data[parentIndex];
-            _data[parentIndex] = _data[leftChildIndex];
-            _data[leftChildIndex] = tmp;
+            (_data[leftChildIndex], _data[parentIndex]) = (_data[parentIndex], _data[leftChildIndex]);
             parentIndex = leftChildIndex;
         }
 

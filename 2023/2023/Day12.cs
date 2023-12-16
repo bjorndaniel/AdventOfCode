@@ -1,7 +1,7 @@
 ﻿namespace AoC2023;
 public class Day12
 {
-    private static ConcurrentDictionary<string, BigInteger> _cache = new ConcurrentDictionary<string, BigInteger>();
+    private static ConcurrentDictionary<string, BigInteger> _cache = new();
     public static List<ConditionRecord> ParseInput(string filename, bool isPart2 = false)
     {
         var lines = File.ReadAllLines(filename);
@@ -40,7 +40,7 @@ public class Day12
         BigInteger sum = 0;
         foreach (var record in records)
         {
-            var result = CountConfigs(record.Records, record.Groups.ToArray());
+            var result = CountConfigs(record.Records, [.. record.Groups]);
             sum += result;
         }
         return new SolutionResult(sum.ToString());
@@ -54,7 +54,7 @@ public class Day12
         foreach (var record in records)
         {
             _cache = new ConcurrentDictionary<string, BigInteger>();
-            var result = CountConfigs(record.Records, record.Groups.ToArray());
+            var result = CountConfigs(record.Records, [.. record.Groups]);
             sum += result;
         }
         return new SolutionResult(sum.ToString());
@@ -66,16 +66,16 @@ public class Day12
     {
         if (records.Length == 0)
         {
-            return groups.Any() ? 0 : 1;
+            return groups.Length != 0 ? 0 : 1;
         }
-        if (!groups.Any())
+        if (groups.Length == 0)
         {
-            return records.Contains("#") ? 0 : 1;
+            return records.Contains('#') ? 0 : 1;
         }
         var key = $"{records}{(groups.Select(_ => _.ToString()).Aggregate((a, b) => $"{a}{b}"))}";
-        if (_cache.ContainsKey(key))
+        if (_cache.TryGetValue(key, out BigInteger value))
         {
-            return _cache[key];
+            return value;
         }
 
         BigInteger result = 0;
