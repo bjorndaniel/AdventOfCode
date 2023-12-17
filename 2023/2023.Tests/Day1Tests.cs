@@ -1,8 +1,6 @@
 ﻿namespace AoC2023.Tests;
 public class Day1Tests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output = output;
-
     [Fact]
     public void Can_parse_input()
     {
@@ -15,7 +13,7 @@ public class Day1Tests(ITestOutputHelper output)
         //Then
         Assert.True(4 == result.Count, $"Expected 4 but was {result.Count}");
         Assert.True("1abc2" == result.First(), $"Expected  but was {result.First()}");
-        Assert.True("treb7uchet" == result.Last(), $"Expected 4 but was {result.Last()}");
+        Assert.True("treb7uchet" == result.Last(), $"Expected treb7uchet but was {result.Last()}");
     }
 
     [Fact]
@@ -25,7 +23,7 @@ public class Day1Tests(ITestOutputHelper output)
         var filename = $"{Helpers.DirectoryPathTests}Day1-test.txt";
 
         //When
-        var result = Day1.Part1(filename, new TestPrinter(_output));
+        var result = Day1.Part1(filename, new TestPrinter(output));
 
         //Then
         Assert.True("142" == result.Result, $"Expected 142 but was {result.Result}");
@@ -38,7 +36,7 @@ public class Day1Tests(ITestOutputHelper output)
         var filename = $"{Helpers.DirectoryPathTests}Day1-test2.txt";
 
         //When
-        var result = Day1.Part2(filename, new TestPrinter(_output));
+        var result = Day1.Part2(filename, new TestPrinter(output));
 
         //Then
         Assert.True("281" == result.Result, $"Expected 281 but was {result.Result}");

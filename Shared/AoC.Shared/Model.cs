@@ -178,7 +178,7 @@ public class Printer : IPrinter
 
 public class TestPrinter(ITestOutputHelper output) : IPrinter
 {
-    private readonly ITestOutputHelper _output = output;
+    
     private readonly StringBuilder _sb = new();
 
     public void Print(string s)
@@ -189,7 +189,7 @@ public class TestPrinter(ITestOutputHelper output) : IPrinter
     public void Flush()
     {
         Debug.WriteLine(_sb.ToString());
-        _output.WriteLine(_sb.ToString());
+        output.WriteLine(_sb.ToString());
         _sb.Clear();
     }
 
@@ -273,66 +273,66 @@ public class Solveable(string filename, string name, int day = 0, bool skip = fa
     public bool Skip { get; } = skip;
 }
 
-public class PriorityQueue<T> where T : IComparable<T>
-{
-    private readonly List<T> _data = [];
+//public class PriorityQueue<T> where T : IComparable<T>
+//{
+//    private readonly List<T> _data = [];
 
-    public void Enqueue(T item)
-    {
-        _data.Add(item);
-        var currentIndex = _data.Count - 1;
+//    public void Enqueue(T item)
+//    {
+//        _data.Add(item);
+//        var currentIndex = _data.Count - 1;
 
-        while (currentIndex > 0)
-        {
-            var parentIndex = (currentIndex - 1) / 2;
+//        while (currentIndex > 0)
+//        {
+//            var parentIndex = (currentIndex - 1) / 2;
 
-            if (_data[currentIndex].CompareTo(_data[parentIndex]) >= 0)
-            {
-                break;
-            }
-            (_data[parentIndex], _data[currentIndex]) = (_data[currentIndex], _data[parentIndex]);
-            currentIndex = parentIndex;
-        }
-    }
+//            if (_data[currentIndex].CompareTo(_data[parentIndex]) >= 0)
+//            {
+//                break;
+//            }
+//            (_data[parentIndex], _data[currentIndex]) = (_data[currentIndex], _data[parentIndex]);
+//            currentIndex = parentIndex;
+//        }
+//    }
 
-    public T Dequeue()
-    {
-        int lastIndex = _data.Count - 1;
-        var frontItem = _data[0];
-        _data[0] = _data[lastIndex];
-        _data.RemoveAt(lastIndex);
+//    public T Dequeue()
+//    {
+//        int lastIndex = _data.Count - 1;
+//        var frontItem = _data[0];
+//        _data[0] = _data[lastIndex];
+//        _data.RemoveAt(lastIndex);
 
-        --lastIndex;
-        var parentIndex = 0;
+//        --lastIndex;
+//        var parentIndex = 0;
 
-        while (true)
-        {
-            var leftChildIndex = parentIndex * 2 + 1;
-            if (leftChildIndex > lastIndex)
-            {
-                break;
-            }
+//        while (true)
+//        {
+//            var leftChildIndex = parentIndex * 2 + 1;
+//            if (leftChildIndex > lastIndex)
+//            {
+//                break;
+//            }
 
-            var rightChildIndex = leftChildIndex + 1;
-            if (rightChildIndex <= lastIndex && _data[rightChildIndex].CompareTo(_data[leftChildIndex]) < 0)
-            {
-                leftChildIndex = rightChildIndex;
-            }
+//            var rightChildIndex = leftChildIndex + 1;
+//            if (rightChildIndex <= lastIndex && _data[rightChildIndex].CompareTo(_data[leftChildIndex]) < 0)
+//            {
+//                leftChildIndex = rightChildIndex;
+//            }
 
-            if (_data[parentIndex].CompareTo(_data[leftChildIndex]) <= 0)
-            {
-                break; 
-            }
+//            if (_data[parentIndex].CompareTo(_data[leftChildIndex]) <= 0)
+//            {
+//                break; 
+//            }
 
-            (_data[leftChildIndex], _data[parentIndex]) = (_data[parentIndex], _data[leftChildIndex]);
-            parentIndex = leftChildIndex;
-        }
+//            (_data[leftChildIndex], _data[parentIndex]) = (_data[parentIndex], _data[leftChildIndex]);
+//            parentIndex = leftChildIndex;
+//        }
 
-        return frontItem;
-    }
+//        return frontItem;
+//    }
 
-    public int Count()
-    {
-        return _data.Count;
-    }
-}
+//    public int Count()
+//    {
+//        return _data.Count;
+//    }
+//}

@@ -1,7 +1,7 @@
 ﻿namespace AoC2023.Tests;
 public class Day7Tests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output = output;
+    
 
     [Fact]
     public void Can_parse_input()
@@ -31,7 +31,7 @@ public class Day7Tests(ITestOutputHelper output)
         var filename = $"{Helpers.DirectoryPathTests}{input}";
 
         //When
-        var result = Day7.Part1(filename, new TestPrinter(_output));
+        var result = Day7.Part1(filename, new TestPrinter(output));
 
         //Then
         Assert.True(expected == result.Result, $"Expected {expected} but was {result.Result}");
@@ -46,7 +46,7 @@ public class Day7Tests(ITestOutputHelper output)
         var filename = $"{Helpers.DirectoryPathTests}{input}";
 
         //When
-        var result = Day7.Part2(filename, new TestPrinter(_output));
+        var result = Day7.Part2(filename, new TestPrinter(output));
 
         //Then
         Assert.True(expected == result.Result, $"Expected {expected} but was {result.Result}");
@@ -82,15 +82,15 @@ public class Day7Tests(ITestOutputHelper output)
         hand1 = new Hand(['5', '2', '3', '4', '6'], 0, 0, HandType.HighCard);
         hand2 = new Hand(['2', '3', '4', '5', '6'], 0, 0, HandType.HighCard);
         var hand3 = new Hand(['5', '4', '3', '2', '1'], 0, 0, HandType.HighCard);
-        hands = new List<Hand> { hand1, hand2, hand3 };
-        result = hands.OrderBy(_ => _).ToList();
+        hands = [hand1, hand2, hand3];
+        result = [.. hands.OrderBy(_ => _)];
         Assert.True(hand2 == result[0]);
         Assert.True(hand1 == result[1]);
         Assert.True(hand3 == result[2]);
         hand1 = new Hand(['2', '3', '4', '5', 'J'], 0, 0, HandType.FourOfAKind);
         hand2 = new Hand(['J', '3', '4', '5', 'A'], 0, 0, HandType.FourOfAKind);
-        hands = new List<Hand> { hand1, hand2 };
-        result = hands.OrderBy(_ => _).ToList();
+        hands = [hand1, hand2];
+        result = [.. hands.OrderBy(_ => _)];
         Assert.True(hand2 == result[1]);
     }
 

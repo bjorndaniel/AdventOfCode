@@ -1,7 +1,7 @@
 ﻿namespace AoC2023.Tests;
 public class Day6Tests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output = output;
+    
 
     [Fact]
     public void Can_parse_input()
@@ -27,7 +27,7 @@ public class Day6Tests(ITestOutputHelper output)
         var filename = $"{Helpers.DirectoryPathTests}Day6-test.txt";
 
         //When
-        var result = Day6.Part1(filename, new TestPrinter(_output));
+        var result = Day6.Part1(filename, new TestPrinter(output));
 
         //Then
         Assert.True("288" == result.Result, $"Expected 288 but was {result.Result}");
@@ -40,7 +40,7 @@ public class Day6Tests(ITestOutputHelper output)
         var filename = $"{Helpers.DirectoryPathTests}Day6-test.txt";
 
         //When
-        var result = Day6.Part2(filename, new TestPrinter(_output));
+        var result = Day6.Part2(filename, new TestPrinter(output));
 
         //Then
         Assert.True("71503" == result.Result, $"Expected 71503 but was {result.Result}");

@@ -41,7 +41,7 @@ public static class Helpers
             }
         }
 
-        return solveableMethods.OrderBy(_ => _.day).ToList();
+        return [.. solveableMethods.OrderBy(_ => _.day)];
     }
 
     public static void Runner(string message, params object[] args)
@@ -54,24 +54,24 @@ public static class Helpers
         var onlyRun = args.ToList();
         var solveables = FindSolveableMethodsInAssembly(Assembly.GetCallingAssembly());
         var printer = new Printer();
-        foreach (var solveable in solveables)
+        foreach (var (func, filename, name, day, skip) in solveables)
         {
-            if (solveable.skip)
+            if (skip)
             {
                 continue;
             }
 
-            if (args.Any())
+            if (args.Length != 0)
             {
-                if (!args.Any(_ => solveable.filename.EndsWith(_?.ToString() ?? "")))
+                if (!args.Any(_ => filename.EndsWith(_?.ToString() ?? "")))
                 {
                     continue;
                 }
             }
 
             watch.Restart();
-            Console.WriteLine($"Running {solveable.name}");
-            var result = solveable.func($"{DirectoryPath}{solveable.filename}", printer);
+            Console.WriteLine($"Running {name}");
+            var result = func($"{DirectoryPath}{filename}", printer);
             watch.Stop();
             Console.WriteLine($"Got {result.Result} in {watch.ElapsedMilliseconds} ms");
             Console.WriteLine("");
@@ -128,9 +128,9 @@ public static class Helpers
                 matrix[i, j] = '.';
             }
         }
-        foreach (var coord in coords)
+        foreach (var (x, y) in coords)
         {
-            matrix[coord.x, coord.y] = '#';
+            matrix[x, y] = '#';
         }
         return matrix;
     }
