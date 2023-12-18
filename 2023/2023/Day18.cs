@@ -28,18 +28,9 @@ public class Day18
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var plan = ParseInput(filename);
-        var points = new List<(long x, long y)>
-        {
-            (0, 0)
-        };
-        foreach (var instruction in plan)
-        {
-            var p = (points.Last().x, points.Last().y);
-            points.Add(GetPoint(p, instruction));
-        }
-        var perimeter = CalculatePolygonPerimeter(points);
-        var cubes = CalculateCubesInsidePolygon(points);
-        return new SolutionResult((perimeter + cubes).ToString());
+        var points = GetPoints(plan);
+        var area = CalculatePolygonArea(points, CalculatePolygonPerimeter(points));
+        return new SolutionResult(area.ToString());
     }
 
     [Solveable("2023/Puzzles/Day18.txt", "Day 18 part 2", 18)]
@@ -47,24 +38,17 @@ public class Day18
     {
         var plan = ParseInput(filename);
         var newPlan = new List<DigInstruction>();
-        var points = new List<(long x, long y)>
-            {
-                (0, 0)
-            };
+
         foreach (var instruction in plan)
         {
             var newDirection = GetDirection(instruction.Color[^1]);
             var newDistance = long.Parse(instruction.Color[1..^1], System.Globalization.NumberStyles.HexNumber);
             newPlan.Add(new DigInstruction(newDirection, newDistance, instruction.Color));
         }
-        foreach (var instruction in newPlan)
-        {
-            var p = (points.Last().x, points.Last().y);
-            points.Add(GetPoint(p, instruction));
-        }
-        var perimeter = CalculatePolygonPerimeter(points);
-        //var cubes = CalculateCubesInsidePolygon(points);
-        return new SolutionResult((perimeter /*+ cubes*/).ToString());
+        List<(long x, long y)> points = GetPoints(newPlan);
+
+        var area = CalculatePolygonArea(points, CalculatePolygonPerimeter(points), printer);
+        return new SolutionResult(area.ToString());
 
         DigDirection GetDirection(char instruction) => instruction switch
         {
@@ -74,6 +58,33 @@ public class Day18
             '3' => DigDirection.North,
             _ => throw new Exception($"Unknown direction {instruction}")
         };
+
+        static long CalculatePolygonArea(List<(long x, long y)> vertices, long perimeter, IPrinter printer)
+        {
+            var n = vertices.Count;
+            var area = 0L;
+            for (int i = 0; i < n; i++)
+            {
+                var j = (i + 1) % n;
+                area += (vertices[i].x * vertices[j].y) - (vertices[j].x * vertices[i].y); // Calculate the signed area of the triangle formed by the current vertex, the next vertex, and the origin
+            }
+            return Math.Abs(area / 2) + (perimeter / 2) + 1;
+        }
+    }
+
+    private static List<(long x, long y)> GetPoints(List<DigInstruction> newPlan)
+    {
+        var points = new List<(long x, long y)>
+            {
+                (0, 0)
+            };
+        foreach (var instruction in newPlan)
+        {
+            var p = (points.Last().x, points.Last().y);
+            points.Add(GetPoint(p, instruction));
+        }
+
+        return points;
     }
 
     public record DigInstruction(DigDirection Direction, long Meters, string Color) { }
@@ -103,53 +114,6 @@ public class Day18
         };
     }
 
-    private static long CalculateCubesInsidePolygon(List<(long x, long y)> points)
-    {
-        var minX = points.Min(p => p.x);
-        var maxX = points.Max(p => p.x);
-        var minY = points.Min(p => p.y);
-        var maxY = points.Max(p => p.y);
-
-        var count = 0L;
-
-        for (var x = minX; x <= maxX; x++)
-        {
-            for (var y = minY; y <= maxY; y++)
-            {
-                if (IsPointInPolygon(points, (x, y)))
-                {
-                    count++;
-                }
-            }
-        }
-
-        return count;
-    }
-
-    private static bool IsPointInPolygon(List<(long x, long y)> points, (long x, long y) point)
-    {
-
-        var isInside = false;
-        for (int i = 0, j = points.Count - 1; i < points.Count; j = i++)
-        {
-            if (((points[i].y > point.y) != (points[j].y > point.y)) &&
-                (point.x < (points[j].x - points[i].x) * (point.y - points[i].y) / (points[j].y - points[i].y) + points[i].x))
-            {
-                isInside = !isInside;
-            }
-        }
-        for (int i = 0, j = points.Count - 1; i < points.Count; j = i++)
-        {
-            if ((points[i].x - point.x) * (points[j].y - point.y) == (points[j].x - point.x) * (points[i].y - point.y) &&
-                (point.x - points[i].x) * (point.x - points[j].x) <= 0 && (point.y - points[i].y) * (point.y - points[j].y) <= 0)
-            {
-                return false; // The point is on the perimeter, so it's not considered inside
-            }
-        }
-
-        return isInside;
-    }
-
     private static long CalculatePolygonPerimeter(List<(long x, long y)> points)
     {
         var perimeter = 0.0;
@@ -163,6 +127,18 @@ public class Day18
         }
 
         return (long)perimeter;
+    }
+
+    private static long CalculatePolygonArea(List<(long x, long y)> vertices, long perimeter)
+    {
+        var n = vertices.Count;
+        var area = 0L;
+        for (int i = 0; i < n; i++)
+        {
+            var j = (i + 1) % n;
+            area += (vertices[i].x * vertices[j].y) - (vertices[j].x * vertices[i].y);
+        }
+        return Math.Abs(area / 2) + (perimeter / 2) + 1;
     }
 
 }
