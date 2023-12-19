@@ -70,7 +70,7 @@ public class Day19
                             start = workflows.First(w => w.Name == "in");
                             break;
                         }
-                        else if(f.Output == "R")
+                        else if (f.Output == "R")
                         {
                             done = true;
                             start = workflows.First(w => w.Name == "in");
@@ -85,11 +85,11 @@ public class Day19
                     else
                     {
                         var part = f.Part;
-                        var condition = f.Condition;    
+                        var condition = f.Condition;
                         var number = rating.PartRatings[part];
-                        if(condition == Condition.GreaterThan)
+                        if (condition == Condition.GreaterThan)
                         {
-                            if(number > f.Number)
+                            if (number > f.Number)
                             {
                                 if (f.Output == "A")
                                 {
@@ -113,7 +113,7 @@ public class Day19
                         }
                         else
                         {
-                            if(number < f.Number)
+                            if (number < f.Number)
                             {
                                 if (f.Output == "A")
                                 {
@@ -138,17 +138,106 @@ public class Day19
                     }
                 }
             }
-            
+
         }
         return new SolutionResult(accepted.Sum(_ => _.Value()).ToString());
     }
 
+    //Following walktrough from https://www.youtube.com/watch?v=3RwIpUegdU4
     [Solveable("2023/Puzzles/Day19.txt", "Day 19 part 2", 19)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
-        var (workflows, ratings) = ParseInput(filename);
-        var start = workflows.First(w => w.Name == "in");
-        return new SolutionResult("");
+        var lines = File.ReadAllLines(filename);
+        var ranges = new Dictionary<char, (int low, int high)>
+        {
+            {'x', (1, 4000)},
+            {'m', (1, 4000)},
+            {'a', (1, 4000)},
+            {'s', (1, 4000)}
+         };
+        var workflows = new Dictionary<string, (List<(char key, char comp, int number, string target)> rules, string fallback)>();
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrEmpty(line))
+            {
+                break;
+            }
+            var prts = line[..^1].ToString().Split("{");
+            var name = prts[0];
+            var rules = prts[1].Split(",")[..^1];
+            var fallback = prts[1].Split(",").Last();
+            workflows.Add(name, ([], fallback));
+            foreach (var rule in rules)
+            {
+                var (comparison, target) = (rule.Split(":")[0], rule.Split(":")[1]);
+                var key = comparison[0];
+                var cmp = comparison[1];
+                var number = int.Parse(comparison[2..]);
+                workflows[name].rules.Add((key, cmp, number, target));
+            }
+
+        }
+        var result = Count(ranges, workflows);
+        return new SolutionResult(result.ToString());
+        static long Count(Dictionary<char, (int low, int high)> ranges, Dictionary<string, (List<(char key, char comp, int number, string target)> rules, string fallback)> workflows, string name = "in")
+        {
+            if (name == "R")
+            {
+                return 0;
+            }
+            if (name == "A")
+            {
+                var product = 1L;
+                foreach (var r in ranges)
+                {
+                    product *= (r.Value.high - r.Value.low + 1);
+                }
+                return product;
+            }
+            var total = 0L;
+            var cont = true;
+            var (rules, fallback) = workflows[name];
+            foreach (var (key, cmp, n, target) in rules)
+            {
+                var (low, high) = ranges[key];
+                var (tl, th) = (0, 0);
+                var (fl, fh) = (0, 0);
+                if (cmp == '<')
+                {
+                    (tl, th) = (low, Math.Min(n - 1, high));
+                    (fl, fh) = (Math.Max(n, low), high);
+                }
+                else
+                {
+                    (tl, th) = (Math.Max(n + 1, low), high);
+                    (fl, fh) = (low, Math.Min(n, high));
+                }
+                if (tl <= th)
+                {
+                    var copy = new Dictionary<char, (int low, int high)>(ranges);
+                    copy[key] = (tl, th);
+                    var next = target;
+                    total += Count(copy, workflows, next);
+                }
+                if (fl <= fh)
+                {
+                    var copy = new Dictionary<char, (int low, int high)>(ranges);
+                    ranges = copy;
+                    ranges[key] = (fl, fh);
+                }
+                else
+                {
+                    cont = false;
+                    break;
+                }
+            }
+            if (cont)
+            {
+                total += Count(ranges, workflows, fallback);
+            }
+            return total;
+        }
+
     }
 
     public record Rating(Guid id, Dictionary<char, long> PartRatings)
@@ -159,7 +248,7 @@ public class Day19
 
     public record Workflow(string Name, List<Flow> Flows) { }
 
-    public record Flow(int Order, char Part, long Number, Condition Condition, string Output) { }
+    public record Flow(int Order, char Part, int Number, Condition Condition, string Output) { }
 
     public enum Condition
     {
