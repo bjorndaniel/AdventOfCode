@@ -121,6 +121,8 @@ public class Day20
                                     break;
                                 }
                             }
+                            //This works for my input these 4 have to be low for rx to be low so
+                            //check your input and adjust accordingly
                             if (output.module == "st" && toSend == Pulse.Low)
                             {
                                 st = counter;
