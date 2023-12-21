@@ -75,13 +75,24 @@ public class Day21
         //    };
 
         //    DFS(plot, start.x, start.y, i, plot, true, originalX + 1, originalY + 1);
-        //    //Trying to find a pattern
+        //    //Trying to find a pattern for the diamond shape n
         //    //put it into https://www.wolframalpha.com/ and found the equation below
         //    printer.Print($"steps: {i} nr: {_found.Count()}");
         //    printer.Flush();
         //}
+        if (filename.Contains("test"))
+        {
+            _memo = new();
+            _found = new()
+            {
+                [(start.x, start.y)] = true
+            };
+            DFS(plot, start.x, start.y, (int)steps, plot, true, originalX + 1, originalY + 1);
+            return new SolutionResult(_found.Count().ToString());
+        }
+        var plots = 0.0;
         var number = ((steps - 65) / 131) + 1;
-        var plots = (15158 * Math.Pow(number, 2)) - (15061 * number) + 3724.67;
+        plots = (15158 * Math.Pow(number, 2)) - (15061 * number) + 3724.67;
         return new SolutionResult(((long)plots).ToString());
     }
 
