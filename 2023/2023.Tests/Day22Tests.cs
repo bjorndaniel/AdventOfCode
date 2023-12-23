@@ -1,9 +1,6 @@
-﻿using static AoC2023.Day22;
-
-namespace AoC2023.Tests;
+﻿namespace AoC2023.Tests;
 public class Day22Tests(ITestOutputHelper output)
 {
-
     [Fact]
     public void Can_parse_input()
     {
@@ -46,7 +43,7 @@ public class Day22Tests(ITestOutputHelper output)
         var result = Day22.Part2(filename, new TestPrinter(output));
 
         //Then
-        Assert.True(false);
+        Assert.True("7" == result.Result, $"Expected 7 but was {result.Result}");
     }
 
     [Fact]
@@ -56,6 +53,8 @@ public class Day22Tests(ITestOutputHelper output)
         var bricks = Day22.ParseInput($"{Helpers.DirectoryPathTests}Day22-test.txt");
 
         //When
+        bricks = bricks.OrderBy(b => b.Z1).ToList();
+
         Day22.SettleBricks(bricks);
 
         //Then
@@ -93,4 +92,4 @@ public class Day22Tests(ITestOutputHelper output)
         Assert.False(g.IsSupporting(f));
 
     }
-}
+}   
