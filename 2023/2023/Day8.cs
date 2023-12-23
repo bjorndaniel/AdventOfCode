@@ -101,7 +101,6 @@ public class Day8
         }
         return new SolutionResult(Helpers.CalculateLCM(stepsToEnd).ToString());
     }
- 
 
     public record Map(List<char> Instructions, List<Node> Nodes) { }
     public class Node(string name, Node left, Node right)

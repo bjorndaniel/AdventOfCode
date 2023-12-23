@@ -2,7 +2,7 @@
   "profiles": {
     "2023": {
       "commandName": "Project",
-      "commandLineArgs": "Day22.txt\r\n"
+      "commandLineArgs": "\r\n\r\n"
     }
   }
 }

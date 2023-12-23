@@ -30,7 +30,7 @@ public class Day14
         return new SolutionResult(platforms.Where(_ => _.Type == RockType.Round).Sum(_ => platforms.Max(_ => _.Y) + 1 - _.Y).ToString());
     }
 
-    [Solveable("2023/Puzzles/Day14.txt", "Day 14 part 2", 14, true)]
+    [Solveable("2023/Puzzles/Day14.txt", "Day 14 part 2", 14)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var timer = new Stopwatch();
