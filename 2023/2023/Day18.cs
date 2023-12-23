@@ -14,7 +14,7 @@ public class Day18
         }
         return result;
 
-        DigDirection GetDirection(string direction) => direction switch
+        static DigDirection GetDirection(string direction) => direction switch
         {
             "U" => DigDirection.North,
             "D" => DigDirection.South,
@@ -47,10 +47,10 @@ public class Day18
         }
         List<(long x, long y)> points = GetPoints(newPlan);
 
-        var area = CalculatePolygonArea(points, CalculatePolygonPerimeter(points), printer);
+        var area = CalculatePolygonArea(points, CalculatePolygonPerimeter(points));
         return new SolutionResult(area.ToString());
 
-        DigDirection GetDirection(char instruction) => instruction switch
+        static DigDirection GetDirection(char instruction) => instruction switch
         {
             '0' => DigDirection.East,
             '1' => DigDirection.South,
@@ -59,7 +59,7 @@ public class Day18
             _ => throw new Exception($"Unknown direction {instruction}")
         };
 
-        static long CalculatePolygonArea(List<(long x, long y)> vertices, long perimeter, IPrinter printer)
+        static long CalculatePolygonArea(List<(long x, long y)> vertices, long perimeter)
         {
             var n = vertices.Count;
             var area = 0L;
@@ -99,18 +99,13 @@ public class Day18
 
     private static (long x, long y) GetPoint((long x, long y) point, DigInstruction instruction)
     {
-        switch (instruction.Direction)
+        return instruction.Direction switch
         {
-            case DigDirection.North:
-                return (point.x, point.y - instruction.Meters);
-            case DigDirection.South:
-                return (point.x, point.y + instruction.Meters);
-            case DigDirection.East:
-                return (point.x + instruction.Meters, point.y);
-            case DigDirection.West:
-                return (point.x - instruction.Meters, point.y);
-            default:
-                throw new Exception($"Unknown direction {instruction.Direction}");
+            DigDirection.North => (point.x, point.y - instruction.Meters),
+            DigDirection.South => (point.x, point.y + instruction.Meters),
+            DigDirection.East => (point.x + instruction.Meters, point.y),
+            DigDirection.West => (point.x - instruction.Meters, point.y),
+            _ => throw new Exception($"Unknown direction {instruction.Direction}"),
         };
     }
 

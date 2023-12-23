@@ -1,11 +1,11 @@
 ﻿namespace AoC2023;
 public class Day23
 {
-    private static Dictionary<((int x, int y) pos, int dist), int> _memo = new();
+    private static Dictionary<((int x, int y) pos, int dist), int> _memo = [];
     private static int _maxDist = 0;
-    private static List<char> _slopes = ['>', '<', '^', 'v'];
-    private static Dictionary<Direction, (int x, int y)> _directions = new Dictionary<Direction, (int x, int y)>
-     {
+    private static readonly List<char> _slopes = ['>', '<', '^', 'v'];
+    private static readonly Dictionary<Direction, (int x, int y)> _directions = new()
+    {
         { Direction.Down, ( 0, 1 ) },
         { Direction.Up, ( 0, -1 ) },
         { Direction.Right, (1, 0) },
@@ -34,7 +34,7 @@ public class Day23
         var start = (1, 0);
         var end = (map.GetLength(0) - 2, map.GetLength(1) - 1);
         _maxDist = 0;
-        _memo = new();
+        _memo = [];
         Hamiltonian(map, start, end, visited, start, 0);
         return new SolutionResult(_maxDist.ToString());
     }
@@ -48,10 +48,10 @@ public class Day23
         var end = (map.GetLength(0) - 2, map.GetLength(1) - 1);
         var nodes = CreateNodes(map, start, end);
         var graph = new Dictionary<(int x, int y), Dictionary<(int x, int y), int>>();
-        nodes.ForEach(_ => graph.Add(_, new()));
+        nodes.ForEach(_ => graph.Add(_, []));
         CreateGraph(map, nodes, graph);
 
-        return new SolutionResult(DFS(start, end, graph, new()).ToString());
+        return new SolutionResult(DFS(start, end, graph, []).ToString());
 
         static int DFS((int x, int y) current, (int x, int y) end, Dictionary<(int x, int y), Dictionary<(int x, int y), int>> graph, List<(int x, int y)> seen)
         {
@@ -111,15 +111,12 @@ public class Day23
                 var stack = new Stack<(int c, (int x, int y))>();
                 stack.Push((0, node));
                 var seen = new List<(int x, int y)> { node };
-                while (stack.Any())
+                while (stack.Count != 0)
                 {
                     var (c, pos) = stack.Pop();
                     if (c != 0 && nodes.Contains(pos))
                     {
-                        if (!graph[node].ContainsKey(pos))
-                        {
-                            graph[node].Add(pos, c);
-                        }
+                        graph[node].TryAdd(pos, c);
                         graph[node][pos] = c;
                         continue;
                     }

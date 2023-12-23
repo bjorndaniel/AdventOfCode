@@ -53,7 +53,7 @@ public class Day22Tests(ITestOutputHelper output)
         var bricks = Day22.ParseInput($"{Helpers.DirectoryPathTests}Day22-test.txt");
 
         //When
-        bricks = bricks.OrderBy(b => b.Z1).ToList();
+        bricks = [.. bricks.OrderBy(keySelector: b => b.Z1)];
 
         Day22.SettleBricks(bricks);
 

@@ -6,13 +6,13 @@ public class Day13
         var lines = File.ReadAllLines(filename);
         var result = new List<char[,]>();
         var patterns = new List<List<string>>();
-        List<string> currentPattern = new List<string>();
+        List<string> currentPattern = [];
         foreach (var line in lines)
         {
             if (string.IsNullOrEmpty(line))
             {
                 patterns.Add(currentPattern);
-                currentPattern = new List<string>();
+                currentPattern = [];
             }
             else
             {

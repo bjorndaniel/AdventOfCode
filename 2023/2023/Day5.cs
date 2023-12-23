@@ -5,7 +5,7 @@ public class Day5
     {
         var lines = File.ReadAllLines(filename);
         var seeds = lines.First().Split(":").Last().Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(_ => long.Parse(_)).ToList();
-        var result = new Almanac(seeds, new List<Map>(), new List<(long start, long end)>());
+        var result = new Almanac(seeds, [], []);
         for(int i = 0; i< seeds.Count; i += 2)
         {
             result.SeedRanges.Add((seeds[i], seeds[i] + seeds[i + 1] - 1));
@@ -30,7 +30,7 @@ public class Day5
                 {
                     result.Maps.Add(map);
                 }
-                map = new Map(new List<(long destination, long source, long length)>(), GetMapType(line));
+                map = new Map([], GetMapType(line));
             }
 
         }

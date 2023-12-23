@@ -19,11 +19,11 @@ public class Day20
             {
                 result.Add(module, new Module(ModuleType.Broadcaster, module, inputList, outputList));
             }
-            else if (module.StartsWith("%"))
+            else if (module.StartsWith('%'))
             {
                 result.Add(module[1..], new Module(ModuleType.FlipFlop, module[1..], inputList, outputList));
             }
-            else if (module.StartsWith("&"))
+            else if (module.StartsWith('&'))
             {
                 result.Add(module[1..], new Module(ModuleType.Conjuction, module[1..], inputList, outputList));
             }
@@ -46,12 +46,12 @@ public class Day20
         {
             sentLow++;//Push the button
             var queue = new Queue<(string sender, string receiver, Pulse pulse)>();
-            foreach (var output in modules["broadcaster"].Outputs)
+            foreach (var (module, last) in modules["broadcaster"].Outputs)
             {
-                queue.Enqueue(("broadcaster", output.module, Pulse.Low));
+                queue.Enqueue(("broadcaster", module, Pulse.Low));
                 sentLow++;
             }
-            while (queue.Any())
+            while (queue.Count != 0)
             {
                 var (sender, receiver, pulse) = queue.Dequeue();
                 var senderModule = modules[sender];
@@ -95,11 +95,11 @@ public class Day20
         while(!isDone)
         {
             var queue = new Queue<(string sender, string receiver, Pulse pulse)>();
-            foreach (var output in modules["broadcaster"].Outputs)
+            foreach (var (module, last) in modules["broadcaster"].Outputs)
             {
-                queue.Enqueue(("broadcaster", output.module, Pulse.Low));
+                queue.Enqueue(("broadcaster", module, Pulse.Low));
             }
-            while (queue.Any())
+            while (queue.Count != 0)
             {
                 var (sender, receiver, pulse) = queue.Dequeue();
                 var senderModule = modules[sender];

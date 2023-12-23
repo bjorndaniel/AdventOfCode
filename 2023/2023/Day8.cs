@@ -13,28 +13,28 @@ public class Day8
             var right = line.Split("=").Last().Split(",").Last().Replace(")", "").Trim();
             Node lNode = null!;
             Node rNode = null!;
-            if (nodes.ContainsKey(left))
+            if (nodes.TryGetValue(left, out Node? v))
             {
-                lNode = nodes[left];
+                lNode = v;
             }
             else
             {
                 lNode = new Node(left, null!, null!);
                 nodes.Add(left, lNode);
             }
-            if (!nodes.ContainsKey(right))
+            if (!nodes.TryGetValue(right, out Node? v1))
             {
                 rNode = new Node(right, null!, null!);
                 nodes.Add(right, rNode);
             }
             else
             {
-                rNode = nodes[right];
+                rNode = v1;
             }
-            if (nodes.ContainsKey(name))
+            if (nodes.TryGetValue(name, out Node? v2))
             {
-                nodes[name].Left = lNode;
-                nodes[name].Right = rNode;
+                v2.Left = lNode;
+                v2.Right = rNode;
             }
             else
             {
@@ -54,7 +54,7 @@ public class Day8
         var steps = 0;
         while (currentNode.Name != "ZZZ")
         {
-            currentInstruction = currentInstruction % map.Instructions.Count;
+            currentInstruction %= map.Instructions.Count;
             if (map.Instructions[currentInstruction] == 'L')
             {
                 currentNode = currentNode.Left;
@@ -76,16 +76,16 @@ public class Day8
         var map = ParseInput(filename);
         var queue = new Queue<Node>();
         var visited = new HashSet<Node>();
-        var startingNodes = map.Nodes.Where(_ => _.Name.EndsWith("A")).ToList();
+        var startingNodes = map.Nodes.Where(_ => _.Name.EndsWith('A')).ToList();
         var stepsToEnd = new List<long>();
         foreach(var startingNode in startingNodes)
         {
             var currentNode = startingNode;
             var currentInstruction = 0;
             var steps = 0;
-            while (!currentNode.Name.EndsWith("Z"))//Each A node has exactly one path to a Z that repeats
+            while (!currentNode.Name.EndsWith('Z'))//Each A node has exactly one path to a Z that repeats
             {
-                currentInstruction = currentInstruction % map.Instructions.Count;
+                currentInstruction %= map.Instructions.Count;
                 if (map.Instructions[currentInstruction] == 'L')
                 {
                     currentNode = currentNode.Left;

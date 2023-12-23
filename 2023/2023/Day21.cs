@@ -1,15 +1,15 @@
 ﻿namespace AoC2023;
 public class Day21
 {
-    private static List<(int x, int y)> _directions = new List<(int x, int y)>
-    {
+    private static readonly List<(int x, int y)> _directions =
+    [
         ( 0, 1 ),
         ( 0, -1 ),
         (1, 0),
         ( -1, 0 )
-    };
-    private static Dictionary<(int, int, int), long> _memo = new();
-    private static Dictionary<(int x, int y), bool> _found = new();
+    ];
+    private static Dictionary<(int, int, int), long> _memo = [];
+    private static Dictionary<(int x, int y), bool> _found = [];
 
     public static ((int x, int y) start, Dictionary<(int x, int y), char> plot) ParseInput(string filename)
     {
@@ -34,15 +34,15 @@ public class Day21
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var (start, plot) = ParseInput(filename);
-        _memo = new();
+        _memo = [];
         _found = new()
         {
             [(start.x, start.y)] = true
         };
 
-        DFS(plot, start.x, start.y, filename.Contains("test") ? 6 : 64, new());
+        DFS(plot, start.x, start.y, filename.Contains("test") ? 6 : 64, []);
 
-        return new SolutionResult(_found.Count().ToString());
+        return new SolutionResult(_found.Count.ToString());
     }
 
     [Solveable("2023/Puzzles/Day21.txt", "Day 21 part 2", 21)]
@@ -82,13 +82,13 @@ public class Day21
         //}
         if (filename.Contains("test"))
         {
-            _memo = new();
+            _memo = [];
             _found = new()
             {
                 [(start.x, start.y)] = true
             };
             DFS(plot, start.x, start.y, (int)steps, plot, true, originalX + 1, originalY + 1);
-            return new SolutionResult(_found.Count().ToString());
+            return new SolutionResult(_found.Count.ToString());
         }
         var plots = 0.0;
         var number = ((steps - 65) / 131) + 1;

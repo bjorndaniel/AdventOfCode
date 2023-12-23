@@ -33,17 +33,17 @@ public class Day22
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var bricks = ParseInput(filename);
-        bricks = bricks.OrderBy(b => b.Z1).ToList();
+        bricks = [.. bricks.OrderBy(b => b.Z1)];
         SettleBricks(bricks);
-        bricks = bricks.OrderBy(b => b.Z1).ToList();
+        bricks = [.. bricks.OrderBy(b => b.Z1)];
 
         //This part was learned from https://www.youtube.com/watch?v=imz7uexX394&t=723s
         var keySupportsValues = new Dictionary<int, List<int>>();
         var valuesSupportKey = new Dictionary<int, List<int>>();
         foreach (var (brick, i) in bricks.WithIndex())
         {
-            keySupportsValues[i] = new List<int>();
-            valuesSupportKey[i] = new List<int>();
+            keySupportsValues[i] = [];
+            valuesSupportKey[i] = [];
         }
         foreach (var (upper, j) in bricks.WithIndex())
         {
@@ -77,17 +77,17 @@ public class Day22
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var bricks = ParseInput(filename);
-        bricks = bricks.OrderBy(b => b.Z1).ToList();
+        bricks = [.. bricks.OrderBy(b => b.Z1)];
         SettleBricks(bricks);
-        bricks = bricks.OrderBy(b => b.Z1).ToList();
+        bricks = [.. bricks.OrderBy(b => b.Z1)];
 
         //This part was learned from https://www.youtube.com/watch?v=imz7uexX394&t=723s
         var keySupportsValues = new Dictionary<int, List<int>>();
         var valuesSupportKey = new Dictionary<int, List<int>>();
         foreach(var (brick, i) in bricks.WithIndex())
         {
-            keySupportsValues[i] = new List<int>();
-            valuesSupportKey[i] = new List<int>();
+            keySupportsValues[i] = [];
+            valuesSupportKey[i] = [];
         }
 
         foreach (var (upper, j) in bricks.WithIndex())
@@ -186,7 +186,7 @@ public class Brick(string id, int x1, int y1, int z1, int x2, int y2, int z2)
     public int SizeX => X2 - X1 + 1;
     public int SizeY => Y2 - Y1 + 1;
     public int SizeZ => Z2 - Z1 + 1;
-    public List<Brick> Supporting { get; set; } = new();
+    public List<Brick> Supporting { get; set; } = [];
 
     public bool IsSupporting(Brick upper) =>
         IsOverlapping(upper) && Z2 + 1 == upper.Z1;

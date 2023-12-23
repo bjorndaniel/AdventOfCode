@@ -10,7 +10,7 @@ public class Day7
         {
             var cards = line.Split(" ");
             var bid = int.Parse(cards[1]);
-            var hand = new Hand(cards[0].ToArray(), bid, 0, GetHandType(cards[0].ToArray()));
+            var hand = new Hand([.. cards[0]], bid, 0, GetHandType([.. cards[0]]));
             result.Add(hand);
         }
         return result;
@@ -107,7 +107,7 @@ public class Day7
                 var newC = Cards.ToList();
                 newC.RemoveAll(c => c == 'J');
                 newC.AddRange(Enumerable.Range(0, Cards.Count(c => c == 'J')).Select(_ => g.Key));
-                var type = GetHandType(newC.ToArray());
+                var type = GetHandType([.. newC]);
                 highest = type > highest ? type : highest;
             }
             Type = highest;

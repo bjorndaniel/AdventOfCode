@@ -25,7 +25,7 @@ public class Day10
     {
         var (pipes, start) = ParseInput(filename);
         var (pipeConnections, sConnections) = GetConnections(pipes, start);
-        pipeConnections.Add('S', new List<(int dx, int dy)> { sConnections.First() });
+        pipeConnections.Add('S', [sConnections.First()]);
         var loops = FindLoop(pipes, start, pipeConnections);
         return new SolutionResult((loops.Count() / 2).ToString());
     }
@@ -35,7 +35,7 @@ public class Day10
     {
         var (pipes, start) = ParseInput(filename);
         var (pipeConnections, sConnections) = GetConnections(pipes, start);
-        pipeConnections.Add('S', new List<(int dx, int dy)> { sConnections.First() });
+        pipeConnections.Add('S', [sConnections.First()]);
         var loop = FindLoop(pipes, start, pipeConnections);
         return new SolutionResult(CalculatePolygonArea(loop).ToString());
 
@@ -78,7 +78,7 @@ public class Day10
                 }
             }
         }
-        return new List<(int x, int y)>();
+        return [];
     }
 
     private static (Dictionary<char, List<(int dx, int dy)>> pipeConnections, List<(int dx, int dy)> sConnections) GetConnections(char[,] pipes, (int x, int y) start)

@@ -4,7 +4,7 @@ public class Day3
     public static Schematic ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
-        var schematic = new Schematic(new List<Part>(), new List<Symbol>());
+        var schematic = new Schematic([], []);
         for (int y = 0; y < lines.Length; y++)
         {
             var currentNumber = "";
@@ -27,7 +27,7 @@ public class Day3
                     }
                     if (c != '.')
                     {
-                        schematic.Symbols.Add(new Symbol(c, x, y, new List<Part>()));
+                        schematic.Symbols.Add(new Symbol(c, x, y, []));
                     }
                 }
             }

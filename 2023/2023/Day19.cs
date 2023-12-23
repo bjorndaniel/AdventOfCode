@@ -214,8 +214,10 @@ public class Day19
                 }
                 if (tl <= th)
                 {
-                    var copy = new Dictionary<char, (int low, int high)>(ranges);
-                    copy[key] = (tl, th);
+                    var copy = new Dictionary<char, (int low, int high)>(ranges)
+                    {
+                        [key] = (tl, th)
+                    };
                     var next = target;
                     total += Count(copy, workflows, next);
                 }
