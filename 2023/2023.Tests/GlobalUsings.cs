@@ -7,3 +7,4 @@ global using static AoC2023.Day18;
 global using static AoC2023.Day19;
 global using static AoC2023.Day20;
 global using static AoC2023.Day22;
+global using static AoC2023.Day24;
