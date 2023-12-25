@@ -4,3 +4,6 @@ global using System.Diagnostics;
 global using System.Numerics;
 global using System.Drawing;
 global using Microsoft.Z3;
+global using QuickGraph;
+global using QuickGraph.Graphviz;
+global using QuickGraph.Graphviz.Dot;
