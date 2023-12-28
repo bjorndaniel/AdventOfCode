@@ -43,7 +43,8 @@ public class Day5
         return (stacks, movements);
     }
 
-    public static string SolvePart1(string filename)
+    [Solveable("2022/Puzzles/Day5.txt", "Day 5 part 1", 5)]
+    public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var (stacks, movements) = ParseInput(filename);
         foreach (var m in movements)
@@ -59,10 +60,11 @@ public class Day5
                 toMove[i].StackIndex = endStack.Crates.Count;
             }
         }
-        return string.Concat(stacks.Select(_ => _.Crates.OrderByDescending(_ => _.StackIndex).First().Value));
+        return new SolutionResult(string.Concat(stacks.Select(_ => _.Crates.OrderByDescending(_ => _.StackIndex).First().Value)));
     }
 
-    public static string SolvePart2(string filename)
+    [Solveable("2022/Puzzles/Day5.txt", "Day 5 part 2", 5)]
+    public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var (stacks, movements) = ParseInput(filename);
         stacks.ForEach(_ =>
@@ -84,37 +86,38 @@ public class Day5
             }
             stacks.ForEach(_ => _.SetIndices());
         }
-        return string.Concat(stacks.Select(_ => _.Crates.OrderByDescending(_ => _.StackIndex).First().Value));
-    }
-}
-
-public record Movement(int From, int To, int NrOfCrates) { }
-
-public class Crate
-{
-
-    public Crate(int stackNumber, int stackIndex, char value)
-    {
-        StackNumber = stackNumber;
-        StackIndex = stackIndex;
-        Value = value;
+        return new SolutionResult(string.Concat(stacks.Select(_ => _.Crates.OrderByDescending(_ => _.StackIndex).First().Value)));
     }
 
-    public int StackNumber { get; set; }
-    public int StackIndex { get; set; }
-    public char Value { get; }
-}
+    public record Movement(int From, int To, int NrOfCrates) { }
 
-
-public record CrateStack(List<Crate> Crates, int StackNumber)
-{
-    public int StackHeight => Crates.Count;
-
-    public void SetIndices()
+    public class Crate
     {
-        foreach(var (c, i) in Crates.Select((v,i) => (v, i)))
+
+        public Crate(int stackNumber, int stackIndex, char value)
         {
-            c.StackIndex = i;
+            StackNumber = stackNumber;
+            StackIndex = stackIndex;
+            Value = value;
+        }
+
+        public int StackNumber { get; set; }
+        public int StackIndex { get; set; }
+        public char Value { get; }
+    }
+
+
+    public record CrateStack(List<Crate> Crates, int StackNumber)
+    {
+        public int StackHeight => Crates.Count;
+
+        public void SetIndices()
+        {
+            foreach (var (c, i) in Crates.Select((v, i) => (v, i)))
+            {
+                c.StackIndex = i;
+            }
         }
     }
 }
+

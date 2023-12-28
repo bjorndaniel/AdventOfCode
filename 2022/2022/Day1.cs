@@ -1,17 +1,17 @@
 ﻿namespace AoC2022;
-public static class Day1
+public class Day1
 {
     public static IEnumerable<Backpack> ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
-        List<List<int>> result = new();
+        List<List<int>> result = [];
         var current = new List<int>();
         foreach (var l in lines)
         {
             if (string.IsNullOrEmpty(l))
             {
                 result.Add(current);
-                current = new List<int>();
+                current = [];
             }
             else
             {
@@ -22,25 +22,27 @@ public static class Day1
         return result.Select(x => new Backpack(x));
     }
 
-    public static long SolvePart1(string filename)
+    [Solveable("2022/Puzzles/Day1.txt", "Day 1 part 1", 1)]
+    public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var backpacks = ParseInput(filename);
-        return backpacks.Max(_ => _.TotalCalories);
+        return new SolutionResult(backpacks.Max(_ => _.TotalCalories).ToString());
     }
 
-    public static long SolvePart2(string filename)
+    [Solveable("2022/Puzzles/Day1.txt", "Day 1 part 2", 1)]
+    public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var backpacks = ParseInput(filename);
 
-        return backpacks
+        return new SolutionResult(backpacks
             .OrderByDescending(_ => _.TotalCalories)
             .Take(3)
-            .Sum(_ => _.TotalCalories);
+            .Sum(_ => _.TotalCalories).ToString());
     }
-}
 
-public record Backpack(List<int> Calories)
-{
-    public long TotalCalories => Calories.Sum();
+    public record Backpack(List<int> Calories)
+    {
+        public long TotalCalories => Calories.Sum();
+    }
 }
 

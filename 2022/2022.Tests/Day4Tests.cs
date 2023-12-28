@@ -1,5 +1,5 @@
 ﻿namespace AoC2022.Tests;
-public class Day4Tests
+public class Day4Tests(ITestOutputHelper output)
 {
 
     [Fact]
@@ -26,10 +26,10 @@ public class Day4Tests
         var filename = $"{Helpers.DirectoryPathTests}Day4-test.txt";
 
         //When 
-        var result = Day4.SolvePart1(filename);
+        var result = Day4.Part1(filename, new TestPrinter(output));
 
         //Then
-        Assert.Equal(2, result);
+        Assert.Equal("2", result.Result);
     }
 
 
@@ -40,9 +40,9 @@ public class Day4Tests
         var filename = $"{Helpers.DirectoryPathTests}Day4-test.txt";
 
         //When 
-        var result = Day4.SolvePart2(filename);
+        var result = Day4.Part2(filename, new TestPrinter(output));
 
         //Then
-        Assert.Equal(4, result);
+        Assert.Equal("4", result.Result);
     }
 }

@@ -1,5 +1,5 @@
 ﻿namespace AoC2022;
-public static class Day4
+public class Day4
 {
     public static IEnumerable<SectionPair> ParseInput(string filename)
     {
@@ -19,37 +19,40 @@ public static class Day4
         }
     }
 
-    public static int SolvePart1(string filename)
+    [Solveable("2022/Puzzles/Day4.txt", "Day 4 part 1", 4)]
+    public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var pairs = ParseInput(filename);
 
-        return pairs.Count(_ => _.IsContained());
+        return new SolutionResult(pairs.Count(_ => _.IsContained()).ToString());
     }
 
-    public static int SolvePart2(string filename)
+    [Solveable("2022/Puzzles/Day4.txt", "Day 4 part 1", 4)]
+    public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var pairs = ParseInput(filename);
-        return pairs.Count(_ => _.HasOverlap());
+        return new SolutionResult(pairs.Count(_ => _.HasOverlap()).ToString());
     }
 
+
+    public record Section(int Low, int High)
+    {
+        public bool IsContained(Section test) =>
+            test.Low <= Low && test.High >= High;
+
+        public bool Overlaps(Section test) =>
+            Low <= test.High && test.Low <= High;
+    }
+
+    public record SectionPair(Section First, Section Second)
+    {
+        public bool IsContained() =>
+            First.IsContained(Second) || Second.IsContained(First);
+
+        public bool HasOverlap() =>
+            First.Overlaps(Second);
+    }
 }
 
-public record Section(int Low, int High)
-{
-    public bool IsContained(Section test) =>
-        test.Low <= Low && test.High >= High;
-
-    public bool Overlaps(Section test) =>
-        Low <= test.High && test.Low <= High;
-}
-
-public record SectionPair(Section First, Section Second)
-{
-    public bool IsContained() =>
-        First.IsContained(Second) || Second.IsContained(First);
-
-    public bool HasOverlap() =>
-        First.Overlaps(Second);
-}
 
 

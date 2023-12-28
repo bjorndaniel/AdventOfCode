@@ -1,5 +1,5 @@
 ﻿namespace AoC2022;
-public static class Day3
+public class Day3
 {
     public static int GetValue(char value)
     {
@@ -16,7 +16,8 @@ public static class Day3
         return lines.Select(l => new Rucksack(l));
     }
 
-    public static int SolvePart1(string filename)
+    [Solveable("2022/Puzzles/Day3.txt", "Day 3 part 1", 3)]
+    public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var backpacks = ParseInput(filename);
 
@@ -26,16 +27,17 @@ public static class Day3
             return comps.comp1.Intersect(comps.comp2);
         });
 
-        return intersections.SelectMany(_ => _).Sum(_ => GetValue(_));
+        return new SolutionResult(intersections.SelectMany(_ => _).Sum(_ => GetValue(_)).ToString());
 
     }
 
-    public static int SolvePart2(string filename)
+    [Solveable("2022/Puzzles/Day3.txt", "Day 3 part 2", 3)]
+    public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var backpacks = ParseInput(filename);
         var groups = backpacks.Chunk(3);
         var badges = groups.Select(_ => GetBadge(_));
-        return badges.Sum(_ => GetValue(_));
+        return new SolutionResult(badges.Sum(_ => GetValue(_)).ToString());
     }
 
     public static char GetBadge(Rucksack[] chunk)
@@ -44,13 +46,15 @@ public static class Day3
         var second = first.Intersect(chunk[2].Contents);
         return second.First();
     }
-}
 
-public record Rucksack(string Contents)
-{
-    public (List<char> comp1, List<char> comp2) Compartments()
+    public record Rucksack(string Contents)
     {
-        var length = Contents.Length / 2;
-        return (Contents[..length].ToList(), Contents[length..].ToList());
+        public (List<char> comp1, List<char> comp2) Compartments()
+        {
+            var length = Contents.Length / 2;
+            return (Contents[..length].ToList(), Contents[length..].ToList());
+        }
     }
 }
+
+

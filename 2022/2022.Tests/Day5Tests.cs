@@ -1,5 +1,5 @@
 ﻿namespace AoC2022.Tests;
-public class Day5Tests
+public class Day5Tests(ITestOutputHelper output)
 {
     [Fact]
     public void Can_parse_input()
@@ -29,10 +29,10 @@ public class Day5Tests
         var filename = $"{Helpers.DirectoryPathTests}Day5-test.txt";
 
         //When
-        var result = Day5.SolvePart1(filename);
+        var result = Day5.Part1(filename, new TestPrinter(output));
 
         //Then
-        Assert.Equal("CMZ", result);
+        Assert.Equal("CMZ", result.Result);
     }
 
     [Fact]
@@ -42,9 +42,9 @@ public class Day5Tests
         var filename = $"{Helpers.DirectoryPathTests}Day5-test.txt";
 
         //When
-        var result = Day5.SolvePart2(filename);
+        var result = Day5.Part2(filename, new TestPrinter(output));
 
         //Then
-        Assert.Equal("MCD", result);
+        Assert.Equal("MCD", result.Result);
     }
 }

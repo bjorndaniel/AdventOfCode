@@ -1,5 +1,5 @@
 ﻿namespace AoC2022;
-public static class Day2
+public class Day2
 {
     public static IEnumerable<Round> ParseInput(string filename, bool round2 = false)
     {
@@ -24,74 +24,73 @@ public static class Day2
         }
     }
 
-    public static long SolvePart1(string filename) =>
-        ParseInput(filename).Sum(_ => _.GetMatchResult());
+    [Solveable("2022/Puzzles/Day2.txt", "Day 2 part 1", 2)]
+    public static SolutionResult Part1(string filename, IPrinter printer) =>
+      new SolutionResult(ParseInput(filename).Sum(_ => _.GetMatchResult()).ToString());
 
-    public static long SolvePart2(string filename) =>
-        ParseInput(filename, true).Sum(_ => _.GetMatchResult());
+    [Solveable("2022/Puzzles/Day2.txt", "Day 2 part 2", 2)]
+    public static SolutionResult Part2(string filename, IPrinter printer) =>
+        new SolutionResult(ParseInput(filename, true).Sum(_ => _.GetMatchResult()).ToString());
 
-}
-
-public enum RPS
-{
-    Rock = 1,
-    Paper = 2,
-    Scissors = 3,
-    PlayerDraw,
-    PlayerLose,
-    PlayerWin
-}
-
-public enum RoundResult
-{
-    Loss = 0,
-    Draw = 3,
-    Win = 6
-}
-
-public record Round(RPS Opponent, RPS Player)
-{
-    public int GetMatchResult()
+    public enum RPS
     {
-        return Opponent switch
+        Rock = 1,
+        Paper = 2,
+        Scissors = 3,
+        PlayerDraw,
+        PlayerLose,
+        PlayerWin
+    }
+
+    public enum RoundResult
+    {
+        Loss = 0,
+        Draw = 3,
+        Win = 6
+    }
+
+    public record Round(RPS Opponent, RPS Player)
+    {
+        public int GetMatchResult()
         {
-            RPS.Rock =>
-                Player switch
-                {
-                    RPS.Rock => (int)RoundResult.Draw + (int)RPS.Rock,
-                    RPS.Paper => (int)RoundResult.Win + (int)RPS.Paper,
-                    RPS.Scissors => (int)RPS.Scissors,
-                    RPS.PlayerLose => (int)RPS.Scissors,
-                    RPS.PlayerDraw => (int)RoundResult.Draw + (int)RPS.Rock,
-                    RPS.PlayerWin => (int)RoundResult.Win + (int)RPS.Paper,
-                    _ => throw new NotImplementedException()
-                },
-            RPS.Paper =>
-                Player switch
-                {
-                    RPS.Rock => (int)RPS.Rock,
-                    RPS.Paper => ((int)RoundResult.Draw + (int)RPS.Paper),
-                    RPS.Scissors => ((int)RoundResult.Win + (int)RPS.Scissors),
-                    RPS.PlayerLose => (int)RPS.Rock,
-                    RPS.PlayerDraw => (int)RoundResult.Draw + (int)RPS.Paper,
-                    RPS.PlayerWin => (int)RoundResult.Win + (int)RPS.Scissors,
-                    _ => throw new NotImplementedException()
-                },
-            RPS.Scissors =>
+            return Opponent switch
+            {
+                RPS.Rock =>
                     Player switch
                     {
-                        RPS.Rock => ((int)RoundResult.Win + (int)RPS.Rock),
-                        RPS.Paper => (int)RPS.Paper,
-                        RPS.Scissors => ((int)RoundResult.Draw + (int)RPS.Scissors),
-                        RPS.PlayerLose => (int)RPS.Paper,
-                        RPS.PlayerDraw => (int)RoundResult.Draw + (int)RPS.Scissors,
-                        RPS.PlayerWin => (int)RoundResult.Win + (int)RPS.Rock,
-                        _ => throw new NotImplementedException(),
+                        RPS.Rock => (int)RoundResult.Draw + (int)RPS.Rock,
+                        RPS.Paper => (int)RoundResult.Win + (int)RPS.Paper,
+                        RPS.Scissors => (int)RPS.Scissors,
+                        RPS.PlayerLose => (int)RPS.Scissors,
+                        RPS.PlayerDraw => (int)RoundResult.Draw + (int)RPS.Rock,
+                        RPS.PlayerWin => (int)RoundResult.Win + (int)RPS.Paper,
+                        _ => throw new NotImplementedException()
                     },
-            _ => throw new NotImplementedException()
-        };
-        throw new ArgumentException("Impossible outcome");
+                RPS.Paper =>
+                    Player switch
+                    {
+                        RPS.Rock => (int)RPS.Rock,
+                        RPS.Paper => ((int)RoundResult.Draw + (int)RPS.Paper),
+                        RPS.Scissors => ((int)RoundResult.Win + (int)RPS.Scissors),
+                        RPS.PlayerLose => (int)RPS.Rock,
+                        RPS.PlayerDraw => (int)RoundResult.Draw + (int)RPS.Paper,
+                        RPS.PlayerWin => (int)RoundResult.Win + (int)RPS.Scissors,
+                        _ => throw new NotImplementedException()
+                    },
+                RPS.Scissors =>
+                        Player switch
+                        {
+                            RPS.Rock => ((int)RoundResult.Win + (int)RPS.Rock),
+                            RPS.Paper => (int)RPS.Paper,
+                            RPS.Scissors => ((int)RoundResult.Draw + (int)RPS.Scissors),
+                            RPS.PlayerLose => (int)RPS.Paper,
+                            RPS.PlayerDraw => (int)RoundResult.Draw + (int)RPS.Scissors,
+                            RPS.PlayerWin => (int)RoundResult.Win + (int)RPS.Rock,
+                            _ => throw new NotImplementedException(),
+                        },
+                _ => throw new NotImplementedException()
+            };
+            throw new ArgumentException("Impossible outcome");
+        }
     }
 }
-
-

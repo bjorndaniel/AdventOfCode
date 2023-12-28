@@ -1,5 +1,5 @@
 ﻿namespace AoC2022.Tests;
-public class Day3Tests
+public class Day3Tests(ITestOutputHelper output)
 {
     [Fact]
     public void Can_get_char_number()
@@ -34,7 +34,7 @@ public class Day3Tests
     }
 
     [Fact]
-    public void Can_get_badge_from_chunc()
+    public void Can_get_badge_from_chunk()
     {
         //Given
         var filename = $"{Helpers.DirectoryPathTests}Day3-test.txt";
@@ -55,10 +55,10 @@ public class Day3Tests
         var filename = $"{Helpers.DirectoryPathTests}Day3-test.txt";
 
         //When 
-        var result = Day3.SolvePart1(filename);
+        var result = Day3.Part1(filename, new TestPrinter(output));
 
         //Then
-        Assert.Equal(157, result);
+        Assert.Equal("157", result.Result);
     }
 
     [Fact]
@@ -68,9 +68,9 @@ public class Day3Tests
         var filename = $"{Helpers.DirectoryPathTests}Day3-test.txt";
 
         //When 
-        var result = Day3.SolvePart2(filename);
+        var result = Day3.Part2(filename, new TestPrinter(output));
 
         //Then
-        Assert.Equal(70, result);
+        Assert.Equal("70", result.Result);
     }
 }
