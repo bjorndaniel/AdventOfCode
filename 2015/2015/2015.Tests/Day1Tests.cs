@@ -1,13 +1,6 @@
 ﻿namespace AoC2015.Tests;
-public class Day1Tests
+public class Day1Tests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output;
-
-    public Day1Tests(ITestOutputHelper output)
-    {
-        _output = output;
-    }
-
     [Fact]
     public void Can_parse_input()
     {
@@ -29,7 +22,7 @@ public class Day1Tests
         var filename = $"{Helpers.DirectoryPathTests}Day1-test.txt";
 
         //When
-        var result = Day1.Part1(filename, new TestPrinter(_output));
+        var result = Day1.Part1(filename, new TestPrinter(output));
 
         //Then
         Assert.True("-1" == result.Result, $"Expected -1 but was {result.Result}");
@@ -42,7 +35,7 @@ public class Day1Tests
         var filename = $"{Helpers.DirectoryPathTests}Day1-test.txt";
 
         //When
-        var result = Day1.Part2(filename, new TestPrinter(_output));
+        var result = Day1.Part2(filename, new TestPrinter(output));
 
         //Then
         Assert.True("5" == result.Result, $"Expected 5 but was {result.Result}");
