@@ -7,7 +7,7 @@ public class Day4
         return lines.First();
     }
 
-    [Solveable("2015/Puzzles/Day4.txt", "Day 4 part 1", 4, true)]
+    [Solveable("2015/Puzzles/Day4.txt", "Day 4 part 1", 4)]
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var input = ParseInput(filename);
