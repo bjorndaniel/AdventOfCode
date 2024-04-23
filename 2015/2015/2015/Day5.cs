@@ -1,4 +1,6 @@
-﻿namespace AoC2015;
+﻿using System.Text.RegularExpressions;
+
+namespace AoC2015;
 public class Day5
 {
     public static List<string> ParseInput(string filename)
@@ -36,8 +38,31 @@ public class Day5
     [Solveable("2015/Puzzles/Day5.txt", "Day5  part 2", 5)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
-        return new SolutionResult("");
+        var strings = ParseInput(filename);
+        var niceStrings = 0;
+        foreach (var input in strings)
+        {
+           if(MeetsConditions(input) is false)
+            {
+                continue;
+            }
+            niceStrings++;
+        }
+
+        return new SolutionResult(niceStrings.ToString());
+
+        bool MeetsConditions(string input)
+        {
+            if (Regex.IsMatch(input, @"(..).*\1") is false)
+            {
+                return false; 
+            }
+
+            if (Regex.IsMatch(input, @"(.).\1") is false)
+            {
+                return false;
+            }
+            return true;
+        }
     }
-
-
 }

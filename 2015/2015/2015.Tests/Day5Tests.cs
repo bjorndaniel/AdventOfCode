@@ -32,13 +32,13 @@ public class Day5Tests(ITestOutputHelper output)
     public void Can_solve_part2_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPathTests}Day5-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day5-part2-test.txt";
 
         //When
         var result = Day5.Part2(filename, new TestPrinter(output));
 
         //Then
-        Assert.True(false);
+        Assert.Equal("2", result.Result);
     }
 
 }
