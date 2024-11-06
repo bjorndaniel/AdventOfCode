@@ -1,12 +1,10 @@
-﻿using System.Text.RegularExpressions;
-
-namespace AoC2015;
+﻿namespace AoC2015;
 public class Day5
 {
     public static List<string> ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
-        return lines.ToList();
+        return [.. lines];
     }
 
     [Solveable("2015/Puzzles/Day5.txt", "Day5  part 1", 5)]
@@ -51,7 +49,7 @@ public class Day5
 
         return new SolutionResult(niceStrings.ToString());
 
-        bool MeetsConditions(string input)
+        static bool MeetsConditions(string input)
         {
             if (Regex.IsMatch(input, @"(..).*\1") is false)
             {

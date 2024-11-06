@@ -16,10 +16,7 @@ public class DebugPrinter : IPrinter
 {
     public void Flush() { }
 
-    public void Print(string s)
-    {
-        Debug.WriteLine(s);
-    }
+    public void Print(string s) => Debug.WriteLine(s);
 
     public void PrintMatrix<T>(T[,] matrix)
     {
@@ -98,10 +95,8 @@ public class Printer : IPrinter
 {
     public void Flush() { }
 
-    public void Print(string s)
-    {
+    public void Print(string s) =>
         Console.WriteLine(s);
-    }
 
     public void PrintMatrix<T>(T[,] matrix)
     {
@@ -181,10 +176,7 @@ public class TestPrinter(ITestOutputHelper output) : IPrinter
     
     private readonly StringBuilder _sb = new();
 
-    public void Print(string s)
-    {
-        _sb.Append(s);
-    }
+    public void Print(string s) => _sb.Append(s);
 
     public void Flush()
     {
@@ -265,6 +257,7 @@ public class TestPrinter(ITestOutputHelper output) : IPrinter
     }
 }
 
+[AttributeUsage(AttributeTargets.All)]
 public class Solveable(string filename, string name, int day = 0, bool skip = false) : Attribute
 {
     public string Filename { get; } = filename;

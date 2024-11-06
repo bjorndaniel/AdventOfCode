@@ -100,10 +100,8 @@ public static class Helpers
         return lcm;
     }
 
-    public static long CalculateLCM(long a, long b)
-    {
-        return (a * b) / CalculateGCD(a, b);
-    }
+    public static long CalculateLCM(long a, long b) =>
+        (a * b) / CalculateGCD(a, b);
 
     public static long CalculateGCD(long a, long b)
     {
