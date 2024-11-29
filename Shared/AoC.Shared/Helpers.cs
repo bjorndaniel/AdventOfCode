@@ -78,7 +78,7 @@ public static class Helpers
         }
 
         totalTime.Stop();
-        Console.WriteLine($"AoC 2023 total running time: {totalTime.Elapsed.TotalMilliseconds}ms");
+        Console.WriteLine($"Total running time: {totalTime.Elapsed.TotalMilliseconds}ms");
 
     }
 
