@@ -23,4 +23,14 @@
     <Folder Include="Puzzles\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\AoC.Shared\AoC.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Puzzles\Day1-test.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

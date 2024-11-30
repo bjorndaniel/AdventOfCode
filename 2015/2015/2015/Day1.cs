@@ -4,7 +4,7 @@ public class Day1
     public static List<char> ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
-        return lines.First().ToList();
+        return [.. lines.First()];
     }
 
     [Solveable("2015/Puzzles/Day1.txt", "Day 1 part 1")]
