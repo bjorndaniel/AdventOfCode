@@ -31,13 +31,7 @@ public class Day1
         var input = ParseInput(filename);
         var left = input.Select(i => i.left).OrderBy(i => i).ToList();
         var right = input.Select(i => i.right).OrderBy(i => i).ToList();
-        var result = 0L;
-        foreach (var l in left)
-        {
-            var numberOfTimes = (long)right.Count(r => r == l);
-            result += l * numberOfTimes;
-        }
-
+        var result = left.Sum(l => l * right.Count(r => r == l));
         return new SolutionResult(result.ToString());
     }
 
