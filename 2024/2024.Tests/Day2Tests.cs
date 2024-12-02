@@ -12,7 +12,8 @@ public class Day2Tests(ITestOutputHelper output)
         var result = Day2.ParseInput(filename);
 
         //Then
-        Assert.True(false);
+        Assert.Equal(6, result.Count);
+        Assert.Equal(5, result[0].Count);
     }
 
     [Fact]
@@ -25,7 +26,7 @@ public class Day2Tests(ITestOutputHelper output)
         var result = Day2.Part1(filename, new TestPrinter(output));
 
         //Then
-        Assert.True(false);
+        Assert.Equal("2", result.Result);
     }
 
     [Fact]
@@ -38,7 +39,7 @@ public class Day2Tests(ITestOutputHelper output)
         var result = Day2.Part2(filename, new TestPrinter(output));
 
         //Then
-        Assert.True(false);
+        Assert.Equal("4", result.Result);
     }
 
 }
