@@ -61,29 +61,11 @@ public class Day2
         var increasing = IsIncreasingSequence(sequence);
         var decreasing = IsDecreasingSequence(sequence);
         return unSafe is false && (increasing || decreasing);
-    }
 
-    private static bool IsIncreasingSequence(List<int> sequence)
-    {
-        for (int i = 0; i < sequence.Count - 1; i++)
-        {
-            if (sequence[i] >= sequence[i + 1])
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+        bool IsIncreasingSequence(List<int> sequence) =>
+            sequence.Zip(sequence.Skip(1), (a, b) => a < b).All(x => x);
 
-    private static bool IsDecreasingSequence(List<int> sequence)
-    {
-        for (int i = 0; i < sequence.Count - 1; i++)
-        {
-            if (sequence[i] <= sequence[i + 1])
-            {
-                return false;
-            }
-        }
-        return true;
+        bool IsDecreasingSequence(List<int> sequence) =>
+            sequence.Zip(sequence.Skip(1), (a, b) => a > b).All(x => x);
     }
 }
