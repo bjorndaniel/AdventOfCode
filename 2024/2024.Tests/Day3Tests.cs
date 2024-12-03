@@ -12,7 +12,7 @@ public class Day3Tests(ITestOutputHelper output)
         var result = Day3.ParseInput(filename);
 
         //Then
-        Assert.True(false);
+        Assert.NotNull(result);
     }
 
     [Fact]
@@ -25,20 +25,20 @@ public class Day3Tests(ITestOutputHelper output)
         var result = Day3.Part1(filename, new TestPrinter(output));
 
         //Then
-        Assert.True(false);
+        Assert.Equal("161", result.Result);
     }
 
     [Fact]
     public void Can_solve_part2_for_test()
     {
         //Given
-        var filename = $"{Helpers.DirectoryPathTests}Day3-test.txt";
+        var filename = $"{Helpers.DirectoryPathTests}Day3-test2.txt";
 
         //When
         var result = Day3.Part2(filename, new TestPrinter(output));
 
         //Then
-        Assert.True(false);
+        Assert.Equal("48", result.Result);
     }
 
 }
