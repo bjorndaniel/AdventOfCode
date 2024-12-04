@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace AoC2024;
+﻿namespace AoC2024;
 public class Day3
 {
     public static string ParseInput(string filename)
