@@ -20,15 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Puzzles\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Shared\AoC.Shared\AoC.Shared.csproj" />
     <ProjectReference Include="..\2024\2024.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Puzzles\Day5-test.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Puzzles\Day1-test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
