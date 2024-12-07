@@ -10,6 +10,7 @@ public interface IPrinter
     void PrintMatrixXY<T>(T[,] matrix);
     void PrintMatrix(List<(int x, int y)> coords);
     void PrintMatrix(List<(int x, int y, char mark)> coords);
+    void PrintMatrixYX<T>(T[,] matrix);
 }
 
 public class DebugPrinter : IPrinter
@@ -84,6 +85,18 @@ public class DebugPrinter : IPrinter
             for (int col = 0; col < matrix.GetLength(0); col++)
             {
                 Debug.Write(matrix[col, row]?.ToString() ?? ".");
+            }
+            Debug.WriteLine("");
+        }
+    }
+
+    public void PrintMatrixYX<T>(T[,] matrix)
+    {
+        for (int row = 0; row < matrix.GetLength(0); row++)
+        {
+            for (int col = 0; col < matrix.GetLength(1); col++)
+            {
+                Debug.Write(matrix[row, col]?.ToString() ?? ".");
             }
             Debug.WriteLine("");
         }
@@ -169,6 +182,17 @@ public class Printer : IPrinter
         }
     }
 
+    public void PrintMatrixYX<T>(T[,] matrix)
+    {
+        for (int row = 0; row < matrix.GetLength(0); row++)
+        {
+            for (int col = 0; col < matrix.GetLength(1); col++)
+            {
+                Console.Write(matrix[row, col]);
+            }
+            Console.WriteLine();
+        }
+    }
 }
 
 public class TestPrinter(ITestOutputHelper output) : IPrinter
@@ -204,6 +228,18 @@ public class TestPrinter(ITestOutputHelper output) : IPrinter
             for (int col = 0; col < matrix.GetLength(0); col++)
             {
                 _sb.Append(matrix[col, row]?.ToString() ?? ".");
+            }
+            _sb.AppendLine();
+        }
+    }
+
+    public void PrintMatrixYX<T>(T[,] matrix)
+    {
+        for (int row = 0; row < matrix.GetLength(0); row++)
+        {
+            for (int col = 0; col < matrix.GetLength(1); col++)
+            {
+                _sb.Append(matrix[row, col]?.ToString() ?? ".");
             }
             _sb.AppendLine();
         }
