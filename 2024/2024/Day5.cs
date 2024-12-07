@@ -32,14 +32,11 @@ public class Day5
             var middleIndex = instruction.Count / 2;
             var number = instruction[middleIndex];
             var isValid = true;
-            foreach (var rule in rules)
+            foreach (var rule in rules.Where(_ => instruction.IndexOf(_.first) != -1 && instruction.IndexOf(_.second) != -1))
             {
                 var firstIndex = instruction.IndexOf(rule.first);
                 var secondIndex = instruction.IndexOf(rule.second);
-                if (firstIndex == -1 || secondIndex == -1)
-                {
-                    continue;
-                }
+                
                 if (firstIndex > secondIndex)
                 {
                     isValid = false;
