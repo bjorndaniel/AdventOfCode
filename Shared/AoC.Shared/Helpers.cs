@@ -155,5 +155,12 @@ public static class Helpers
     //From: https://thomaslevesque.com/2019/11/18/using-foreach-with-index-in-c/
     public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> source) =>
         source.Select((item, index) => (item, index));
+    public static bool IsInsideGrid(char[,] grid, (int y, int x) position)
+    {
+        int rows = grid.GetLength(0);
+        int cols = grid.GetLength(1);
+        return position.y >= 0 && position.y < rows && position.x >= 0 && position.x < cols;
+    }
+
 
 }

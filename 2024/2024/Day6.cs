@@ -1,6 +1,7 @@
 ﻿namespace AoC2024;
 public class Day6
 {
+
     public static (char[,] grid, (int y, int x) start) ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
@@ -27,7 +28,7 @@ public class Day6
         var result = 0;
         var (grid, position) = ParseInput(filename);
         var direction = grid[position.y, position.x];
-        while (IsInsideGrid(grid, position))
+        while (Helpers.IsInsideGrid(grid, position))
         {
             (int y, int x) nextPosition = direction switch
             {
@@ -38,7 +39,7 @@ public class Day6
                 _ => position
             };
 
-            if (IsInsideGrid(grid, nextPosition) is false)
+            if (Helpers.IsInsideGrid(grid, nextPosition) is false)
             {
                 result++;
                 break;
@@ -79,12 +80,13 @@ public class Day6
         return new SolutionResult(result.ToString());
     }
 
-    [Solveable("2024/Puzzles/Day6.txt", "Day 6 part 2", 6)]
+    [Solveable("2024/Puzzles/Day6.txt", "Day 6 part 2", 6, true)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var (originalGrid, start) = ParseInput(filename);
-        var infiniteLoopPositions = new List<(int y, int x)>();
-
+        var infiniteLoopPositions = new ConcurrentBag<(int y, int x)>();
+        var grids = new List<char[,]>();
+        
         for (int i = 0; i < originalGrid.GetLength(0); i++)
         {
             for (int j = 0; j < originalGrid.GetLength(1); j++)
@@ -93,16 +95,18 @@ public class Day6
                 {
                     var grid = (char[,])originalGrid.Clone();
                     grid[i, j] = '#';
-                    if (CausesInfiniteLoop(grid, start))
-                    {
-                        infiniteLoopPositions.Add((i, j));
-                        printer.Print(infiniteLoopPositions.Count().ToString());
-                        printer.Flush();
-                    }
+                    grids.Add(grid);
                 }
             }
         }
-        return new SolutionResult(infiniteLoopPositions.Distinct().Count().ToString());
+        Parallel.ForEach(grids, grid =>
+        {
+            if (CausesInfiniteLoop(grid, start))
+            {
+                infiniteLoopPositions.Add((0, 0));
+            }
+        });
+        return new SolutionResult(infiniteLoopPositions.Count().ToString());
     }
 
     private static bool CausesInfiniteLoop(char[,] grid, (int y, int x) start)
@@ -114,7 +118,7 @@ public class Day6
         var position = start;
         grid[start.y, start.x] = 'X';
 
-        while (IsInsideGrid(grid, position))
+        while (Helpers.IsInsideGrid(grid, position))
         {
             var currentStep = (position, direction);
             path.Add(currentStep);
@@ -140,7 +144,7 @@ public class Day6
                 _ => position
             };
 
-            if (IsInsideGrid(grid, nextPosition) is false)
+            if (Helpers.IsInsideGrid(grid, nextPosition) is false)
             {
                 break;
             }
@@ -174,12 +178,5 @@ public class Day6
         }
 
         return false;
-    }
-
-    private static bool IsInsideGrid(char[,] grid, (int y, int x) position)
-    {
-        int rows = grid.GetLength(0);
-        int cols = grid.GetLength(1);
-        return position.y >= 0 && position.y < rows && position.x >= 0 && position.x < cols;
     }
 }
