@@ -34,6 +34,9 @@
     <None Update="Puzzles\Day12-test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Puzzles\Day12-test2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Puzzles\Day5-test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
