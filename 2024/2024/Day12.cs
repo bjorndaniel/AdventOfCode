@@ -50,27 +50,21 @@ public class Day12
         visited[x, y] = true;
         region.Add((x, y));
 
-        bool isSide = false;
-
         if (x + 1 >= cols || matrix[x + 1, y] != target)
         {
             perimeter++;
-            isSide = true;
         }
         if (x - 1 < 0 || matrix[x - 1, y] != target)
         {
             perimeter++;
-            isSide = true;
         }
         if (y + 1 >= rows || matrix[x, y + 1] != target)
         {
             perimeter++;
-            isSide = true;
         }
         if (y - 1 < 0 || matrix[x, y - 1] != target)
         {
             perimeter++;
-            isSide = true;
         }
 
         FloodFill(matrix, visited, x + 1, y, ref target, region, ref perimeter);
