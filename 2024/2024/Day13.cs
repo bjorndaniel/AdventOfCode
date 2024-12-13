@@ -90,6 +90,7 @@ public class Day13
         var acount = (long)Math.Round(solution[0]);
         var bcount = (long)Math.Round(solution[1]);
 
+        // Ensure the solution is non-negative and within the allowed range
         if (acount >= 0 && bcount >= 0)
         {
             var x = acount * claw.A.XMovement + bcount * claw.B.XMovement;

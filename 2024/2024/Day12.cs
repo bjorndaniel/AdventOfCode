@@ -25,7 +25,6 @@ public class Day12
         {
             result += region.region.Count * region.perimeter;
         }
-
         return new SolutionResult(result.ToString());
     }
 
@@ -35,6 +34,12 @@ public class Day12
         var plots = ParseInput(filename);
         var result = 0L;
         var regions = FindAllRegions(plots);
+        foreach (var region in regions)
+        {
+            var fences = CountFences(region.region.ToHashSet());
+            result += region.region.Count * fences;
+        }
+
         return new SolutionResult(result.ToString());
     }
 
@@ -93,7 +98,7 @@ public class Day12
                     FloodFill(matrix, visited, i, j, ref target, region, ref perimeter);
                     if (region.Count > 0)
                     {
-                        regions.Add((region, perimeter, target));
+                        regions.Add((region, perimeter,target));
                     }
                 }
             }
@@ -102,4 +107,47 @@ public class Day12
         return regions;
     }
 
+    public enum Direction
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
+
+    public static int CountFences(HashSet<(int x, int y)> region)
+    {
+        var fences = 0;
+        foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+        {
+            var plots = region
+                .Where(p => !region.Contains(Step(p, direction)))
+                .Select(p => direction == Direction.Up || direction == Direction.Down ? (p.x, p.y) : (p.y, p.x))
+                    .OrderBy(p => p)
+                .ToList();
+
+            fences += 1;
+
+            for (int i = 1; i < plots.Count(); i++)
+            {
+                var (x1, y1) = plots[i - 1];
+                var (x2, y2) = plots[i];
+                if (x1 != x2 || y2 != y1 + 1)
+                {
+                    fences += 1;
+                }
+            }
+        }
+
+        return fences;
+
+        (int x, int y) Step((int x, int y) p, Direction direction) => direction switch
+        {
+            Direction.Up => (p.x - 1, p.y),
+            Direction.Down => (p.x + 1, p.y),
+            Direction.Left => (p.x, p.y - 1),
+            Direction.Right => (p.x, p.y + 1),
+            _ => p
+        };
+    }
 }
