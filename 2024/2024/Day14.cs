@@ -20,6 +20,31 @@ public class Day14
         return (result, (101, 103));
     }
 
+    [Solveable("2024/Puzzles/Day14.txt", "Day 14 part 1", 14)]
+    public static SolutionResult Part1(string filename, IPrinter printer)
+    {
+        var (robots, gridSize) = ParseInput(filename);
+        var positions = new List<(int x, int y)>();
+        var result = 0L;
+        foreach (var robot in robots)
+        {
+            var (x, y) = robot.CalculatePositionAt(100, gridSize);
+            positions.Add((x, y));
+        }
+
+        var midX = gridSize.x / 2;
+        var midY = gridSize.y / 2;
+
+        var topLeft = positions.Count(p => p.x < midX && p.y < midY && p.x != midX && p.y != midY);
+        var topRight = positions.Count(p => p.x >= midX && p.y < midY && p.x != midX && p.y != midY);
+        var bottomLeft = positions.Count(p => p.x < midX && p.y >= midY && p.x != midX && p.y != midY);
+        var bottomRight = positions.Count(p => p.x >= midX && p.y >= midY && p.x != midX && p.y != midY);
+
+        result = topLeft * topRight * bottomLeft * bottomRight;
+
+        return new SolutionResult(result.ToString());
+    }
+
     [Solveable("2024/Puzzles/Day14.txt", "Day 14 part 2", 14)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
