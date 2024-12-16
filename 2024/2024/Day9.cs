@@ -56,7 +56,7 @@ public class Day9
         return new SolutionResult(checksum.ToString());
     }
 
-    [Solveable("2024/Puzzles/Day9.txt", "Day 9 part 2", 9, true)]
+    [Solveable("2024/Puzzles/Day9.txt", "Day 9 part 2", 9)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var input = ParseInput(filename, true);

@@ -107,7 +107,7 @@ public class Day14
         }
 
         // Print the grid with the robots' positions at the found time
-        //printer.PrintMatrixYX(grid);
+        printer.PrintMatrixXY(grid);
         return new SolutionResult(time.ToString());
     }
 }
