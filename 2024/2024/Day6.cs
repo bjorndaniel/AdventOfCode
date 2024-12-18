@@ -80,7 +80,7 @@ public class Day6
         return new SolutionResult(result.ToString());
     }
 
-    [Solveable("2024/Puzzles/Day6.txt", "Day 6 part 2", 6)]
+    [Solveable("2024/Puzzles/Day6.txt", "Day 6 part 2", 6, true)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var (originalGrid, start) = ParseInput(filename);

@@ -45,7 +45,7 @@ public class Day14
         return new SolutionResult(result.ToString());
     }
 
-    [Solveable("2024/Puzzles/Day14.txt", "Day 14 part 2", 14)]
+    [Solveable("2024/Puzzles/Day14.txt", "Day 14 part 2", 14, true)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var (robots, gridSize) = ParseInput(filename);
@@ -130,4 +130,3 @@ public class Day14
         return ((int)newX, (int)newY);
     }
 }
-

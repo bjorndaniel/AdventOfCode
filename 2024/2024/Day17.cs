@@ -39,37 +39,60 @@ public class Day17
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var (computer, program) = ParseInput(filename);
+        var outputs = RunProgram(computer, program);
+        return new SolutionResult(outputs.Select(_ => _.ToString()).Aggregate((a, b) => $"{a},{b}"));
+    }
+
+    [Solveable("2024/Puzzles/Day17.txt", "Day 17 part 2", 17, true)]
+    public static SolutionResult Part2(string filename, IPrinter printer)
+    {
+        var (computer, program) = ParseInput(filename);
+        var result = 0L;
+
+        return new SolutionResult(result.ToString());
+    }
+
+    public static List<long> RunProgram(Computer computer, List<int> program)
+    {
         var outputs = new List<long>();
         var pointer = 0;
-        while(pointer < program.Count)
+        while (pointer < program.Count)
         {
             var instr = (Instruction)program[pointer];
-            var operand = (ComboOperand)program[pointer + 1];
+            var operand = (Operand)program[pointer + 1];
             var (output, jump) = computer.RunInstruction(instr, operand);
             if (output.HasValue)
             {
                 outputs.Add(output.Value);
+                pointer += 2;
             }
-            if (jump.HasValue)
+            else if (jump.HasValue)
             {
                 pointer = jump.Value;
             }
             else
             {
-                jump += 2;
+                pointer += 2;
             }
         }
-        
-        return new SolutionResult(outputs.Select(_ => _.ToString()).Aggregate((a, b) => $"{a},{b}"));
+        return outputs;
     }
 
-    [Solveable("2024/Puzzles/Day17.txt", "Day 17 part 2", 17)]
-    public static SolutionResult Part2(string filename, IPrinter printer)
+    public static long XorWithPadding(long num1, long num2)
     {
-        return new SolutionResult("");
+        var str1 = Convert.ToString(num1, 2);
+        var str2 = Convert.ToString(num2, 2);
+        var maxLength = Math.Max(str1.Length, str2.Length);
+        str1 = str1.PadLeft(maxLength, '0');
+        str2 = str2.PadLeft(maxLength, '0');
+        var result = new char[maxLength];
+        for (int i = 0; i < str2.Length; i++)
+        {
+            result[i] = (str1[i] == str2[i]) ? '0' : '1';
+        }
+        var num = new string(result);
+        return Convert.ToInt64(num, 2);
     }
-
-
 }
 
 public class Computer(long a, long b, long c)
@@ -78,68 +101,70 @@ public class Computer(long a, long b, long c)
     public long B { get; set; } = b;
     public long C { get; set; } = c;
 
-    public (long? result, int? jump) RunInstruction(Instruction instruction, ComboOperand operand)
+    public (long? result, int? jump) RunInstruction(Instruction instruction, Operand operand)
     {
         switch (instruction)
         {
             case Instruction.Adv:
                 var numerator = A;
-                var denominator = GetOperand(operand);
+                var denominator = Math.Pow(2, (double)GetOperand(operand));
                 var result = numerator / denominator;
                 A = (int)result;
                 break;
             case Instruction.Bxl:
                 var op = (int)operand;
-                B = B ^ op;
+                B = Day17.XorWithPadding(B, op);
                 break;
             case Instruction.Bst:
-                B = ((int)operand) % 8;
+                B = ((int)GetOperand(operand)) % 8;
                 break;
             case Instruction.Jnz:
-                if(A != 0)
+                if (A != 0)
                 {
-                    return (null, (int)operand);    
+                    return (null, (int)operand);
                 }
                 break;
             case Instruction.Bxc:
-                B = B ^ C;
+                B = Day17.XorWithPadding(B, C);
                 break;
             case Instruction.Out:
-                var value = ((int)operand) % 8;
+                var value = (GetOperand(operand)) % 8;
                 return (value, null);
             case Instruction.Bdv:
-                var numerator = A;
-                var denominator = GetOperand(operand);
-                var result = numerator / denominator;
-                B = (int)result;
+                var numeratorB = A;
+                var denominatorB = Math.Pow(2, (double)GetOperand(operand));
+                var resultB = numeratorB / denominatorB;
+                B = (int)resultB;
                 break;
             case Instruction.Cdv:
-                var numerator = A;
-                var denominator = GetOperand(operand);
-                var result = numerator / denominator;
-                C = (int)result;
+                var numeratorC = A;
+                var denominatorC = Math.Pow(2, (double)GetOperand(operand));
+                var resultC = numeratorC / denominatorC;
+                C = (int)resultC;
                 break;
         }
+        return (null, null);
 
-        long GetOperand(ComboOperand operand)
+        long GetOperand(Operand operand)
         {
             return operand switch
             {
-                ComboOperand.Literal0 => 0,
-                ComboOperand.Literal1 => 1,
-                ComboOperand.Literal2 => 2,
-                ComboOperand.Literal3 => 3,
-                ComboOperand.ValueA => A,
-                ComboOperand.ValueB => B,
-                ComboOperand.ValueC => C,
+                Operand.Literal0 => 0,
+                Operand.Literal1 => 1,
+                Operand.Literal2 => 2,
+                Operand.Literal3 => 3,
+                Operand.ValueA => A,
+                Operand.ValueB => B,
+                Operand.ValueC => C,
                 _ => throw new Exception("Invalid operand")
             };
         }
-
     }
 }
 
-public enum ComboOperand
+
+
+public enum Operand
 {
     Literal0,
     Literal1,
