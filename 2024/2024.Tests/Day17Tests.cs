@@ -33,18 +33,18 @@ public class Day17Tests(ITestOutputHelper output)
         Assert.Equal("4,6,3,5,6,3,5,2,1,0", result.Result);
     }
 
-    //[Fact]
-    //public void Can_solve_part2_for_test()
-    //{
-    //    //Given
-    //    var filename = $"{Helpers.DirectoryPathTests}Day17-test2.txt";
+    [Fact]
+    public void Can_solve_part2_for_test()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day17-test2.txt";
 
-    //    //When
-    //    var result = Day17.Part2(filename, new TestPrinter(output));
+        //When
+        var result = Day17.Part2(filename, new TestPrinter(output));
 
-    //    //Then
-    //    Assert.Equal("117440", result.Result);
-    //}
+        //Then
+        Assert.Equal("117440", result.Result);
+    }
 
     [Fact]
     public void Can_run_programs()
