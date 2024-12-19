@@ -55,8 +55,6 @@ public class Day17
         return new SolutionResult(result.ToString());
     }
 
-  
-
     public static long FindResult(long requiredA, int position, List<int> program)
     {
         if (position >= _code.Length)
@@ -82,7 +80,7 @@ public class Day17
         return -1;
     }
 
-    public static (long b, long output) RunPartial(Computer computer, List<int> program)
+    public static (long a, long output) RunPartial(Computer computer, List<int> program)
     {
         var outputs = new List<long>();
         var pointer = 0;
@@ -99,7 +97,6 @@ public class Day17
             }
             else if (jump.HasValue)
             {
-                //return (computer.A, outputs.Last());
                 pointer = jump.Value;
             }
             else
