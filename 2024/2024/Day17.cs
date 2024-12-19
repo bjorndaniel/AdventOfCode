@@ -1,6 +1,8 @@
 ﻿namespace AoC2024;
 public class Day17
 {
+    private static int[] _code;
+
     public static (Computer computer, List<int> program) ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
@@ -43,13 +45,69 @@ public class Day17
         return new SolutionResult(outputs.Select(_ => _.ToString()).Aggregate((a, b) => $"{a},{b}"));
     }
 
-    [Solveable("2024/Puzzles/Day17.txt", "Day 17 part 2", 17, true)]
+    [Solveable("2024/Puzzles/Day17.txt", "Day 17 part 2", 17)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var (computer, program) = ParseInput(filename);
         var result = 0L;
-
+        _code = program.ToArray();
+        result = FindResult(0, 0, program);
         return new SolutionResult(result.ToString());
+    }
+
+  
+
+    public static long FindResult(long requiredA, int position, List<int> program)
+    {
+        if (position >= _code.Length)
+        {
+            return requiredA;
+        }
+        var requiredOutput = _code[_code.Length - position - 1];
+        var shifted = requiredA << 3;
+        for (int i = 0; i < (1 << 20); i++)
+        {
+            var testA = XorWithPadding(shifted, i); 
+
+            (long newA, long output) = RunPartial(new Computer(testA, 0,0), program);
+            if (newA == requiredA && output == requiredOutput)
+            {
+                var result = FindResult(testA, position + 1, program);
+                if (result > 0)
+                {
+                    return result;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static (long b, long output) RunPartial(Computer computer, List<int> program)
+    {
+        var outputs = new List<long>();
+        var pointer = 0;
+        while (pointer < program.Count)
+        {
+            var instr = (Instruction)program[pointer];
+            var operand = (Operand)program[pointer + 1];
+            var (output, jump) = computer.RunInstruction(instr, operand);
+            if (output.HasValue)
+            {
+                outputs.Add(output.Value);
+                pointer += 2;
+                return (computer.A, output.Value);
+            }
+            else if (jump.HasValue)
+            {
+                //return (computer.A, outputs.Last());
+                pointer = jump.Value;
+            }
+            else
+            {
+                pointer += 2;
+            }
+        }
+        return (0, 0);
     }
 
     public static List<long> RunProgram(Computer computer, List<int> program)
