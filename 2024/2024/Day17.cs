@@ -1,7 +1,7 @@
 ﻿namespace AoC2024;
 public class Day17
 {
-    private static int[] _code;
+    private static int[] _code = [];
 
     public static (Computer computer, List<int> program) ParseInput(string filename)
     {
@@ -51,28 +51,35 @@ public class Day17
         var (computer, program) = ParseInput(filename);
         var result = 0L;
         _code = program.ToArray();
-        result = FindResult(0, 0, program);
+        result = FindResult(0, 0, program, printer);
         return new SolutionResult(result.ToString());
     }
 
-    public static long FindResult(long requiredA, int position, List<int> program)
+    public static long FindResult(long requiredA, int position, List<int> program, IPrinter printer)
     {
         if (position >= _code.Length)
         {
             return requiredA;
         }
-        var requiredOutput = _code[_code.Length - position - 1];
+        var outputPosition = _code.Length - position - 1;
+        var requiredOutput = _code[outputPosition];
         var shifted = requiredA << 3;
-        for (int i = 0; i < (1 << 20); i++)
+        //printer.Print($"Testing position {outputPosition} with requiredA {requiredA} and requiredOutput {requiredOutput}");
+        //printer.Flush();
+        for (int i = 0; i < 9000; i++)
         {
-            var testA = XorWithPadding(shifted, i); 
+            var testA = shifted ^ i;
 
-            (long newA, long output) = RunPartial(new Computer(testA, 0,0), program);
+            (long newA, long output) = RunPartial(new Computer(testA, 0, 0), program);
             if (newA == requiredA && output == requiredOutput)
             {
-                var result = FindResult(testA, position + 1, program);
-                if (result > 0)
+                printer.Print($"Found result {output} for {outputPosition} with testA {testA} and newA {newA}");
+                printer.Flush();
+                var result = FindResult(testA, position + 1, program, printer);
+                if (result >= 0)
                 {
+                    //printer.Print($"Found result {result} at with testA {testA}");
+                    //printer.Flush();
                     return result;
                 }
             }
@@ -82,6 +89,7 @@ public class Day17
 
     public static (long a, long output) RunPartial(Computer computer, List<int> program)
     {
+        var returnOutPut = 0L;
         var outputs = new List<long>();
         var pointer = 0;
         while (pointer < program.Count)
@@ -92,12 +100,13 @@ public class Day17
             if (output.HasValue)
             {
                 outputs.Add(output.Value);
+                returnOutPut  = output.Value;
                 pointer += 2;
-                return (computer.A, output.Value);
             }
             else if (jump.HasValue)
             {
                 pointer = jump.Value;
+                return (computer.A, returnOutPut);
             }
             else
             {

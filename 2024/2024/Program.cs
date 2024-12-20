@@ -1,1 +1,1 @@
-﻿Helpers.Runner("Running AoC 2024");
+﻿Helpers.Runner("Running AoC 2024", "Day20.txt");
