@@ -6,9 +6,9 @@ public class Day17
     public static (Computer computer, List<int> program) ParseInput(string filename)
     {
         var lines = File.ReadAllLines(filename);
-        var regA = 0L;
-        var regB = 0L;
-        var regC = 0L;
+        ulong regA = 0L;
+        ulong regB = 0L;
+        ulong regC = 0L;
         var program = new List<int>();
         for (int i = 0; i < lines.Length; i++)
         {
@@ -17,15 +17,15 @@ public class Day17
                 var vals = lines[i].Split(":");
                 if (i == 0)
                 {
-                    regA = long.Parse(vals[1]);
+                    regA = ulong.Parse(vals[1]);
                 }
                 if (i == 1)
                 {
-                    regB = long.Parse(vals[1]);
+                    regB = ulong.Parse(vals[1]);
                 }
                 if (i == 2)
                 {
-                    regC = long.Parse(vals[1]);
+                    regC = ulong.Parse(vals[1]);
                 }
             }
             if (i == 4)
@@ -49,48 +49,33 @@ public class Day17
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var (computer, program) = ParseInput(filename);
-        var result = 0L;
-        _code = program.ToArray();
-        result = FindResult(0, 0, program, printer);
-        return new SolutionResult(result.ToString());
-    }
-
-    public static long FindResult(long requiredA, int position, List<int> program, IPrinter printer)
-    {
-        if (position >= _code.Length)
+        var validA = new List<ulong> { 0 };
+        var backTracking = program.ToArray().Reverse().ToList();
+        for (int i = 0; i < backTracking.Count; i++)
         {
-            return requiredA;
-        }
-        var outputPosition = _code.Length - position - 1;
-        var requiredOutput = _code[outputPosition];
-        var shifted = requiredA << 3;
-        //printer.Print($"Testing position {outputPosition} with requiredA {requiredA} and requiredOutput {requiredOutput}");
-        //printer.Flush();
-        for (int i = 0; i < 9000; i++)
-        {
-            var testA = shifted ^ i;
-
-            (long newA, long output) = RunPartial(new Computer(testA, 0, 0), program);
-            if (newA == requiredA && output == requiredOutput)
+            var newAs = new List<ulong>();
+            foreach (var a in validA)
             {
-                printer.Print($"Found result {output} for {outputPosition} with testA {testA} and newA {newA}");
-                printer.Flush();
-                var result = FindResult(testA, position + 1, program, printer);
-                if (result >= 0)
+                for (ulong j = 0; j < 8; j++)
                 {
-                    //printer.Print($"Found result {result} at with testA {testA}");
-                    //printer.Flush();
-                    return result;
+                    ulong newA = (a << 3) + j;
+                    var (_, output) = RunPartial(new Computer(newA, 0, 0), program);
+                    if ((int)output == backTracking[i])
+                    {
+                        newAs.Add(newA);
+                    }
                 }
             }
+            validA = newAs;
         }
-        return -1;
+
+        return new SolutionResult(validA.Min().ToString());
     }
 
-    public static (long a, long output) RunPartial(Computer computer, List<int> program)
+    public static (ulong a, ulong output) RunPartial(Computer computer, List<int> program)
     {
-        var returnOutPut = 0L;
-        var outputs = new List<long>();
+        ulong returnOutPut = 0L;
+        var outputs = new List<ulong>();
         var pointer = 0;
         while (pointer < program.Count)
         {
@@ -100,7 +85,7 @@ public class Day17
             if (output.HasValue)
             {
                 outputs.Add(output.Value);
-                returnOutPut  = output.Value;
+                returnOutPut = output.Value;
                 pointer += 2;
             }
             else if (jump.HasValue)
@@ -116,9 +101,9 @@ public class Day17
         return (0, 0);
     }
 
-    public static List<long> RunProgram(Computer computer, List<int> program)
+    public static List<ulong> RunProgram(Computer computer, List<int> program)
     {
-        var outputs = new List<long>();
+        var outputs = new List<ulong>();
         var pointer = 0;
         while (pointer < program.Count)
         {
@@ -142,45 +127,62 @@ public class Day17
         return outputs;
     }
 
-    public static long XorWithPadding(long num1, long num2)
+    public static ulong XorWithPadding(ulong num1, ulong num2)
     {
-        var str1 = Convert.ToString(num1, 2);
-        var str2 = Convert.ToString(num2, 2);
-        var maxLength = Math.Max(str1.Length, str2.Length);
-        str1 = str1.PadLeft(maxLength, '0');
-        str2 = str2.PadLeft(maxLength, '0');
-        var result = new char[maxLength];
-        for (int i = 0; i < str2.Length; i++)
+        return num1 ^ num2; 
+        //var str1 = UlongToBinaryString(num1);
+        //var str2 = UlongToBinaryString(num2);
+        //var maxLength = Math.Max(str1.Length, str2.Length);
+        //str1 = str1.PadLeft(maxLength, '0');
+        //str2 = str2.PadLeft(maxLength, '0');
+        //var result = new char[maxLength];
+        //for (int i = 0; i < str2.Length; i++)
+        //{
+        //    result[i] = (str1[i] == str2[i]) ? '0' : '1';
+        //}
+        //var num = new string(result);
+        //return BinaryStringToUlong(num);
+    }
+
+    public static string UlongToBinaryString(ulong value)
+    {
+        char[] binaryArray = new char[64];
+        for (int i = 63; i >= 0; i--)
         {
-            result[i] = (str1[i] == str2[i]) ? '0' : '1';
+            binaryArray[i] = (value & 1) == 1 ? '1' : '0';
+            value >>= 1;
         }
-        var num = new string(result);
-        return Convert.ToInt64(num, 2);
+        return new string(binaryArray).TrimStart('0');
+    }
+
+    public static ulong BinaryStringToUlong(string binaryString)
+    {
+        return Convert.ToUInt64(binaryString, 2);
     }
 }
 
-public class Computer(long a, long b, long c)
+public class Computer(ulong a, ulong b, ulong c)
 {
-    public long A { get; set; } = a;
-    public long B { get; set; } = b;
-    public long C { get; set; } = c;
+    public ulong A { get; set; } = a;
+    public ulong B { get; set; } = b;
+    public ulong C { get; set; } = c;
 
-    public (long? result, int? jump) RunInstruction(Instruction instruction, Operand operand)
+    public (ulong? result, int? jump) RunInstruction(Instruction instruction, Operand operand)
     {
         switch (instruction)
         {
             case Instruction.Adv:
                 var numerator = A;
-                var denominator = Math.Pow(2, (double)GetOperand(operand));
+                var denominator = Math.Pow(2, GetOperand(operand));
                 var result = numerator / denominator;
-                A = (int)result;
+                A = (ulong)result;
                 break;
             case Instruction.Bxl:
-                var op = (int)operand;
+                var op = (ulong)operand;
                 B = Day17.XorWithPadding(B, op);
                 break;
             case Instruction.Bst:
-                B = ((int)GetOperand(operand)) % 8;
+                B = (GetOperand(operand)) % 8;
                 break;
             case Instruction.Jnz:
                 if (A != 0)
@@ -196,20 +198,20 @@ public class Computer(long a, long b, long c)
                 return (value, null);
             case Instruction.Bdv:
                 var numeratorB = A;
-                var denominatorB = Math.Pow(2, (double)GetOperand(operand));
+                var denominatorB = Math.Pow(2, GetOperand(operand));
                 var resultB = numeratorB / denominatorB;
-                B = (int)resultB;
+                B = (ulong)resultB;
                 break;
             case Instruction.Cdv:
                 var numeratorC = A;
-                var denominatorC = Math.Pow(2, (double)GetOperand(operand));
+                var denominatorC = Math.Pow(2, GetOperand(operand));
                 var resultC = numeratorC / denominatorC;
-                C = (int)resultC;
+                C = (ulong)resultC;
                 break;
         }
         return (null, null);
 
-        long GetOperand(Operand operand)
+        ulong GetOperand(Operand operand)
         {
             return operand switch
             {
