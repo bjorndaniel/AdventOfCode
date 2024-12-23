@@ -418,7 +418,7 @@ public class Day15
         }
     }
 
-    private static bool CanMoveBoxPart2(List<GridItem> gridItems, GridItem boxItem, (int x, int y) direction, HashSet<GridItem> visited = null)
+    private static bool CanMoveBoxPart2(List<GridItem> gridItems, GridItem boxItem, (int x, int y) direction)
     {
         if (direction.y == -1)
         {
@@ -434,8 +434,8 @@ public class Day15
             }
             if (boxAboveLeft != null && boxAboveRight != null)
             {
-                var canMoveLeft = CanMoveBoxPart2(gridItems, boxAboveLeft, direction, visited);
-                var canMoveRight = CanMoveBoxPart2(gridItems, boxAboveRight, direction, visited);
+                var canMoveLeft = CanMoveBoxPart2(gridItems, boxAboveLeft, direction);
+                var canMoveRight = CanMoveBoxPart2(gridItems, boxAboveRight, direction);
                 if (canMoveLeft && canMoveRight)
                 {
                     return true;
@@ -447,11 +447,11 @@ public class Day15
             }
             else if (directlyAbove != null)
             {
-                return CanMoveBoxPart2(gridItems, directlyAbove, direction, visited);
+                return CanMoveBoxPart2(gridItems, directlyAbove, direction);
             }
             else if (middleAbove != null)
             {
-                return CanMoveBoxPart2(gridItems, middleAbove, direction, visited);
+                return CanMoveBoxPart2(gridItems, middleAbove, direction);
             }
         }
         else if (direction.y == 1)
@@ -469,8 +469,8 @@ public class Day15
 
             if (boxBelowLeft != null && boxBelowRight != null)
             {
-                var canMoveLeft = CanMoveBoxPart2(gridItems, boxBelowLeft, direction, visited);
-                var canMoveRight = CanMoveBoxPart2(gridItems, boxBelowRight, direction, visited);
+                var canMoveLeft = CanMoveBoxPart2(gridItems, boxBelowLeft, direction);
+                var canMoveRight = CanMoveBoxPart2(gridItems, boxBelowRight, direction);
                 if (canMoveLeft && canMoveRight)
                 {
                     return true;
@@ -482,11 +482,11 @@ public class Day15
             }
             else if (directlyBelow != null)
             {
-                return CanMoveBoxPart2(gridItems, directlyBelow, direction, visited);
+                return CanMoveBoxPart2(gridItems, directlyBelow, direction);
             }
             else if (middleBelow != null)
             {
-                return CanMoveBoxPart2(gridItems, middleBelow, direction, visited);
+                return CanMoveBoxPart2(gridItems, middleBelow, direction);
             }
 
         }
@@ -495,7 +495,7 @@ public class Day15
             var left = gridItems.FirstOrDefault(_ => _.RightX == boxItem.LeftX - 1 && _.Y == boxItem.Y);
             if (left != null)
             {
-                return left.Type == ItemType.Wall ? false : CanMoveBoxPart2(gridItems, left, direction, visited);
+                return left.Type == ItemType.Wall ? false : CanMoveBoxPart2(gridItems, left, direction);
             }
             return true;
         }
@@ -504,7 +504,7 @@ public class Day15
             var right = gridItems.FirstOrDefault(_ => _.LeftX == boxItem.RightX + 1 && _.Y == boxItem.Y);
             if (right != null)
             {
-                return right.Type == ItemType.Wall ? false : CanMoveBoxPart2(gridItems, right, direction, visited);
+                return right.Type == ItemType.Wall ? false : CanMoveBoxPart2(gridItems, right, direction);
             }
             return true;
         }

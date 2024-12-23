@@ -75,6 +75,6 @@ public class Day22Tests(ITestOutputHelper output)
         var result = Day22.Part2(filename, new TestPrinter(output));
 
         //Then
-        Assert.Equal(true, false);
+        Assert.True(false);
     }
 }
