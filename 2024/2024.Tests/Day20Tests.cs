@@ -31,7 +31,7 @@ public class Day20Tests(ITestOutputHelper output)
         var result = Day20.Part1(filename, new TestPrinter(output));
 
         //Then
-        Assert.Equal("3", result.Result);
+        Assert.Equal("8", result.Result);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class Day20Tests(ITestOutputHelper output)
         var result = Day20.Part2(filename, new TestPrinter(output));
 
         //Then
-        Assert.True(false);
+        Assert.Equal("285", result.Result);
     }
 
 }

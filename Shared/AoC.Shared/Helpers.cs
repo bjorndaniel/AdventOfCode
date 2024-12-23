@@ -164,5 +164,19 @@ public static class Helpers
         return position.y >= 0 && position.y < rows && position.x >= 0 && position.x < cols;
     }
 
-
+    public static long XorWithPadding(long num1, long num2)
+    {
+        var str1 = Convert.ToString(num1, 2);
+        var str2 = Convert.ToString(num2, 2);
+        var maxLength = Math.Max(str1.Length, str2.Length);
+        str1 = str1.PadLeft(maxLength, '0');
+        str2 = str2.PadLeft(maxLength, '0');
+        var result = new char[maxLength];
+        for (int i = 0; i < str2.Length; i++)
+        {
+            result[i] = (str1[i] == str2[i]) ? '0' : '1';
+        }
+        var num = new string(result);
+        return Convert.ToInt64(num, 2);
+    }
 }

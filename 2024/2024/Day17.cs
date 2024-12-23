@@ -37,7 +37,7 @@ public class Day17
         return (new Computer(regA, regB, regC), program);
     }
 
-    [Solveable("2024/Puzzles/Day17.txt", "Day 17 part 1", 17)]
+    [Solveable("2024/Puzzles/Day17.txt", "Day 17 part 1", 17, true)]
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var (computer, program) = ParseInput(filename);
@@ -49,43 +49,80 @@ public class Day17
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var (computer, program) = ParseInput(filename);
-        var result = 0L;
-        _code = program.ToArray();
-        result = FindResult(0, 0, program, printer);
-        return new SolutionResult(result.ToString());
-    }
-
-    public static long FindResult(long requiredA, int position, List<int> program, IPrinter printer)
-    {
-        if (position >= _code.Length)
+        //var result = 0L;
+        //_code = program.ToArray();
+        //result = FindResult([0], 0, program, printer);
+        var backTrack = program.ToArray().Reverse().ToList();
+        var validA = new List<long>{0};
+        for (int i = 0;i< backTrack.Count; i ++)
         {
-            return requiredA;
-        }
-        var outputPosition = _code.Length - position - 1;
-        var requiredOutput = _code[outputPosition];
-        var shifted = requiredA << 3;
-        //printer.Print($"Testing position {outputPosition} with requiredA {requiredA} and requiredOutput {requiredOutput}");
-        //printer.Flush();
-        for (int i = 0; i < 9000; i++)
-        {
-            var testA = shifted ^ i;
-
-            (long newA, long output) = RunPartial(new Computer(testA, 0, 0), program);
-            if (newA == requiredA && output == requiredOutput)
+            var newAs = new List<long>();
+            foreach(var requiredA in validA)
             {
-                printer.Print($"Found result {output} for {outputPosition} with testA {testA} and newA {newA}");
-                printer.Flush();
-                var result = FindResult(testA, position + 1, program, printer);
-                if (result >= 0)
+                for (long j = 0; j < 9; j++)
                 {
-                    //printer.Print($"Found result {result} at with testA {testA}");
-                    //printer.Flush();
-                    return result;
+                    var shifted = requiredA << 3;
+                    shifted += j;
+                    //(long newA, long output) = RunPartial(new Computer((long)shifted, 0, 0), program);
+                    var res = RunProgram(new Computer(shifted, 0, 0), program);
+                    if (res[0] == backTrack[i])
+                    {
+                        newAs.Add(shifted);
+                    }
                 }
+
             }
+            validA = newAs;
+
         }
-        return -1;
+        //foreach(var a in validA)
+        //{
+        //    var result = RunProgram(new Computer((long)a, 0, 0), program);
+        //    printer.Print(result.Select(_ => _.ToString()).Aggregate((a, b) => $"{a},{b}"));
+        //    printer.Flush();
+        //}
+        return new SolutionResult(validA.Min().ToString());
     }
+
+    //public static long FindResult(List<long> validA, int position, List<int> program, IPrinter printer)
+    //{
+    //    //if (position >= _code.Length)
+    //    //{
+    //    //    return validA.Min();
+    //    //}
+    //    //var outputPosition = _code.Length - position - 1;
+    //    //var requiredOutput = _code[outputPosition];
+    //    //var newAs = new List<long>();
+    //    //foreach(var requiredA in validA)
+    //    //{
+            
+    //    //    //printer.Print($"Testing position {outputPosition} with requiredA {requiredA} and requiredOutput {requiredOutput}");
+    //    //    //printer.Flush();
+    //    //    //var counter = shifted > 0 ? (shifted << 10) : 1024;
+    //    //    for (int i = 0; i < 8; i++)
+    //    //    {
+    //    //        var shifted = requiredA << 3;
+    //    //        shifted += i;
+    //    //        //var testA = shifted + i;
+    //    //        (long newA, long output) = RunPartial(new Computer(shifted, 0, 0), program);
+    //    //        if (newA == requiredA && output == requiredOutput)
+    //    //        {
+    //    //            newAs.Add(shifted);
+    //    //            //printer.Print($"Found result {output} for {outputPosition} with testA {testA} and newA {newA}");
+    //    //            //printer.Flush();
+    //    //            var result = FindResult(newAs, position + 1, program, printer);
+    //    //            if (result >= 0)
+    //    //            {
+    //    //                //printer.Print($"Found result {result} at with testA {testA}");
+    //    //                //printer.Flush();
+    //    //                return result;
+    //    //            }
+    //    //        }
+    //    //    }
+    //    //}
+        
+    //    //return -1;
+    //}
 
     public static (long a, long output) RunPartial(Computer computer, List<int> program)
     {
@@ -142,21 +179,7 @@ public class Day17
         return outputs;
     }
 
-    public static long XorWithPadding(long num1, long num2)
-    {
-        var str1 = Convert.ToString(num1, 2);
-        var str2 = Convert.ToString(num2, 2);
-        var maxLength = Math.Max(str1.Length, str2.Length);
-        str1 = str1.PadLeft(maxLength, '0');
-        str2 = str2.PadLeft(maxLength, '0');
-        var result = new char[maxLength];
-        for (int i = 0; i < str2.Length; i++)
-        {
-            result[i] = (str1[i] == str2[i]) ? '0' : '1';
-        }
-        var num = new string(result);
-        return Convert.ToInt64(num, 2);
-    }
+   
 }
 
 public class Computer(long a, long b, long c)
@@ -177,7 +200,7 @@ public class Computer(long a, long b, long c)
                 break;
             case Instruction.Bxl:
                 var op = (int)operand;
-                B = Day17.XorWithPadding(B, op);
+                B = Helpers.XorWithPadding(B, op);
                 break;
             case Instruction.Bst:
                 B = ((int)GetOperand(operand)) % 8;
@@ -189,7 +212,7 @@ public class Computer(long a, long b, long c)
                 }
                 break;
             case Instruction.Bxc:
-                B = Day17.XorWithPadding(B, C);
+                B = Helpers.XorWithPadding(B, C);
                 break;
             case Instruction.Out:
                 var value = (GetOperand(operand)) % 8;

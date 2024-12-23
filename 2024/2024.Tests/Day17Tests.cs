@@ -31,12 +31,21 @@ public class Day17Tests(ITestOutputHelper output)
 
         //Then
         Assert.Equal("4,6,3,5,6,3,5,2,1,0", result.Result);
+
+        //Given
+        filename = $"{Helpers.DirectoryPathTests}Day17-test3.txt";
+
+        //When
+        result = Day17.Part1(filename, new TestPrinter(output));
+
+        //Then
+        Assert.Equal("6,0,4,5,4,5,2,0", result.Result);
     }
 
     [Fact]
     public void Can_solve_part2_for_test()
     {
-        //Given
+        ////Given
         var filename = $"{Helpers.DirectoryPathTests}Day17-test2.txt";
 
         //When
@@ -44,6 +53,15 @@ public class Day17Tests(ITestOutputHelper output)
 
         //Then
         Assert.Equal("117440", result.Result);
+
+        //Given
+        filename = $"{Helpers.DirectoryPathTests}Day17-test3.txt";
+
+        //When
+        result = Day17.Part2(filename, new TestPrinter(output));
+
+        //Then
+        Assert.Equal("202797954918051", result.Result);
     }
 
     [Fact]
@@ -70,7 +88,7 @@ public class Day17Tests(ITestOutputHelper output)
         result = Day17.RunProgram(c, program);
         Assert.Equal(26, c.B);
 
-        var x = Day17.XorWithPadding(2024, 43690);
+        var x = Helpers.XorWithPadding(2024, 43690);
         Assert.Equal(44354, x);
         c = new Computer(0, 2024, 43690);
         program = new List<int> { 4, 0 };
