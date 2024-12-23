@@ -97,6 +97,7 @@ public class Day20
         }
 
         return paths;
+        //return new SolutionResult(res.DistinctBy(_ => _.removedWalls).Count().ToString());
     }
 
     private static int FindShortestPath(char[,] grid, (int x, int y) start, (int x, int y) end)
