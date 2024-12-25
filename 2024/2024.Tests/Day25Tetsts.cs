@@ -30,18 +30,4 @@ public class Day25Tests(ITestOutputHelper output)
         //Then
         Assert.Equal("3", result.Result);
     }
-
-    [Fact]
-    public void Can_solve_part2_for_test()
-    {
-        //Given
-        var filename = $"{Helpers.DirectoryPathTests}Day25-test.txt";
-
-        //When
-        var result = Day25.Part2(filename, new TestPrinter(output));
-
-        //Then
-        Assert.True(false);
-    }
-
 }

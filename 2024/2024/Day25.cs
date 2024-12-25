@@ -81,15 +81,7 @@ public class Day25
                 }
             }
         }
-
         return new SolutionResult(result.ToString());
     }
-
-    [Solveable("2024/Puzzles/Day25.txt", "Day 25 part 2", 25)]
-    public static SolutionResult Part2(string filename, IPrinter printer)
-    {
-        return new SolutionResult("");
-    }
-
 
 }
