@@ -44,10 +44,55 @@ public class Day20
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var (grid, start, end) = ParseInput(filename);
-        var path = FindShortestPath(grid, start, end);
+        var path = FindShortestPathWithCoordinates(grid, start, end);
+        var pathlength = FindShortestPath(grid, start, end);
         var timeSaved = filename.Contains("test") ? 50 : 100;
-        var result = FindPathsRemovingUpTo20Walls(grid, start, end, path - timeSaved, printer);
-        return new SolutionResult(result.Count().ToString());
+        var targetPathLength = pathlength - timeSaved;
+        var count = 0;
+        var uniquePairs = new HashSet<(int, int, int, int)>();
+        var pathCache = new Dictionary<((int x, int y) point1, (int x, int y) point2), int>();
+
+        foreach (var point in path)
+        {
+            foreach (var otherPoint in path)
+            {
+                if (point == otherPoint)
+                {
+                    continue;
+                }
+
+                var pair = point.x < otherPoint.x || (point.x == otherPoint.x && point.y < otherPoint.y)
+                    ? (point.x, point.y, otherPoint.x, otherPoint.y)
+                    : (otherPoint.x, otherPoint.y, point.x, point.y);
+
+                if (uniquePairs.Contains(pair))
+                {
+                    continue;
+                }
+
+                uniquePairs.Add(pair);
+
+                var distance = Helpers.ManhattanDistance(point, otherPoint);
+                if (distance > 20)
+                {
+                    continue;
+                }
+
+                var cacheKey = (point, otherPoint);
+                if (!pathCache.TryGetValue(cacheKey, out var lengthSaved))
+                {
+                    lengthSaved = FindShortestPath(grid, point, otherPoint);
+                    pathCache[cacheKey] = lengthSaved;
+                }
+
+                if (distance <= 20 && pathlength - (lengthSaved - distance) <= targetPathLength)
+                {
+                    count += 1;
+                }
+            }
+        }
+
+        return new SolutionResult(count.ToString());
     }
 
     private static List<int> FindPathsRemovingOneWall(char[,] grid, (int x, int y) start, (int x, int y) end, int targetPathLength)
@@ -136,67 +181,41 @@ public class Day20
         return -1;
     }
 
-    private static List<List<(int x, int y)>> FindPathsRemovingUpTo20Walls(char[,] grid, (int x, int y) start, (int x, int y) end, int targetPathLength, IPrinter printer)
+    private static List<(int x, int y)> FindShortestPathWithCoordinates(char[,] grid, (int x, int y) start, (int x, int y) end)
     {
-        var paths = new List<List<(int x, int y)>>();
+        int rows = grid.GetLength(0);
+        int cols = grid.GetLength(1);
         var directions = new (int x, int y)[] { (0, 1), (1, 0), (0, -1), (-1, 0) };
+        var queue = new Queue<((int x, int y) pos, List<(int x, int y)> path)>();
+        var visited = new bool[rows, cols];
 
+        queue.Enqueue((start, new List<(int x, int y)> { start }));
+        visited[start.y, start.x] = true;
 
-        for (int walls = 0; walls <= 20; walls++)
+        while (queue.Count > 0)
         {
-            BFSWithWallRemoval(grid, start, end, walls);
-        }
+            var (current, path) = queue.Dequeue();
 
-        return paths;
-
-        List<(int x, int y)> BFSWithWallRemoval(char[,] grid, (int x, int y) start, (int x, int y) end, int maxWalls)
-        {
-            var queue = new Queue<((int x, int y) pos, int dist, int walls, List<(int x, int y)> removedWalls)>();
-            var visited = new Dictionary<((int x, int y) pos, int walls), int>();
-
-            queue.Enqueue((start, 0, 0, new List<(int x, int y)>()));
-            visited[(start, 0)] = 0;
-
-            while (queue.Count > 0)
+            if (current == end)
             {
-                var (current, dist, walls, removedWalls) = queue.Dequeue();
-
-                if (current == end)
-                {
-                    if (dist <= targetPathLength)
-                    {
-                        paths.Add(new (removedWalls));
-                    }
-                    continue;
-                }
-
-                foreach (var direction in directions)
-                {
-                    var next = (x: current.x + direction.x, y: current.y + direction.y);
-                    if (next.x >= 0 && next.x < grid.GetLength(1) && next.y >= 0 && next.y < grid.GetLength(0))
-                    {
-                        int newWalls = walls + (grid[next.y, next.x] == '#' ? 1 : 0);
-                        if (newWalls > maxWalls) continue;
-
-                        int newDist = dist + 1;
-                        var nextState = (next, newWalls);
-                        if (!visited.ContainsKey(nextState) || visited[nextState] > newDist)
-                        {
-                            visited[nextState] = newDist;
-                            var newRemovedWalls = new List<(int x, int y)>(removedWalls);
-                            if (grid[next.y, next.x] == '#')
-                            {
-                                newRemovedWalls.Add(next);
-                            }
-                            queue.Enqueue((next, newDist, newWalls, newRemovedWalls));
-                        }
-                    }
-                }
+                return path;
             }
 
-            return new List<(int x, int y)>();
+            foreach (var direction in directions)
+            {
+                var next = (x: current.x + direction.x, y: current.y + direction.y);
+
+                if (next.x >= 0 && next.x < cols && next.y >= 0 && next.y < rows &&
+                    grid[next.y, next.x] == '.' && !visited[next.y, next.x])
+                {
+                    var newPath = new List<(int x, int y)>(path) { next };
+                    queue.Enqueue((next, newPath));
+                    visited[next.y, next.x] = true;
+                }
+            }
         }
 
+        return new List<(int x, int y)>();
     }
 
 }

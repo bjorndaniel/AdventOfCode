@@ -49,18 +49,4 @@ public class Day21Tests(ITestOutputHelper output)
         //Then
         Assert.Equal("126384", result.Result);
     }
-
-    [Fact]
-    public void Can_solve_part2_for_test()
-    {
-        //Given
-        var filename = $"{Helpers.DirectoryPathTests}Day21-test.txt";
-
-        //When
-        var result = Day21.Part2(filename, new TestPrinter(output));
-
-        //Then
-        Assert.True(false);
-    }
-
 }

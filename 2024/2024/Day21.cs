@@ -1,4 +1,5 @@
-﻿namespace AoC2024;
+﻿//Solution adapted from https://www.bytesizego.com/blog/aoc-day21-golang
+namespace AoC2024;
 public class Day21
 {
     public static List<(string code, long number)> ParseInput(string filename)
@@ -17,148 +18,64 @@ public class Day21
     public static SolutionResult Part1(string filename, IPrinter printer)
     {
         var codes = ParseInput(filename);
-        var keypad = KeyPad();
-        var dirPad1 = DirectionPad();
-        var dirPad2 = DirectionPad();
-        var dirPad3 = DirectionPad();
-        var result = new List<PadKey>();
-        var complexity = 0L;
-        var currentPosition = keypad[PadKey.A];
-        var currentPositionDirpad1 = dirPad1[PadKey.A];
-        var currentPositionDirpad2 = dirPad2[PadKey.A];
-        var currentPositionDirpad3 = dirPad3[PadKey.A];
-        foreach (var code in codes)
+        var result = 0L;
+        foreach (var (code, number) in codes)
         {
-            var codeMoves = new List<PadKey>();
-            foreach (var padKey in GetPadKeys(code.code))
-            {
-                var targetPosition = keypad[padKey];
-                // Find moves on the first direction pad (keypad)
-                var path1 = FindShortestPathOnDirectionPad(currentPosition, targetPosition, keypad);
-                path1.Add(PadKey.A); // Add the key to the path
-                codeMoves.AddRange(path1);
-                //path1.AddRange(FindShortestPathOnDirectionPad(targetPosition, (2,3), keypad));
-
-                //// Find moves on the second direction pad to get the moves for path1
-                //var path2 = new List<PadKey>();
-                //foreach (var move in path1)
-                //{
-                //    var dirPad1End = dirPad1[move];
-                //    path2.AddRange(FindShortestPathOnDirectionPad(currentPositionDirpad1, dirPad1End, dirPad1));
-                //    currentPositionDirpad1 = dirPad1End;
-                //}
-                //codeMoves.AddRange(path2);
-
-                //var path3 = new List<PadKey>();
-                //foreach (var move in path2)
-                //{
-                //    var dirPad2End = dirPad2[move];
-                //    path3.AddRange(FindShortestPathOnDirectionPad(currentPositionDirpad2, dirPad2End, dirPad2));
-                //    currentPositionDirpad2 = dirPad2End;
-                //}
-                //codeMoves.AddRange(path3);
-
-                //var path4 = new List<PadKey>();
-                //foreach (var move in path3)
-                //{
-                //    var dirPad3End = dirPad3[move];
-                //    path4.AddRange(FindShortestPathOnDirectionPad(currentPositionDirpad3, dirPad3End, dirPad3));
-                //    currentPositionDirpad3 = dirPad3End;
-                //}
-
-                //codeMoves.AddRange(path4);
-                currentPosition = targetPosition;
-               
-            }
-            printer.Print(code.code);
-            printer.Flush();
-            var display = codeMoves.Select(_ => GetKey(_)).Aggregate((a, b) => $"{a}{b}");
-            printer.Print(display);
-            printer.Flush();
-            printer.Print("");
-            printer.Flush();
-            complexity += code.number * codeMoves.Count;
-            result.AddRange(codeMoves);
+            var seq1 = GetPressesForNumericPad(code, PadKey.A, KeyPad());
+            var seq2 = GetPressesForDirectionalPad(seq1, PadKey.A, DirectionPad());
+            seq2 = GetPressesForDirectionalPad(seq2, PadKey.A, DirectionPad());
+            result += seq2.Length * number;
         }
-
-        return new SolutionResult(complexity.ToString());
+        return new SolutionResult(result.ToString());
     }
-
-    private static List<PadKey> FindShortestPathOnDirectionPad((int x, int y) start, (int x, int y) end, Dictionary<PadKey, (int x, int y)> pad)
-    {
-        var directions = new Dictionary<PadKey, (int x, int y)>
-        {
-            { PadKey.UP, (0, -1) },
-            { PadKey.DOWN, (0, 1) },
-            { PadKey.LEFT, (-1, 0) },
-            { PadKey.RIGHT, (1, 0) }
-        };
-
-        var queue = new Queue<((int x, int y) pos, List<PadKey> path)>();
-        var visited = new HashSet<(int x, int y)>();
-        queue.Enqueue((start, new List<PadKey>()));
-        visited.Add(start);
-
-        while (queue.Count > 0)
-        {
-            var (current, path) = queue.Dequeue();
-
-            if (current == end)
-            {
-                return path;
-            }
-
-            foreach (var direction in directions)
-            {
-                var next = (x: current.x + direction.Value.x, y: current.y + direction.Value.y);
-                if (IsValidPosition(next, pad) && !visited.Contains(next))
-                {
-                    var newPath = new List<PadKey>(path) { direction.Key };
-                    queue.Enqueue((next, newPath));
-                    visited.Add(next);
-                }
-            }
-        }
-
-        return new List<PadKey>(); // Return an empty list if no path is found
-    }
-
-    private static bool IsValidPosition((int x, int y) pos, Dictionary<PadKey, (int x, int y)> pad) =>
-        pad.Values.Contains(pos) && pad[PadKey.OUTOFBOUNDS] != pos; // Ensure the position is within bounds and not OUTOFBOUNDS
 
     [Solveable("2024/Puzzles/Day21.txt", "Day 21 part 2", 21)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
+        var codes = ParseInput(filename);
+        var result = 0L;
+        foreach (var (code, number) in codes)
+        {
+            var seq1 = GetPressesForNumericPad(code, PadKey.A, KeyPad());
+            var seq2 = GetPressesForDirectionalPad(seq1, PadKey.A, DirectionPad());
+
+            for(int i = 0; i < 25; i++)
+            {
+                seq2 = GetPressesForDirectionalPad(seq2, PadKey.A, DirectionPad());
+            }
+            
+            result += seq2.Length * number;
+        }
         return new SolutionResult("");
     }
 
     public static Dictionary<PadKey, (int x, int y)> KeyPad()
     {
         var keyPad = new Dictionary<PadKey, (int x, int y)>();
-        keyPad.Add(PadKey.SEVEN, (0, 0));
-        keyPad.Add(PadKey.EIGHT, (1, 0));
-        keyPad.Add(PadKey.NINE, (2, 0));
-        keyPad.Add(PadKey.FOUR, (0, 1));
-        keyPad.Add(PadKey.FIVE, (1, 1));
-        keyPad.Add(PadKey.SIX, (2, 1));
-        keyPad.Add(PadKey.ONE, (0, 2));
-        keyPad.Add(PadKey.TWO, (1, 2));
-        keyPad.Add(PadKey.THREE, (2, 2));
-        keyPad.Add(PadKey.OUTOFBOUNDS, (0, 3));
-        keyPad.Add(PadKey.ZERO, (1, 3));
-        keyPad.Add(PadKey.A, (2, 3));
+        keyPad.Add(PadKey.SEVEN, (0, 3));
+        keyPad.Add(PadKey.EIGHT, (1, 3));
+        keyPad.Add(PadKey.NINE, (2, 3));
+        keyPad.Add(PadKey.FOUR, (0, 2));
+        keyPad.Add(PadKey.FIVE, (1, 2));
+        keyPad.Add(PadKey.SIX, (2, 2));
+        keyPad.Add(PadKey.ONE, (0, 1));
+        keyPad.Add(PadKey.TWO, (1, 1));
+        keyPad.Add(PadKey.THREE, (2, 1));
+        keyPad.Add(PadKey.OUTOFBOUNDS, (0, 0));
+        keyPad.Add(PadKey.ZERO, (1, 0));
+        keyPad.Add(PadKey.A, (2, 0));
         return keyPad;
     }
 
     public static Dictionary<PadKey, (int x, int y)> DirectionPad()
     {
         var dirPad = new Dictionary<PadKey, (int x, int y)>();
-        dirPad.Add(PadKey.OUTOFBOUNDS, (0, 0));
-        dirPad.Add(PadKey.UP, (1, 0));
-        dirPad.Add(PadKey.A, (2, 0));
-        dirPad.Add(PadKey.LEFT, (0, 1));
-        dirPad.Add(PadKey.DOWN, (1, 1));
-        dirPad.Add(PadKey.RIGHT, (2, 1));
+        dirPad.Add(PadKey.OUTOFBOUNDS, (0, 1));
+        dirPad.Add(PadKey.UP, (1, 1));
+        dirPad.Add(PadKey.A, (2, 1));
+        dirPad.Add(PadKey.LEFT, (0, 0));
+        dirPad.Add(PadKey.DOWN, (1, 0));
+        dirPad.Add(PadKey.RIGHT, (2, 0));
         return dirPad;
     }
 
@@ -182,11 +99,36 @@ public class Day21
         OUTOFBOUNDS = 15
     }
 
-    public static List<PadKey> GetPadKeys(string code)
+    public static List<PadKey> GetPadKeys(string input)
     {
         var padKeys = new List<PadKey>();
-        foreach (var c in code)
+        foreach (var c in input)
         {
+            if(c == '>')
+            {
+                padKeys.Add(PadKey.RIGHT);
+                continue;
+            }
+            if(c == '<')
+            {
+                padKeys.Add(PadKey.LEFT);
+                continue;
+            }
+            if (c == '^')
+            {
+                padKeys.Add(PadKey.UP);
+                continue;
+            }
+            if (c == 'v')
+            {
+                padKeys.Add(PadKey.DOWN);
+                continue;
+            }
+            if(c == 'A')
+            {
+                padKeys.Add(PadKey.A);
+                continue;
+            }
             padKeys.Add((PadKey)Enum.Parse(typeof(PadKey), c.ToString()));
         }
         return padKeys;
@@ -212,4 +154,144 @@ public class Day21
         PadKey.OUTOFBOUNDS => "X",
         _ => ""
     };
+
+    public static string GetPressesForNumericPad(string input, PadKey start, Dictionary<PadKey, (int x, int y)> keyPad)
+    {
+        var current = keyPad[start];
+        var output = new StringBuilder();
+
+        foreach (var key in GetPadKeys(input))
+        {
+            
+            var dest = keyPad[key];
+            var diffX = dest.x - current.x;
+            var diffY = dest.y - current.y;
+
+            var horizontal = new StringBuilder();
+            var vertical = new StringBuilder();
+
+            for (int i = 0; i < Math.Abs(diffX); i++)
+            {
+                if (diffX >= 0)
+                {
+                    horizontal.Append(">");
+                }
+                else
+                {
+                    horizontal.Append("<");
+                }
+            }
+
+            for (int i = 0; i < Math.Abs(diffY); i++)
+            {
+                if (diffY >= 0)
+                {
+                    vertical.Append("^");
+                }
+                else
+                {
+                    vertical.Append("v");
+                }
+            }
+
+            // prioritization order:
+            // 1. moving with least turns
+            // 2. moving < over ^ over v over >
+
+            if (current.y == 0 && dest.x == 0)
+            {
+                output.Append(vertical);
+                output.Append(horizontal);
+            }
+            else if (current.x == 0 && dest.y == 0)
+            {
+                output.Append(horizontal);
+                output.Append(vertical);
+            }
+            else if (diffX < 0)
+            {
+                output.Append(horizontal);
+                output.Append(vertical);
+            }
+            else if (diffX >= 0)
+            {
+                output.Append(vertical);
+                output.Append(horizontal);
+            }
+
+            current = dest;
+            output.Append("A");
+        }
+
+        return output.ToString();
+    }
+
+    public static string GetPressesForDirectionalPad(string input, PadKey start, Dictionary<PadKey, (int x, int y)> directionalPad)
+    {
+        var current = directionalPad[start];
+        var output = new StringBuilder();
+        foreach (var key in GetPadKeys(input))
+        {
+            var dest = directionalPad[key];
+            var diffX = dest.x - current.x;
+            var diffY = dest.y - current.y;
+
+            var horizontal = new StringBuilder();
+            var vertical = new StringBuilder();
+
+            for (int i = 0; i < Math.Abs(diffX); i++)
+            {
+                if (diffX >= 0)
+                {
+                    horizontal.Append(">");
+                }
+                else
+                {
+                    horizontal.Append("<");
+                }
+            }
+
+            for (int i = 0; i < Math.Abs(diffY); i++)
+            {
+                if (diffY >= 0)
+                {
+                    vertical.Append("^");
+                }
+                else
+                {
+                    vertical.Append("v");
+                }
+            }
+
+            // prioritization order:
+            // 1. moving with least turns
+            // 2. moving < over ^ over v over >
+
+            if (current.x == 0 && dest.y == 1)
+            {
+                output.Append(horizontal);
+                output.Append(vertical);
+            }
+            else if (current.x == 1 && dest.y == 0)
+            {
+                output.Append(vertical);
+                output.Append(horizontal);
+            }
+            else if (diffX < 0)
+            {
+                output.Append(horizontal);
+                output.Append(vertical);
+            }
+            else if (diffX >= 0)
+            {
+                output.Append(vertical);
+                output.Append(horizontal);
+            }
+
+            current = dest;
+            output.Append("A");
+        }
+        return output.ToString();
+    }
+
 }

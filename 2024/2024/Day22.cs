@@ -35,7 +35,6 @@ public class Day22
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var data = ParseInput(filename);
-        var result = 0L;
         var allHighest = new Dictionary<int, List<int>>();
         var counter = filename.Contains("test3") ? 10 : 2000;
         for (int j = 0; j < data.Count; j++)
