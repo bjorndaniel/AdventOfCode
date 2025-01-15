@@ -35,26 +35,38 @@ public class Day22
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var data = ParseInput(filename);
-        var allHighest = new Dictionary<int, List<int>>();
+        var allHighest = new Dictionary<long, List<long>>();
         var counter = filename.Contains("test3") ? 10 : 2000;
+        var sequences = new List<Dictionary<(long s1, long s2, long s3, long s4), (long banana, long change)>>();
         for (int j = 0; j < data.Count; j++)
         {
-            //var highestLastDigit = new Dictionary<int, int>();
-            //var highestSequence = new List<long>();
-            List<int> lastDigits = [(int)(data[0] % 10)];
+            var dict = new Dictionary<(long s1, long s2, long s3, long s4), (long banana, long change)>();
+            var num = data[j] % 10;
+            var changes = new List<(long banana, long change)>();
             for (int i = 0; i < counter; i++)
             {
                 data[j] = GenerateNext(data[j]);
-                lastDigits.Add((int)(data[j] % 10));
-                //highestLastDigit[i] = (int)data[j] % 10;
+                if (i == 0)
+                {
+                    num = data[j] % 10;
+                    continue;
+                }
+                else
+                {
+                    var newNum = data[j] % 10;
+                    var change = newNum - num;
+                    changes.Add((newNum, change));
+                    num = newNum;
+                }
+                if (changes.Count == 4 && dict.ContainsKey((changes[0].change, changes[1].change, changes[2].change, changes[3].change)) is false)
+                {
+                    dict.Add((changes[0].change, changes[1].change, changes[2].change, changes[3].change), (changes[3].banana, changes[3].change));
+                    changes.RemoveAt(0);
+                }
             }
-            allHighest[j] = lastDigits;
+            sequences.Add(dict);
         }
-        foreach(var kvp in allHighest)
-        {
-            printer.Print($"{kvp.Key} {kvp.Value.Select(_ => _.ToString()).Aggregate((a,b) => $"{a}, {b}")}");
-            printer.Flush();
-        }
+
         return new SolutionResult("");
     }
 

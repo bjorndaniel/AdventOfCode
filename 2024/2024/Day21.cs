@@ -19,12 +19,13 @@ public class Day21
     {
         var codes = ParseInput(filename);
         var result = 0L;
+        var robots = 2;
         foreach (var (code, number) in codes)
         {
             var seq1 = GetPressesForNumericPad(code, PadKey.A, KeyPad());
-            var seq2 = GetPressesForDirectionalPad(seq1, PadKey.A, DirectionPad());
-            seq2 = GetPressesForDirectionalPad(seq2, PadKey.A, DirectionPad());
-            result += seq2.Length * number;
+            var count = GetCountAfterRobots(seq1, robots, 1, DirectionPad(), []);
+
+            result += count * number;
         }
         return new SolutionResult(result.ToString());
     }
@@ -34,19 +35,14 @@ public class Day21
     {
         var codes = ParseInput(filename);
         var result = 0L;
+        var robots = 25;
         foreach (var (code, number) in codes)
         {
             var seq1 = GetPressesForNumericPad(code, PadKey.A, KeyPad());
-            var seq2 = GetPressesForDirectionalPad(seq1, PadKey.A, DirectionPad());
-
-            for(int i = 0; i < 25; i++)
-            {
-                seq2 = GetPressesForDirectionalPad(seq2, PadKey.A, DirectionPad());
-            }
-            
-            result += seq2.Length * number;
+            var count = GetCountAfterRobots(seq1, robots, 1, DirectionPad(), []);
+            result += count * number;
         }
-        return new SolutionResult("");
+        return new SolutionResult(result.ToString());
     }
 
     public static Dictionary<PadKey, (int x, int y)> KeyPad()
@@ -61,7 +57,7 @@ public class Day21
         keyPad.Add(PadKey.ONE, (0, 1));
         keyPad.Add(PadKey.TWO, (1, 1));
         keyPad.Add(PadKey.THREE, (2, 1));
-        keyPad.Add(PadKey.OUTOFBOUNDS, (0, 0));
+        //keyPad.Add(PadKey.OUTOFBOUNDS, (0, 0));
         keyPad.Add(PadKey.ZERO, (1, 0));
         keyPad.Add(PadKey.A, (2, 0));
         return keyPad;
@@ -70,7 +66,7 @@ public class Day21
     public static Dictionary<PadKey, (int x, int y)> DirectionPad()
     {
         var dirPad = new Dictionary<PadKey, (int x, int y)>();
-        dirPad.Add(PadKey.OUTOFBOUNDS, (0, 1));
+        //dirPad.Add(PadKey.OUTOFBOUNDS, (0, 1));
         dirPad.Add(PadKey.UP, (1, 1));
         dirPad.Add(PadKey.A, (2, 1));
         dirPad.Add(PadKey.LEFT, (0, 0));
@@ -104,12 +100,12 @@ public class Day21
         var padKeys = new List<PadKey>();
         foreach (var c in input)
         {
-            if(c == '>')
+            if (c == '>')
             {
                 padKeys.Add(PadKey.RIGHT);
                 continue;
             }
-            if(c == '<')
+            if (c == '<')
             {
                 padKeys.Add(PadKey.LEFT);
                 continue;
@@ -124,7 +120,7 @@ public class Day21
                 padKeys.Add(PadKey.DOWN);
                 continue;
             }
-            if(c == 'A')
+            if (c == 'A')
             {
                 padKeys.Add(PadKey.A);
                 continue;
@@ -134,28 +130,63 @@ public class Day21
         return padKeys;
     }
 
-    public static string GetKey(PadKey key) => key switch
+    private static long GetCountAfterRobots(string input, int nrOfRobots, long robot, Dictionary<PadKey, (int x, int y)> pad, Dictionary<string, long[]> cache)
     {
-        PadKey.ZERO => "0",
-        PadKey.ONE => "1",
-        PadKey.TWO => "2",
-        PadKey.THREE => "3",
-        PadKey.FOUR => "4",
-        PadKey.FIVE => "5",
-        PadKey.SIX => "6",
-        PadKey.SEVEN => "7",
-        PadKey.EIGHT => "8",
-        PadKey.NINE => "9",
-        PadKey.A => "A",
-        PadKey.UP => "^",
-        PadKey.LEFT => "<",
-        PadKey.RIGHT => ">",
-        PadKey.DOWN => "v",
-        PadKey.OUTOFBOUNDS => "X",
-        _ => ""
-    };
+        if (cache.TryGetValue(input, out var val))
+        {
+            if (val[robot-1] != 0)
+            {
+                return val[robot -1];
+            }
+        }
+        else
+        {
+            cache.Add(input, new long[nrOfRobots]);
+        }
+        var seq = GetPressesForDirectionalPad(input, PadKey.A, pad);
+        cache[input][0] = seq.Length;
+        if(robot == nrOfRobots)
+        {
+            return seq.Length;
+        }
+        var split = GetIndividualSteps(seq);
+        var count = 0L;
+        foreach (var s in split)
+        {
+            var c = GetCountAfterRobots(s, nrOfRobots, robot + 1, pad, cache);
+            if (cache.ContainsKey(s) is false)
+            {
+                cache[s] = new long[nrOfRobots];
+            }
+            cache[s][0] = c;
+            count += c;
+        }
 
-    public static string GetPressesForNumericPad(string input, PadKey start, Dictionary<PadKey, (int x, int y)> keyPad)
+        cache[input][robot - 1] = count;
+        return count;
+    }
+
+    private static List<string> GetIndividualSteps(string input)
+    {
+        var output = new List<string>();
+        var current = new StringBuilder();
+
+        foreach (var c in input)
+    {
+            current.Append(c);
+
+            if (c == 'A')
+            {
+                output.Add(current.ToString());
+                current = new();
+            }
+        }
+
+        return output;
+    }
+
+
+    private static string GetPressesForNumericPad(string input, PadKey start, Dictionary<PadKey, (int x, int y)> keyPad)
     {
         var current = keyPad[start];
         var output = new StringBuilder();
@@ -226,7 +257,7 @@ public class Day21
         return output.ToString();
     }
 
-    public static string GetPressesForDirectionalPad(string input, PadKey start, Dictionary<PadKey, (int x, int y)> directionalPad)
+    private static string GetPressesForDirectionalPad(string input, PadKey start, Dictionary<PadKey, (int x, int y)> directionalPad)
     {
         var current = directionalPad[start];
         var output = new StringBuilder();
@@ -272,17 +303,17 @@ public class Day21
                 output.Append(horizontal);
                 output.Append(vertical);
             }
-            else if (current.x == 1 && dest.y == 0)
+            else if (current.y == 1 && dest.x == 0)
             {
                 output.Append(vertical);
                 output.Append(horizontal);
             }
-            else if (diffX < 0)
+            else if (diffX <= 0)
             {
                 output.Append(horizontal);
                 output.Append(vertical);
             }
-            else if (diffX >= 0)
+            else if (diffX > 0)
             {
                 output.Append(vertical);
                 output.Append(horizontal);
