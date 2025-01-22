@@ -31,6 +31,32 @@ public class Day22Tests(ITestOutputHelper output)
     }
 
     [Fact]
+    public void Can_solve_part1_for_test4()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day22-test4.txt";
+
+        //When
+        var result = Day22.Part1(filename, new TestPrinter(output));
+
+        //Then
+        Assert.Equal("18183557", result.Result);
+    }
+
+    [Fact]
+    public void Can_solve_part1_for_test5()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day22-test5.txt";
+
+        //When
+        var result = Day22.Part1(filename, new TestPrinter(output));
+
+        //Then
+        Assert.Equal("8876699", result.Result);
+    }
+
+    [Fact]
     public void Can_solve_part2_for_test()
     {
         //Given
@@ -41,6 +67,32 @@ public class Day22Tests(ITestOutputHelper output)
 
         //Then
         Assert.Equal("23", result.Result);
+    }
+
+    [Fact]
+    public void Can_solve_part2_for_test4()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day22-test4.txt";
+
+        //When
+        var result = Day22.Part2(filename, new TestPrinter(output));
+
+        //Then
+        Assert.Equal("27", result.Result);
+    }
+
+    [Fact]
+    public void Can_solve_part2_for_test5()
+    {
+        //Given
+        var filename = $"{Helpers.DirectoryPathTests}Day22-test5.txt";
+
+        //When
+        var result = Day22.Part2(filename, new TestPrinter(output));
+
+        //Then
+        Assert.Equal("27", result.Result);
     }
 
     [Fact]
@@ -75,6 +127,6 @@ public class Day22Tests(ITestOutputHelper output)
         var result = Day22.Part2(filename, new TestPrinter(output));
 
         //Then
-        Assert.True(false);
+        Assert.Equal("6", result.Result);
     }
 }
