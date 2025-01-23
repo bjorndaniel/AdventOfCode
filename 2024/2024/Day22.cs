@@ -34,10 +34,11 @@ public class Day22
     {
         var data = ParseInput(filename);
         var counter = filename.Contains("test3") ? 10 : 2000;
-        var sequences = new List<Dictionary<(long s1, long s2, long s3, long s4), (long banana, long change)>>();
+        var sequences = new List<Dictionary<(long s1, long s2, long s3, long s4), long>>();
+
         for (int dCount = 0; dCount < data.Count; dCount++)
         {
-            var dict = new Dictionary<(long s1, long s2, long s3, long s4), (long banana, long change)>();
+            var dict = new Dictionary<(long s1, long s2, long s3, long s4), long>();
             var prev = data[dCount] % 10;
             var changes = new List<(long banana, long change)>();
             for (int round = 0; round < counter; round++)
@@ -49,75 +50,63 @@ public class Day22
                 prev = newNum;
                 if (changes.Count == 4)
                 {
-                    if (dict.ContainsKey((changes[0].change, changes[1].change, changes[2].change, changes[3].change)))
+                    if (dict.ContainsKey((changes[0].change, changes[1].change, changes[2].change, changes[3].change)) is false && changes[3].banana > 0)
                     {
-                        //var val = dict[(changes[0].change, changes[1].change, changes[2].change, changes[3].change)];
-                        //if (val.banana < changes[3].banana)
-                        //{
-                        //    dict[(changes[0].change, changes[1].change, changes[2].change, changes[3].change)] = (changes[3].banana, changes[3].change);
-                        //}
-                    }
-                    else if(changes[3].banana > 0)
-                    {
-                        dict.Add((changes[0].change, changes[1].change, changes[2].change, changes[3].change), (changes[3].banana, changes[3].change));
+                        dict.Add((changes[0].change, changes[1].change, changes[2].change, changes[3].change), changes[3].banana);
                     }
                     changes.RemoveAt(0);
+                }
+            }
+            if (changes.Count == 4)
+            {
+                if (dict.ContainsKey((changes[0].change, changes[1].change, changes[2].change, changes[3].change)) is false && changes[3].banana > 0)
+                {
+                    dict.Add((changes[0].change, changes[1].change, changes[2].change, changes[3].change), changes[3].banana);
                 }
             }
             sequences.Add(dict);
         }
 
-        
 
-        var maxBananas = long.MinValue;
+        var bananas = new List<long>();
         for (int i = 0; i < sequences.Count; i++)
         {
+            
             var current = sequences[i];
-            foreach(var s in current)
+            var maxSequence = new List<long>();
+            foreach (var s in current)
             {
-                var currentSum = s.Value.banana;
-                
+                var currentSum = s.Value;
                 for (int k = 0; k < sequences.Count; k++)
                 {
-                    if (k == i)
+                    if (k == i || sequences[k].ContainsKey(s.Key) is false)
                     {
                         continue;
                     }
-                    var other = sequences[k];
-                    if(other.ContainsKey(s.Key))
-                    {
-                        //foreach (var s2 in other)
-                        //{
-                        //    if (s2.Key == s.Key)
-                        //    {
-                                currentSum += other[s.Key].banana;
-                                break;
-                        //    }
-                        //}
-                    }
+                    currentSum += sequences[k][s.Key];
+
                 }
-                if (currentSum > maxBananas)
-                {
-                    maxBananas = currentSum;
-                }
-                
+                printer.Flush();
+                maxSequence.Add(currentSum);
             }
-            
+            bananas.Add(maxSequence.Max());
         }
 
-        return new SolutionResult(maxBananas.ToString());
+        return new SolutionResult(bananas.Max().ToString());
+
     }
+
 
     public static long GenerateNext(long number)
     {
         var next = number * 64;
-        next = number ^ next; //Helpers.XorWithPadding(number, next);
+        next = number ^ next;
         next %= 16777216;
         var temp = next / 32;
-        next = next ^ temp; //Helpers.XorWithPadding(next, temp);
+        next = next ^ temp;
         next %= 16777216;
         temp = next * 2048;
-        next = next ^ temp; //Helpers.XorWithPadding(next, temp);
+        next = next ^ temp;
         next %= 16777216;
         return next;
     }
