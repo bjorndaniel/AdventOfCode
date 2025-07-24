@@ -75,18 +75,4 @@ public class Day24Tests(ITestOutputHelper output)
         //Then
         Assert.Equal("4", result.Result);
     }
-
-    //[Fact]
-    //public void Can_solve_part2_for_test()
-    //{
-    //    //Given
-    //    var filename = $"{Helpers.DirectoryPathTests}Day24-test3.txt";
-
-    //    //When
-    //    var result = Day24.Part2(filename, new TestPrinter(output));
-
-    //    //Then
-    //    Assert.Equal("z00,z01,z02,z05", result.Result);
-    //}
-
 }
