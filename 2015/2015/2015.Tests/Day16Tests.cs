@@ -21,31 +21,4 @@ public class Day16Tests(ITestOutputHelper output)
         Assert.True(result[4].Properties["vizslas"] == 7, $"Expected 7 viszlas but was {result[4].Properties["vizslas"]}");
 
     }
-
-    //[Fact]
-    //public void Can_solve_part1_for_test()
-    //{
-    //    //Given
-    //    var filename = $"{Helpers.DirectoryPathTests}Day16-test.txt";
-
-    //    //When
-    //    var result = Day16.Part1(filename, new TestPrinter(output));
-
-    //    //Then
-    //    Assert.True(false);
-    //}
-
-    //[Fact]
-    //public void Can_solve_part2_for_test()
-    //{
-    //    //Given
-    //    var filename = $"{Helpers.DirectoryPathTests}Day16-test.txt";
-
-    //    //When
-    //    var result = Day16.Part2(filename, new TestPrinter(output));
-
-    //    //Then
-    //    Assert.True(false);
-    //}
-
 }
