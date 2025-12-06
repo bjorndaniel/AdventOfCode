@@ -148,7 +148,13 @@ public class Day21
 
     public record Boss(int HitPoints, int Armor, int Damage);
 
-    public record Player(int HitPoints, int Armor, int Damage);
+    public class Player(int HitPoints, int Armor, int Damage, int Mana = 0)
+    {
+        public int HitPoints { get; set; } = HitPoints;
+        public int Armor { get; set; } = Armor;
+        public int Damage { get; set; } = Damage;
+        public int Mana { get; set; } = Mana;
+    }
 
     public record Weapon(WeaponType Type, int Cost, int Damage, int Armor);
 

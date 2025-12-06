@@ -17,4 +17,5 @@ public class Day21Tests(ITestOutputHelper output)
         Assert.True(7 == result.Damage, $"Expected 7 but was {result.Damage}");
         Assert.True(2 == result.Armor, $"Expected 2 but was {result.Armor}");
     }
+
 }
