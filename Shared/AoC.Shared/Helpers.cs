@@ -1,4 +1,6 @@
-﻿namespace AoC.Shared;
+﻿using System.Numerics;
+
+namespace AoC.Shared;
 public static class Helpers
 {
     public static readonly string DirectoryPath = "C:/OneDrive/Code/AdventOfCodeInputs/";
@@ -178,5 +180,13 @@ public static class Helpers
         }
         var num = new string(result);
         return Convert.ToInt64(num, 2);
+    }
+
+    public static double VectorDistance(Vector3 a, Vector3 b)
+     {
+        var dx = a.X - b.X;
+        var dy = a.Y - b.Y;
+        var dz = a.Z - b.Z;
+        return Math.Sqrt(dx * dx + dy * dy + dz * dz);
     }
 }
