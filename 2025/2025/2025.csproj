@@ -12,4 +12,8 @@
     <ProjectReference Include="..\..\Shared\AoC.Shared\AoC.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NetTopologySuite" Version="2.5.0" />
+  </ItemGroup>
+
 </Project>

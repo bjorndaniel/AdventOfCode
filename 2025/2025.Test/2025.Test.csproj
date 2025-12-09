@@ -28,6 +28,9 @@
     <None Update="Puzzles\Day1-test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Puzzles\Day10-test.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Puzzles\Day2-test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -47,6 +50,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Puzzles\Day8-test.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Puzzles\Day9-test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
