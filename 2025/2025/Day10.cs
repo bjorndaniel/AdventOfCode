@@ -58,7 +58,7 @@ public class Day10
         return new SolutionResult(totalPresses.ToString());
     }
 
-    [Solveable("2025/Puzzles/Day10.txt", "Day 10 part 2", 10)]
+    [Solveable("2025/Puzzles/Day10.txt", "Day 10 part 2", 10, true)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
         var machines = ParseInput(filename);
