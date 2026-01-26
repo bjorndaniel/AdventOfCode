@@ -46,49 +46,90 @@ public class Day23
             { "a", 0 },
             { "b", 0 }
         };
-        for (int i = 0; i < registers.Count; i++)
-        {
-            var instruction = program[i];
-            switch (instruction.Type)
-            {
-                case InstructionType.hlf:
-                    registers[instruction.Register] /= 2;
-                    break;
-                case InstructionType.tpl:
-                    registers[instruction.Register] *= 3;
-                    break;
-                case InstructionType.inc:
-                    registers[instruction.Register] += 1;
-                    break;
-                case InstructionType.jmp:
-                    i += instruction.Offset;
-                    break;
-                case InstructionType.jie:
-                    var jieValue = registers[instruction.Register];
-                    if (long.IsEvenInteger(jieValue))
-                    {
-                        i += instruction.Offset - 1;
-                    }
-                    break;
-                case InstructionType.jio:
-                    var jioValue = registers[instruction.Register];
-                    if (jioValue == 1)
-                    {
-                        i += instruction.Offset - 1;
-                    }
-                    break;
-            }
 
-        }
-        printer.Print($"Register a: {registers["a"]}");
-        printer.Flush();
+        ExecuteProgram(program, registers);
         return new SolutionResult($"A: {registers["a"]}, B: {registers["b"]}");
     }
 
     [Solveable("2015/Puzzles/Day23.txt", "Day 23 part 2", 23)]
     public static SolutionResult Part2(string filename, IPrinter printer)
     {
-        return new SolutionResult("");
+        var program = ParseInput(filename);
+        var registers = new Dictionary<string, long>
+        {
+            { "a", 1 }, // part 2 starts with register a set to 1
+            { "b", 0 }
+        };
+
+        ExecuteProgram(program, registers);
+
+        return new SolutionResult($"A: {registers["a"]}, B: {registers["b"]}");
+    }
+
+    private static void ExecuteProgram(List<Instruction> program, Dictionary<string, long> registers)
+    {
+        var ip = 0;
+        while (ip >= 0 && ip < program.Count)
+        {
+            var instruction = program[ip];
+            switch (instruction.Type)
+            {
+                case InstructionType.hlf:
+                {
+                    registers[instruction.Register] /= 2;
+                    ip++;
+                    break;
+                }
+                case InstructionType.tpl:
+                {
+                    registers[instruction.Register] *= 3;
+                    ip++;
+                    break;
+                }
+                case InstructionType.inc:
+                {
+                    registers[instruction.Register] += 1;
+                    ip++;
+                    break;
+                }
+                case InstructionType.jmp:
+                {
+                    ip += instruction.Offset;
+                    break;
+                }
+                case InstructionType.jie:
+                {
+                    var value = registers[instruction.Register];
+                    if (long.IsEvenInteger(value))
+                    {
+                        ip += instruction.Offset;
+                    }
+                    else
+                    {
+                        ip++;
+                    }
+                    break;
+                }
+                case InstructionType.jio:
+                {
+                    var value = registers[instruction.Register];
+                    if (value == 1)
+                    {
+                        ip += instruction.Offset;
+                    }
+                    else
+                    {
+                        ip++;
+                    }
+                    break;
+                }
+                default:
+                {
+                    ip++;
+                    break;
+                }
+            }
+        }
     }
 
     public record Instruction(InstructionType Type, string Register = "", int Offset = 0);

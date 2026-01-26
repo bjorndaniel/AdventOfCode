@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace AoC.Shared;
+﻿namespace AoC.Shared;
 public static class Helpers
 {
     public static readonly string DirectoryPath = "C:/OneDrive/Code/AdventOfCodeInputs/";

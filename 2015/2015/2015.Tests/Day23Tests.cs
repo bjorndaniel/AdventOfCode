@@ -35,17 +35,4 @@ public class Day23Tests(ITestOutputHelper output)
         Assert.True("A: 2, B: 0" == result.Result, $"Expected A: 2, B: 0 but was {result.Result}");
     }
 
-    [Fact]
-    public void Can_solve_part2_for_test()
-    {
-        //Given
-        var filename = $"{Helpers.DirectoryPathTests}Day23-test.txt";
-
-        //When
-        var result = Day23.Part2(filename, new TestPrinter(output));
-
-        //Then
-        Assert.True(false);
-    }
-
 }
